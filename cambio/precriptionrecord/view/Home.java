@@ -5,12 +5,17 @@ import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import cambio.precriptionrecord.controller.PatientController;
+
 public class Home extends JFrame{
 	private JPanel panelMain = new JPanel(new GridBagLayout());
+	private PatientController patientController = new PatientController();
 	public Home() {
 		initUI();
 		configureLayout();
@@ -18,50 +23,52 @@ public class Home extends JFrame{
 	}
 	private void initUI() {	
 		setTitle("Dispensary Managment.");
-		setSize(750, 750);
+		setSize(780,780);
 		Dimension screenSize = Toolkit.getDefaultToolkit().getScreenSize();
 		Point middle = new Point(screenSize.width/2,screenSize.height/2);
 		Point location = new Point(middle.x-this.getWidth()/2,middle.y-this.getHeight()/2);
 		setLocation(location);//Frame will be centered on the screen.
-		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);		
 		setResizable(false);
+		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
+		getContentPane().add(panelMain);
 		setVisible(true);
 	}
 	
-	private void configureLayout() {
-		GridBagConstraints mainC = new GridBagConstraints();		
-		mainC.weightx = 0.5;//distributed space for the component horizontally.
-		mainC.weighty = 0.5;//distributed space for the component vertically .		
-		mainC.gridx = 0;
-		mainC.gridy = 0;
-		mainC.ipadx = 15;
+	private void configureLayout() {		
+		addTitle();
+		addMenuBar();
+		addEmptyPanel();
 
-		addTitle(mainC);
-		addMenuBar(mainC);
-		addEmptyPanel(mainC);
-		
-		getContentPane().add(panelMain);
 		
 	}
 	
-	private void addTitle(GridBagConstraints titleConstraints){
-		titleConstraints.anchor = GridBagConstraints.NORTH;
-		titleConstraints.gridy = 0;
+	private void addTitle(){
+		GridBagConstraints titleConstraints = new GridBagConstraints();
+		titleConstraints.weightx = 0.5;
+		titleConstraints.weighty = 0.5;
+		titleConstraints.gridx = 0;
+		titleConstraints.gridy = 0;		
+		titleConstraints.anchor = GridBagConstraints.NORTHWEST;
 		panelMain.add(new PageTitle(""),titleConstraints);
 	}
 	
-	private void addMenuBar(GridBagConstraints menuBarConstraints){
+	private void addMenuBar(){
+		GridBagConstraints menuBarConstraints = new GridBagConstraints();
+		menuBarConstraints.weightx = 0.5;
+		menuBarConstraints.weighty = 0.5;
+		menuBarConstraints.gridx = 0;
+		menuBarConstraints.gridy = 1;		
 		menuBarConstraints.anchor = GridBagConstraints.NORTHWEST;
-		menuBarConstraints.gridy = 1;
-		panelMain.add(new MenuBar(),menuBarConstraints);
+		panelMain.add(new MenuBar(patientController),menuBarConstraints);
 	}
 	
-	private void addEmptyPanel(GridBagConstraints emptyPanelConstraints){
-		emptyPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
+	private void addEmptyPanel(){
+		GridBagConstraints emptyPanelConstraints = new GridBagConstraints();
+		emptyPanelConstraints.weightx = 0.5;
+		emptyPanelConstraints.weighty = 0.5;
+		emptyPanelConstraints.gridx = 0;
 		emptyPanelConstraints.gridy = 2;
-		panelMain.add(new EmptyPanel(),emptyPanelConstraints);
-	}
-	
-	
-	
+		emptyPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
+		panelMain.add(new EmptyPanel(patientController),emptyPanelConstraints);
+	}	
 }

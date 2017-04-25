@@ -11,10 +11,10 @@ import javax.swing.JLabel;
 
 public class PageTitle extends JPanel{
 	public PageTitle(String title){
-		JLabel titleLabel = new JLabel("PrescriptionRecord"+title);
+		JLabel titleLabel = new JLabel("Prescription Record"+title);
 		titleLabel.setFont(new Font("seif",Font.BOLD,18));
 		add(titleLabel);
-		setPreferredSize(new Dimension(710,30));
+		setPreferredSize(new Dimension(770,30));
 //		this.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 }
