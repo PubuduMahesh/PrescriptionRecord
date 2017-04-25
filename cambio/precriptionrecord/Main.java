@@ -1,5 +1,9 @@
 package cambio.precriptionrecord;
 
-public class Main {
+import cambio.precriptionrecord.view.Home;
 
+public class Main {
+	public static void main(String [] arg){
+		new Home();
+	}
 }

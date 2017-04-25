@@ -8,6 +8,7 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 public class MenuBar extends JPanel{
@@ -17,8 +18,8 @@ public class MenuBar extends JPanel{
 		JMenuBar menuBar = new JMenuBar();	
 		menuBar.setPreferredSize(new Dimension(650,30));
 		addMenuBarItem(menuBar);
-		setPreferredSize(new Dimension(700,35));
-		this.setBorder(BorderFactory.createLineBorder(Color.black));
+		setPreferredSize(new Dimension(720,35));
+//		this.setBorder(BorderFactory.createLineBorder(Color.black));
 		this.add(menuBar,menuBarConstraints);
 	}	
 	
@@ -30,11 +31,25 @@ public class MenuBar extends JPanel{
 		JMenu drugManagement = new JMenu("Drug Management  ");
 		JMenu help = new JMenu("Help  ");
 		
+		
+		
 		menuBar.add(home);
 		menuBar.add(patientManage);
 		menuBar.add(doctorManagement);
 		menuBar.add(prescriptionManagement);
 		menuBar.add(drugManagement);
-		menuBar.add(help);
+		menuBar.add(help);		
+		//add sub menu item.
+//		addPatientSubMenu(patientManage);
+	}
+	
+	private void addPatientSubMenu(JMenu patientManage){
+		JMenuItem newPatient = new JMenuItem("New Patient   ");
+		JMenuItem editPatient = new JMenuItem("Edit Patient   ");
+		JMenuItem removePatient = new JMenuItem("Remove Patient");
+		patientManage.add(newPatient);
+//		patientManage.add(editPatient);
+//		patientManage.add(removePatient);
+		
 	}
 }

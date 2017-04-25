@@ -1,20 +1,13 @@
 package cambio.precriptionrecord.view;
 
-import java.awt.BorderLayout;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 
-import javax.swing.BorderFactory;
 import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JMenu;
-import javax.swing.JMenuBar;
 import javax.swing.JPanel;
-import javax.swing.JScrollPane;
 
 public class Home extends JFrame{
 	private JPanel panelMain = new JPanel(new GridBagLayout());
@@ -36,21 +29,39 @@ public class Home extends JFrame{
 	}
 	
 	private void configureLayout() {
-		GridBagConstraints mainC = new GridBagConstraints();
-		mainC.anchor = GridBagConstraints.NORTHWEST;
-		mainC.weightx = 1;//distributed space for the component horizontally.
-		mainC.weighty = 1;//distributed space for the component vertically .		
+		GridBagConstraints mainC = new GridBagConstraints();		
+		mainC.weightx = 0.5;//distributed space for the component horizontally.
+		mainC.weighty = 0.5;//distributed space for the component vertically .		
 		mainC.gridx = 0;
 		mainC.gridy = 0;
-		mainC.ipadx = 30;
+		mainC.ipadx = 15;
+
+		addTitle(mainC);
 		addMenuBar(mainC);
+		addEmptyPanel(mainC);
 		
 		getContentPane().add(panelMain);
 		
 	}
+	
+	private void addTitle(GridBagConstraints titleConstraints){
+		titleConstraints.anchor = GridBagConstraints.NORTH;
+		titleConstraints.gridy = 0;
+		panelMain.add(new PageTitle(""),titleConstraints);
+	}
+	
 	private void addMenuBar(GridBagConstraints menuBarConstraints){
+		menuBarConstraints.anchor = GridBagConstraints.NORTHWEST;
+		menuBarConstraints.gridy = 1;
 		panelMain.add(new MenuBar(),menuBarConstraints);
 	}
+	
+	private void addEmptyPanel(GridBagConstraints emptyPanelConstraints){
+		emptyPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
+		emptyPanelConstraints.gridy = 2;
+		panelMain.add(new EmptyPanel(),emptyPanelConstraints);
+	}
+	
 	
 	
 }
