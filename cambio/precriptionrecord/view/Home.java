@@ -1,12 +1,14 @@
 package cambio.precriptionrecord.view;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 
+import javax.swing.BorderFactory;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JMenu;
@@ -15,7 +17,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
 public class Home extends JFrame{
-
+	private JPanel panelMain = new JPanel(new GridBagLayout());
 	public Home() {
 		initUI();
 		configureLayout();
@@ -35,7 +37,19 @@ public class Home extends JFrame{
 	
 	private void configureLayout() {
 		GridBagConstraints mainC = new GridBagConstraints();
+		mainC.anchor = GridBagConstraints.NORTHWEST;
+		mainC.weightx = 1;//distributed space for the component horizontally.
+		mainC.weighty = 1;//distributed space for the component vertically .		
+		mainC.gridx = 0;
+		mainC.gridy = 0;
+		mainC.ipadx = 30;
+		addMenuBar(mainC);
 		
+		getContentPane().add(panelMain);
+		
+	}
+	private void addMenuBar(GridBagConstraints menuBarConstraints){
+		panelMain.add(new MenuBar(),menuBarConstraints);
 	}
 	
 	
