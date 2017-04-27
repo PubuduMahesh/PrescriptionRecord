@@ -2,29 +2,32 @@ package cambio.precriptionrecord.util;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
 public class DBConnection {
-	public DBConnection() throws SQLException{		
-		try {
+	Connection con;
+	public DBConnection(){		
 			//Accessing driver from the JAR file
-			Class.forName("com.mysql.jdbc.Driver");
+			try {
+				Class.forName("com.mysql.jdbc.Driver");
+			} catch (ClassNotFoundException e) {
+				System.out.println(e.getMessage());
+			}
 			
 			//creating a variable for the connection called "con".
-			Connection con = DriverManager.getConnection("jdbc:mysql://localhost:8012/prescription_record","root","");
-			
-			/*PreparedStatement statement = con.prepareStatement("select * From doctor");
-			ResultSet result = statement.executeQuery();*/
-			/*while(result.next()){
-				System.out.println(result.getString(1));
-			}*/
-			
-		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
+			try {
+				String dbName = "prescription_record";
+				String dbUserName = "root";
+				String dbPassword = "";
+				String connectionString = "jdbc:mysql://localhost/" + dbName + "?user=" + dbUserName + "&password=" + dbPassword + "&useUnicode=true&characterEncoding=UTF-8";
+				con = DriverManager.getConnection(connectionString);
+				
+			} catch (SQLException e) {
+				System.out.println(e.getMessage());
+			}
+	}
+	
+	public Connection getConnection(){
+		return con;
 	}
 }

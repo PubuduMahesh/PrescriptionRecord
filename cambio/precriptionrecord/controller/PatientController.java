@@ -7,6 +7,9 @@ import java.util.List;
 
 public class PatientController {
 	private List<ActionListener> listenerNewPatientOpen = new ArrayList<>();
+	private List<ActionListener> listenerEditPatientOpen = new ArrayList<>();
+	private List<ActionListener> listenerRemovePatientOpen = new ArrayList<>();
+	private List<ActionListener> listenerRowClick = new ArrayList<>();
 	
 	public void registerAddNewPatientListeners(ActionListener listener)
 	{
@@ -16,6 +19,42 @@ public class PatientController {
 	public void fireAddNewPatientPerformed(ActionEvent e)
 	{
 		for (ActionListener actionListener : listenerNewPatientOpen) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerEditPatientListeners(ActionListener listener)
+	{
+		listenerEditPatientOpen.add(listener);
+	}
+	
+	public void fireEditPatientPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerEditPatientOpen) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerRemovePatientListeners(ActionListener listener)
+	{
+		listenerRemovePatientOpen.add(listener);
+	}
+	
+	public void fireRemovePatientPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerRemovePatientOpen) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerRowClickListeners(ActionListener listener)
+	{
+		listenerRowClick.add(listener);
+	}
+	
+	public void fireRowClickActionPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerRowClick) {
 			actionListener.actionPerformed(e);
 		}
 	}

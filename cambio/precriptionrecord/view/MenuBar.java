@@ -79,6 +79,18 @@ public class MenuBar extends JPanel{
 				patientController.fireAddNewPatientPerformed(e);
 			}
 		});
+		
+		editPatient.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				patientController.fireEditPatientPerformed(e);
+			}
+		});
+		
+		removePatient.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				patientController.fireRemovePatientPerformed(e);
+			}
+		});
 	}
 	
 	private void addDoctorSubMenu(JMenu doctorManage){
@@ -105,13 +117,5 @@ public class MenuBar extends JPanel{
 		drugManage.add(editDrug);
 		drugManage.add(removeDrug);
 		
-	}
-	
-	private void openInternalFrame(JMenuItem menuItem){
-		menuItem.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				System.out.println("pubudu");
-			}
-		});
-	}
+	}	
 }
