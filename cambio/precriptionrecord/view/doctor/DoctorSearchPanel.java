@@ -1,4 +1,4 @@
-package cambio.precriptionrecord.view;
+package cambio.precriptionrecord.view.doctor;
 
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -22,26 +22,26 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
-import cambio.precriptionrecord.controller.PatientController;
-import cambio.precriptionrecord.model.MyTableModel;
-import cambio.precriptionrecord.model.Patient;
+import cambio.precriptionrecord.controller.DoctorController;
+import cambio.precriptionrecord.model.doctor.Doctor;
+import cambio.precriptionrecord.model.doctor.DoctorTableModel;
 import cambio.precriptionrecord.util.DBConnection;
 
 import javax.swing.JTable;
 import javax.swing.JButton;
 
-public class SearchPanel extends JPanel{
+public class DoctorSearchPanel extends JPanel{
 	private GridBagLayout gridbag;
 	private JLabel lSearchName;
-	private JLabel lSearchID;
+	private JLabel lSearchRegNumber;
 	private JTextField tSearchName;
-	private JTextField tSearchID;
+	private JTextField tSearchRegNumber;
 	private JButton bSearchButton;
 	private JTable searchTable;
 	
-	private PatientController patientController;
-	public SearchPanel(PatientController patientController){
-		this.patientController = patientController;
+	private DoctorController doctorController;
+	public DoctorSearchPanel(DoctorController doctroController){
+		this.doctorController = doctroController;
 		
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
@@ -55,13 +55,13 @@ public class SearchPanel extends JPanel{
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		
 		lSearchName = new JLabel("Name");
-		lSearchID = new JLabel("ID");
+		lSearchRegNumber = new JLabel("Reg:Number");
 		tSearchName = new JTextField(20);
-		tSearchID = new JTextField(12);
+		tSearchRegNumber = new JTextField(12);
 		bSearchButton = new JButton("Search");
 		
 		/*Temporary*/
-		tSearchID.setText("id");
+		tSearchRegNumber.setText("RegNumber");
 		tSearchName.setText("name");
 		
 		searchConstraints.anchor = GridBagConstraints.NORTHWEST;
@@ -77,14 +77,14 @@ public class SearchPanel extends JPanel{
 		add(tSearchName);
 		
 		searchConstraints.insets = new Insets(0, 300, 10, 0);
-		gridbag.setConstraints(lSearchID, searchConstraints);
-		add(lSearchID);
+		gridbag.setConstraints(lSearchRegNumber, searchConstraints);
+		add(lSearchRegNumber);
 		
-		searchConstraints.insets = new Insets(0, 330, 0, 0);
-		gridbag.setConstraints(tSearchID, searchConstraints);
-		add(tSearchID);
+		searchConstraints.insets = new Insets(0, 380, 0, 0);
+		gridbag.setConstraints(tSearchRegNumber, searchConstraints);
+		add(tSearchRegNumber);
 		
-		searchConstraints.insets = new Insets(0, 500, 0, 0);
+		searchConstraints.insets = new Insets(0, 550, 0, 0);
 		gridbag.setConstraints(bSearchButton, searchConstraints);
 		add(bSearchButton);
 		
@@ -96,9 +96,9 @@ public class SearchPanel extends JPanel{
 
 		GridBagConstraints tablConstraints = new GridBagConstraints();
 		
-		final String[] header = {"Name","NIC","Address","Gender","Status","Birthday","Telehphone","Health Description"};
-		ArrayList<Patient> data = new ArrayList<Patient>();
-		searchTable = new JTable(new MyTableModel(data,header));
+		final String[] header = {"Name","NIC","Reg:No","Speciality","Gender","Birthday","Telehphone","Job History"};
+		ArrayList<Doctor> data = new ArrayList<Doctor>();
+		searchTable = new JTable(new DoctorTableModel(data,header));
 		
 		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
 		searchTable.setPreferredScrollableViewportSize(new Dimension(690, 130));
@@ -115,6 +115,12 @@ public class SearchPanel extends JPanel{
 
 		/*Mouse Clicked Event*/
 		mouseClickAction();
+		
+		/*Remove Button Clicked Actions*/
+		removeRow();
+		
+		/*Edit Button Clicked Action*/
+		updateRow();
 	}
 	
 	private void searchButtonAction(){
@@ -132,9 +138,9 @@ public class SearchPanel extends JPanel{
 					e1.printStackTrace();
 				}
 				try {
-					sql = "select * from patient";			
+					sql = "select * from doctor";			
 					rs = stmt.executeQuery(sql);
-					setPatientObject(rs);
+					setDoctorObject(rs);
 					con.close();					
 					
 				} catch (SQLException e1) {
@@ -145,32 +151,43 @@ public class SearchPanel extends JPanel{
 		});
 	}
 	
-	private void setPatientObject(ResultSet rs){
+	private void setDoctorObject(ResultSet rs){
 		try {
 			String id;
 			String name;
-			String surname;
-			String address;
+			String nic;
+			String regNumber;
+			String speciality;
 			String gender;
-			String status;
 			String birthday;
 			String telephone;
-			String healthHistory;
+			String jobHistory;
 			
 			while(rs.next()){
 				id = rs.getObject("id").toString();
 				name = rs.getObject("name").toString();
-				surname = rs.getObject("nic").toString();
-				address = rs.getObject("address").toString();
+				nic = rs.getObject("nic").toString();
+				regNumber = rs.getObject("regNumber").toString();
+				speciality = rs.getObject("speciality").toString();
 				gender = rs.getObject("gender").toString();
-				status = rs.getObject("status").toString();
 				birthday = rs.getObject("birthday").toString();
 				telephone = rs.getObject("telephone").toString();
-				healthHistory = rs.getObject("healthDescription").toString();
+				jobHistory = rs.getObject("jobHistory").toString();
 				
-				Patient patient = new Patient(id,name,surname,address,gender,status,birthday,telephone,healthHistory);
-				MyTableModel tbModel = (MyTableModel)searchTable.getModel();
-				tbModel.updateTable(patient);
+				Doctor doctor = new Doctor();
+				doctor.setId(id);
+				doctor.setName(name);
+				doctor.setNic(nic);
+				doctor.setRegNumber(regNumber);
+				doctor.setSpeiality(speciality);
+				doctor.setGender(gender);
+				doctor.setBirthday(birthday);
+				doctor.setTp(telephone);
+				doctor.setJobHistory(jobHistory);
+				
+				
+				DoctorTableModel tbModel = (DoctorTableModel)searchTable.getModel();
+				tbModel.updateTable(doctor);
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -184,11 +201,45 @@ public class SearchPanel extends JPanel{
 				if(e.getClickCount() == 1){
 					final JTable target = (JTable)e.getSource();
 					final int row = target.getSelectedRow();
-					Patient patient = ((MyTableModel)target.getModel()).getValue(row);
-					ActionEvent eClick = new ActionEvent(patient, -1, "");
-					patientController.fireRowClickActionPerformed(eClick);
+					Doctor doctor = ((DoctorTableModel)target.getModel()).getValue(row);
+					ActionEvent eClick = new ActionEvent(doctor, -1, "");
+					doctorController.fireRowClickActionPerformed(eClick);
 				}
 			}
 		});
+	}
+	
+	private void removeRow(){
+		/*doctorController.registerRemoveRowPatientSearchTableListeners(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int rowIndex = ((MyTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(),searchTable);
+				System.out.println(rowIndex);
+				((MyTableModel) searchTable.getModel()).removeRow(rowIndex);
+			}
+		});*/	
+	}
+	
+	private void updateRow(){
+		/*doctorController.registerUpdateRowPatientSearchTableListeners(new ActionListener() {
+			@Override
+			public void actionPerformed(ActionEvent e) {		
+				Patient patient = (Patient) e.getSource();
+				int updatedRow = ((MyTableModel) searchTable.getModel()).getRowIndex(patient.getID(),searchTable);
+				String[] patientValues;
+				patientValues = new String[]{
+						patient.getID(),
+						patient.getName(),
+						patient.getNIC(),
+						patient.getAddress(),
+						patient.getGender(),
+						patient.getStatus(),
+						patient.getBirthday(),
+						patient.getTp(),
+						patient.getMedicalHistory()
+				};
+				((MyTableModel) searchTable.getModel()).setValueAtRow(patient,updatedRow);
+			}
+		});*/	
 	}
 }

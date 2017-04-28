@@ -18,15 +18,17 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
 
 public class MenuBar extends JPanel{
 	private PatientController patientController;
+	private DoctorController doctorController;
 	private JMenuBar menuBar = new JMenuBar();
 	
-	public MenuBar(PatientController patientcontroller) {
+	public MenuBar(PatientController patientcontroller, DoctorController doctorController) {
 		this.patientController = patientcontroller;
-		
+		this.doctorController = doctorController;
 		this.setLayout(new GridBagLayout());
 		setPreferredSize(new Dimension(770,35));
 //		setBorder(BorderFactory.createLineBorder(Color.black));
@@ -100,6 +102,18 @@ public class MenuBar extends JPanel{
 		doctorManage.add(newDoctor);
 		doctorManage.add(editDoctor);
 		doctorManage.add(removeDoctor);
+		
+		newDoctor.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				doctorController.fireAddNewDoctorPerformed(e);
+			}
+		});
+		
+		editDoctor.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				doctorController.fireEditDoctorPerformed(e);
+			}
+		});
 		
 	}
 	

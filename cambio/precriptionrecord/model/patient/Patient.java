@@ -1,8 +1,9 @@
-package cambio.precriptionrecord.model;
+package cambio.precriptionrecord.model.patient;
 
 import java.util.Date;
 
 public class Patient {
+
 	private String id;
 	private String name;
 	private String nic;
@@ -63,5 +64,41 @@ public class Patient {
 
 	public String getMedicalHistory() {
 		return medicalHistory;
+	}
+	
+	public void setID(String id){
+		this.id = id;
+	}
+	
+	public void setName(String name){
+		this.name = name;
+	}
+	
+	public void setNIC(String nic){
+		this.nic = nic;
+	}
+	
+	public void setAddress(String address){
+		this.address = address;
+	}
+	
+	public void setGender(String gender){
+		this.gender = gender;
+	}
+	
+	public void setStatus(String status){
+		this.status = status;
+	}
+	
+	public void setBirthday(String birthday){
+		this.birthday = birthday;
+	}
+	
+	public void setTp(String tp){
+		this.tp = tp;
+	}
+	
+	public void setMedicalHistory(String medicalHistory){
+		this.medicalHistory = medicalHistory;
 	}
 }

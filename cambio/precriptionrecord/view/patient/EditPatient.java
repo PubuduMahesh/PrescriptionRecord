@@ -30,10 +30,9 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
 import cambio.precriptionrecord.controller.PatientController;
-import cambio.precriptionrecord.model.Patient;
+import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
-import cambio.precriptionrecord.view.SearchPanel;
 
 public class EditPatient extends JInternalFrame{
 	private GridBagLayout gridbag;
@@ -90,7 +89,7 @@ public class EditPatient extends JInternalFrame{
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		
-		SearchPanel searchPanel = new SearchPanel(patientController);		
+		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);
@@ -460,32 +459,35 @@ public class EditPatient extends JInternalFrame{
 		bSave.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				String id = tID.getText();
-				String name = tName.getText();
-				String nic = tNIC.getText();
-				String address = tAddress.getText();
-				String gender;
-				String status;
-				String birthday;
-				String telephone;
-				String medicalHistory;
-				
-				if(rbMale.isSelected())
-					gender = "Male";				
-				else
-					gender = "Female";
-				if(rbSingle.isSelected())
-					status = "Single";
-				else if(rbMarried.isSelected())
-					status = "Married";
-				else
-					status = "Divorce";
-				
-				birthday = tBirthday.getText();
-				telephone = tTp.getText();
-				medicalHistory = tMedicalHitory.getText();		
-				
-				savePatient(new Patient(id,name,nic,address,gender,status,birthday,telephone,medicalHistory));
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Edit Patient?","Warning",0);
+				if(dialogResult == JOptionPane.YES_OPTION){
+					String id = tID.getText();
+					String name = tName.getText();
+					String nic = tNIC.getText();
+					String address = tAddress.getText();
+					String gender;
+					String status;
+					String birthday;
+					String telephone;
+					String medicalHistory;
+
+					if(rbMale.isSelected())
+						gender = "Male";				
+					else
+						gender = "Female";
+					if(rbSingle.isSelected())
+						status = "Single";
+					else if(rbMarried.isSelected())
+						status = "Married";
+					else
+						status = "Divorce";
+
+					birthday = tBirthday.getText();
+					telephone = tTp.getText();
+					medicalHistory = tMedicalHitory.getText();		
+
+					savePatient(new Patient(id,name,nic,address,gender,status,birthday,telephone,medicalHistory));
+				}
 			}
 		});
 	}
@@ -512,10 +514,12 @@ public class EditPatient extends JInternalFrame{
 					+ "`telephone` = '"+patient.getTp()+"', "
 					+ "`healthDescription` = '"+patient.getMedicalHistory()+"' "
 					+ "WHERE "
-					+ "`patient`.`nic` = '"+patient.getNIC()+"' ";
-			
-			System.out.println(sql);
+					+ "`patient`.`nic` = '"+patient.getNIC()+"' ";			
 			stmt.executeUpdate(sql);
+			con.close();
+			ActionEvent e = new ActionEvent(patient,-1,"");
+			patientController.fireUpdateRowPatientSearchTablePerformed(e);
+			JOptionPane.showMessageDialog(null, "Patient detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
