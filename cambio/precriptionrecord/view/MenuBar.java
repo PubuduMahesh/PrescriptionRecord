@@ -20,31 +20,36 @@ import javax.swing.JPanel;
 
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
+import cambio.precriptionrecord.controller.PrescriptionController;
+import cambio.precriptionrecord.controller.DrugController;
 
 public class MenuBar extends JPanel{
 	private PatientController patientController;
 	private DoctorController doctorController;
+	private DrugController drugController;
+	private PrescriptionController prescriptionController;    
 	private JMenuBar menuBar = new JMenuBar();
-	
-	public MenuBar(PatientController patientcontroller, DoctorController doctorController) {
+
+	public MenuBar(PatientController patientcontroller, DoctorController doctorController, DrugController drugController, PrescriptionController prescriptionController) {
 		this.patientController = patientcontroller;
 		this.doctorController = doctorController;
+		this.prescriptionController = prescriptionController;
+		this.drugController = drugController;
 		this.setLayout(new GridBagLayout());
 		setPreferredSize(new Dimension(770,35));
-//		setBorder(BorderFactory.createLineBorder(Color.black));
-		
+
 		GridBagConstraints menuBarConstraints = new GridBagConstraints();
 		menuBarConstraints.anchor = GridBagConstraints.WEST;
 		menuBarConstraints.gridx = 0;
 		menuBarConstraints.gridy = 0;
-		
+
 		menuBar.setPreferredSize(new Dimension(650,30));
 		addMenuBarItem();
 		this.add(menuBar,menuBarConstraints);
-		
-		
+
+
 	}	
-	
+
 	private void addMenuBarItem(){
 		JMenu home = new JMenu("Home  ");
 		JMenu patientManagement = new JMenu("Patient Management  ");
@@ -64,37 +69,47 @@ public class MenuBar extends JPanel{
 		addDoctorSubMenu(doctorManagement);
 		addPrescriptionSubMenu(prescriptionManagement);
 		addDrugSubMenu(drugManagement);
-		
-		
+
+
 	}
-	
+
 	private void addPatientSubMenu(JMenu patientManage){
 		JMenuItem newPatient = new JMenuItem("New Patient");		
 		JMenuItem editPatient = new JMenuItem("Edit Patient");
 		JMenuItem removePatient = new JMenuItem("Remove Patient");
+		JMenuItem treatmentHistory = new JMenuItem("Treatment History");
 		patientManage.add(newPatient);
 		patientManage.add(editPatient);
-		patientManage.add(removePatient);	
-		
+		patientManage.add(removePatient);
+		patientManage.add(treatmentHistory);
+
 		newPatient.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				patientController.fireAddNewPatientPerformed(e);
 			}
 		});
-		
+
 		editPatient.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				patientController.fireEditPatientPerformed(e);
 			}
 		});
-		
+
 		removePatient.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				patientController.fireRemovePatientPerformed(e);
 			}
 		});
+		
+		treatmentHistory.addActionListener(new ActionListener(){
+			
+			@Override
+			public void actionPerformed(ActionEvent e){
+				patientController.fireTreatmentHistoryPerformed(e);
+			}
+		});
 	}
-	
+
 	private void addDoctorSubMenu(JMenu doctorManage){
 		JMenuItem newDoctor = new JMenuItem("New Doctor");		
 		JMenuItem editDoctor= new JMenuItem("Edit Doctor");
@@ -102,27 +117,41 @@ public class MenuBar extends JPanel{
 		doctorManage.add(newDoctor);
 		doctorManage.add(editDoctor);
 		doctorManage.add(removeDoctor);
-		
+
 		newDoctor.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				doctorController.fireAddNewDoctorPerformed(e);
 			}
 		});
-		
+
 		editDoctor.addActionListener(new ActionListener(){
 			public void actionPerformed(ActionEvent e){
 				doctorController.fireEditDoctorPerformed(e);
 			}
 		});
-		
+
+		removeDoctor.addActionListener(new ActionListener(){
+			public void actionPerformed(ActionEvent e){
+				doctorController.fireRemoveDoctorActionPerformed(e);
+			}
+		});
+
 	}
-	
+
 	private void addPrescriptionSubMenu(JMenu prescriptionManage){
 		JMenuItem newPrescription = new JMenuItem("New Prescription");	
 		prescriptionManage.add(newPrescription);
-		
+
+		newPrescription.addActionListener(new ActionListener() {
+
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				prescriptionController.fireAddNewPrescriptionPerformed(e);				
+			}
+		});
+
 	}
-	
+
 	private void addDrugSubMenu(JMenu drugManage){
 		JMenuItem newDrug = new JMenuItem("New Drug");		
 		JMenuItem editDrug = new JMenuItem("Edit Drugh");
@@ -130,6 +159,30 @@ public class MenuBar extends JPanel{
 		drugManage.add(newDrug);
 		drugManage.add(editDrug);
 		drugManage.add(removeDrug);
-		
+
+		newDrug.addActionListener(new ActionListener(){
+
+			@Override
+			public void actionPerformed(ActionEvent e){
+				drugController.fireAddNewDrugActionPerformed(e);
+			}
+		});
+
+		editDrug.addActionListener(new ActionListener(){
+
+			@Override 
+			public void actionPerformed(ActionEvent e){
+				drugController.fireEditDrugActionPerformed(e);
+			}
+		});
+
+		removeDrug.addActionListener(new ActionListener(){
+
+			@Override 
+			public void actionPerformed(ActionEvent e){
+				drugController.fireRemoveDrugActionPerformed(e);
+			}
+		});
+
 	}	
 }

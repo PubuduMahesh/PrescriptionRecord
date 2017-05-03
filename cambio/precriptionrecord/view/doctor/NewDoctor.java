@@ -372,8 +372,6 @@ public class NewDoctor extends JInternalFrame{
 				public void insertUpdate(DocumentEvent e) {
 					enableSaveButton();
 				}
-
-
 			});
 		}
 	}
@@ -473,10 +471,9 @@ public class NewDoctor extends JInternalFrame{
 					+ " '"+doctor.getTp()+"',"
 					+ " '"+doctor.getJobHistory()+"',"
 					+ " NULL)";
-			System.out.println(sql);
 			stmt.executeUpdate(sql);
 			connection.close();
-//			clearField();
+			clearField();
 			JOptionPane.showMessageDialog(null, "Doctor detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
 		}catch(Exception ex){
 			ex.printStackTrace();

@@ -13,11 +13,15 @@ import javax.swing.JPanel;
 
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
+import cambio.precriptionrecord.controller.PrescriptionController;
+import cambio.precriptionrecord.controller.DrugController;
 
 public class Home extends JFrame{
 	private JPanel panelMain = new JPanel(new GridBagLayout());
 	private PatientController patientController = new PatientController();
 	private DoctorController doctorController = new DoctorController();
+    private DrugController drugController = new DrugController();
+    private PrescriptionController prescriptionController = new PrescriptionController();
 	public Home() {
 		initUI();
 		configureLayout();
@@ -61,7 +65,7 @@ public class Home extends JFrame{
 		menuBarConstraints.gridx = 0;
 		menuBarConstraints.gridy = 1;		
 		menuBarConstraints.anchor = GridBagConstraints.NORTHWEST;
-		panelMain.add(new MenuBar(patientController,doctorController),menuBarConstraints);
+		panelMain.add(new MenuBar(patientController,doctorController,drugController,prescriptionController),menuBarConstraints);
 	}
 	
 	private void addEmptyPanel(){
@@ -71,6 +75,6 @@ public class Home extends JFrame{
 		emptyPanelConstraints.gridx = 0;
 		emptyPanelConstraints.gridy = 2;
 		emptyPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
-		panelMain.add(new EmptyPanel(patientController,doctorController),emptyPanelConstraints);
+		panelMain.add(new EmptyPanel(patientController,doctorController,drugController,prescriptionController),emptyPanelConstraints);
 	}	
 }

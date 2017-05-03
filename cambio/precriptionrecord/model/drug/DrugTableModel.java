@@ -1,16 +1,16 @@
-package cambio.precriptionrecord.model.doctor;
+package cambio.precriptionrecord.model.drug;
 
 import java.util.ArrayList;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
-public class DoctorTableModel extends AbstractTableModel {
+public class DrugTableModel extends AbstractTableModel {
 
 	private String [] columnNames;
-	private java.util.List<Doctor> tableData = new ArrayList<Doctor>();
+	private java.util.List<Drug> tableData = new ArrayList<Drug>();
 	
-	public DoctorTableModel(ArrayList<Doctor>data,String[] columnNames){
+	public DrugTableModel(ArrayList<Drug>data,String[] columnNames){
 		this.columnNames = columnNames;
 		this.tableData = data;
 	}
@@ -32,54 +32,44 @@ public class DoctorTableModel extends AbstractTableModel {
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Doctor doctor = tableData.get(rowIndex);
+		Drug drug = tableData.get(rowIndex);
 		switch (columnIndex) {
-		
 		case 0:
-			return doctor.getName();
+			return drug.getDrugId();
 		case 1:
-			return doctor.getNic();
+			return drug.getDrugName();
 		case 2:
-			return doctor.getRegNumber();
+			return drug.getDescription();
 		case 3:
-			return doctor.getSpeiality();
+			return drug.getType();
 		case 4:
-			return doctor.getGender();
-		case 5:
-			return doctor.getBirthday();
-		case 6:
-			return doctor.getTp();
-		case 7:
-			return doctor.getJobHistory();
+			return drug.getDosage();
 		default:
 			return null;
 		}
 			
 	}
 	
-	public Doctor getValue(int rowIndex){
-		Doctor doctor = tableData.get(rowIndex);
-		return doctor;
+	public Drug getValue(int rowIndex){
+		Drug drug = tableData.get(rowIndex);
+		return drug;
 		
 	}
 	
-	public void setValueAtRow(Doctor doctor, int rowIndex)
+	public void setValueAtRow(Drug drug, int rowIndex)
     {
-		Doctor d = tableData.get(rowIndex);
-		d.setName(doctor.getName());
-		d.setNic(doctor.getNic());
-		d.setRegNumber(doctor.getRegNumber());
-		d.setSpeiality(doctor.getSpeiality());
-		d.setGender(doctor.getGender());
-		d.setBirthday(doctor.getBirthday());
-		d.setTp(doctor.getTp());
-		d.setJobHistory(doctor.getJobHistory());	
+		Drug d = tableData.get(rowIndex);
+		d.setDrugName(drug.getDrugName());
+		d.setDrugId(drug.getDrugId());
+		d.setDescription(drug.getDescription());
+		d.setType(drug.getType());
+		d.setDosage(drug.getDosage());
 		fireTableDataChanged();
         
 		
     }
-	public void updateTable(Doctor doctor){
-		tableData.add(doctor);
+	public void updateTable(Drug drug){
+		tableData.add(drug);
 		int row = tableData.size()-1;// New data added to the first row each time. 
 		fireTableRowsInserted(row, row);//fire row inserted. 
 		

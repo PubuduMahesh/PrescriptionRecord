@@ -63,7 +63,7 @@ public class RemovePatient extends JInternalFrame{
 		this.patientController = patientController;
 		
 		JDesktopPane desktopPane = new JDesktopPane();
-		setTitle("Edit Patient");
+		setTitle("Remove Patient");
 		setPreferredSize(new Dimension(740,665));
 		setClosable(true);
 		setVisible(true);
@@ -88,8 +88,9 @@ public class RemovePatient extends JInternalFrame{
 	private void addSearchPanel(){
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
-		
-		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController);		
+		int tbWidth = 690;
+		int tbHieght = 130;
+		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController, tbWidth, tbHieght);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);
@@ -441,7 +442,7 @@ public class RemovePatient extends JInternalFrame{
 		bRemove.addActionListener(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Save Patient?","Warning",0);
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Remove Patient?","Warning",0);
 				if(dialogResult == JOptionPane.YES_OPTION)
 					removePatient(tID.getText());
 			}

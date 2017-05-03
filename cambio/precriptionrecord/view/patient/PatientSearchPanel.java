@@ -40,15 +40,15 @@ public class PatientSearchPanel extends JPanel{
 	private JTable searchTable;
 	
 	private PatientController patientController;
-	public PatientSearchPanel(PatientController patientController){
+	public PatientSearchPanel(PatientController patientController, int tbWidth, int tbHeight){
 		this.patientController = patientController;
 		
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
-		setPreferredSize(new Dimension(720, 200));
-		
+		setPreferredSize(new Dimension(tbWidth+30, tbHeight+70));
+		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		addSearchBar();
-		addTable();	
+		addTable(tbWidth,tbHeight);	
 	}
 	
 	private void addSearchBar(){
@@ -92,7 +92,7 @@ public class PatientSearchPanel extends JPanel{
 		searchButtonAction();		
 	}
 	
-	private void addTable(){
+	private void addTable(int tbWidth, int tbHeight){
 
 		GridBagConstraints tablConstraints = new GridBagConstraints();
 		
@@ -100,8 +100,8 @@ public class PatientSearchPanel extends JPanel{
 		ArrayList<Patient> data = new ArrayList<Patient>();
 		searchTable = new JTable(new PatientTableModel(data,header));
 		
-		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		searchTable.setPreferredScrollableViewportSize(new Dimension(690, 130));
+		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_ALWAYS);
+		searchTable.setPreferredScrollableViewportSize(new Dimension(tbWidth, tbHeight));
 		searchTable.setFillsViewportHeight(true);
 		scrollPane.setViewportView(searchTable);
 

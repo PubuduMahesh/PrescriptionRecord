@@ -12,6 +12,7 @@ public class PatientController {
 	private List<ActionListener> listenerRowClick = new ArrayList<>();
 	private List<ActionListener> listenerRemoveRowPatientSearchTable = new ArrayList<>();
 	private List<ActionListener> listenerUpdateRowPatientSearchTable = new ArrayList<>();
+	private List<ActionListener> listenerTreatmentHistoryOpen = new ArrayList<>();
 	
 	public void registerAddNewPatientListeners(ActionListener listener)
 	{
@@ -45,6 +46,18 @@ public class PatientController {
 	public void fireRemovePatientPerformed(ActionEvent e)
 	{
 		for (ActionListener actionListener : listenerRemovePatientOpen) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerTreatmentHistoryListeners(ActionListener listener)
+	{
+		listenerTreatmentHistoryOpen.add(listener);
+	}
+	
+	public void fireTreatmentHistoryPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerTreatmentHistoryOpen) {
 			actionListener.actionPerformed(e);
 		}
 	}
