@@ -113,7 +113,6 @@ public class EditPatient extends JInternalFrame{
 		JLabel ltp = new JLabel("Telephone");
 		JLabel lProfilePicture = new JLabel();
 		JLabel lMedicalHistory = new JLabel("Medical History");
-		JLabel lLeft = new JLabel();
 		
 		lName.setText("<html>Name <font color='red'> *</font></html>");
 		lBirthday.setText("<html>Birthday <font color='red'> *</font></html>");
@@ -188,13 +187,6 @@ public class EditPatient extends JInternalFrame{
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lProfilePicture, constraintsLabel);
 		add(lProfilePicture);
-		
-		/*Label-Left arrangement*/
-		/*lLeft.setPreferredSize(new Dimension(115,100));
-		constraintsLabel.gridx = 4;
-		constraintsLabel.gridy = 1;
-		gridbag.setConstraints(lLeft,constraintsLabel);
-		add(lLeft);	*/
 	}
 	
 	private void addField(){
@@ -218,7 +210,7 @@ public class EditPatient extends JInternalFrame{
 		bProfilePicDelete = new JButton("Delete");
 		
 		bSave = new JButton("Save");
-		bDiscard = new JButton("Discard");
+		bDiscard = new JButton("Clear");
 				
 		/*text field - id*/
 		tID.setEditable(false);
@@ -369,7 +361,7 @@ public class EditPatient extends JInternalFrame{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				try {
-					String selDate = new DatePicker((NewPatient)(bBirthday.getParent().getParent().getParent().getParent())).setPickedDate();
+					String selDate = new DatePicker((EditPatient)(bBirthday.getParent().getParent().getParent().getParent())).setPickedDate();
 					Date birthday = new SimpleDateFormat("dd/MM/yyyy").parse(selDate);//convert the selected Date in to the "Date" type
 					if (birthday.before(new Date())) {//check whether the selected date is grater than with respect to the current date. 
 						tBirthday.setText(selDate);//set the date to the birthday text field.

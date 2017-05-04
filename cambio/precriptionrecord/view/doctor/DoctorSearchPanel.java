@@ -34,18 +34,20 @@ public class DoctorSearchPanel extends JPanel{
 	private JTextField tSearchName;
 	private JTextField tSearchRegNumber;
 	private JButton bSearchButton;
+	private JButton bClear;
 	private JTable searchTable;
+	private DoctorTableModel tbModel;
 	
 	private DoctorController doctorController;
 	public DoctorSearchPanel(DoctorController doctroController){
 		this.doctorController = doctroController;
-		
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setPreferredSize(new Dimension(720, 250));
 		
 		addSearchBar();
-		addTable();	
+		addTable();
+		tbModel = (DoctorTableModel)searchTable.getModel();
 	}
 	
 	private void addSearchBar(){
@@ -56,6 +58,7 @@ public class DoctorSearchPanel extends JPanel{
 		tSearchName = new JTextField(20);
 		tSearchRegNumber = new JTextField(12);
 		bSearchButton = new JButton("Search");
+		bClear = new JButton("Clear");
 		
 		/*Temporary*/
 		tSearchRegNumber.setText("RegNumber");
@@ -85,8 +88,13 @@ public class DoctorSearchPanel extends JPanel{
 		gridbag.setConstraints(bSearchButton, searchConstraints);
 		add(bSearchButton);
 		
+		searchConstraints.insets = new Insets(0, 630, 0, 0);
+		gridbag.setConstraints(bClear, searchConstraints);
+		add(bClear);
+		
 		/*button Actions*/
-		searchButtonAction();		
+		searchButtonAction();	
+		clearButtonAction();
 	}
 	
 	private void addTable(){
@@ -124,6 +132,7 @@ public class DoctorSearchPanel extends JPanel{
 		bSearchButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearTable();
 				DBConnection dbCon = new DBConnection();
 				Connection con = dbCon.getConnection();
 				Statement stmt = null;
@@ -180,10 +189,7 @@ public class DoctorSearchPanel extends JPanel{
 				doctor.setGender(gender);
 				doctor.setBirthday(birthday);
 				doctor.setTp(telephone);
-				doctor.setJobHistory(jobHistory);
-				
-				
-				DoctorTableModel tbModel = (DoctorTableModel)searchTable.getModel();
+				doctor.setJobHistory(jobHistory);				
 				tbModel.updateTable(doctor);
 			}
 		} catch (SQLException e) {
@@ -198,9 +204,12 @@ public class DoctorSearchPanel extends JPanel{
 				if(e.getClickCount() == 1){
 					final JTable target = (JTable)e.getSource();
 					final int row = target.getSelectedRow();
-					Doctor doctor = ((DoctorTableModel)target.getModel()).getValue(row);
-					ActionEvent eClick = new ActionEvent(doctor, -1, "");
-					doctorController.fireRowClickActionPerformed(eClick);
+					if(row >= 0){
+						Doctor doctor = ((DoctorTableModel)target.getModel()).getValue(row);
+						ActionEvent eClick = new ActionEvent(doctor, -1, "");
+						doctorController.fireRowClickActionPerformed(eClick);
+					}
+					
 				}
 			}
 		});
@@ -211,8 +220,7 @@ public class DoctorSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = ((DoctorTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(),searchTable);
-				System.out.println(rowIndex);
-				((DoctorTableModel) searchTable.getModel()).removeRow(rowIndex);
+				tbModel.removeRow(rowIndex);
 			}
 		});	
 	}
@@ -222,7 +230,7 @@ public class DoctorSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				Doctor doctor = (Doctor) e.getSource();
-				int updatedRow = ((DoctorTableModel) searchTable.getModel()).getRowIndex(doctor.getId(),searchTable);
+				int updatedRow = tbModel.getRowIndex(doctor.getId(),searchTable);
 				doctor.getId();
 				doctor.getName();
 				doctor.getNic();
@@ -232,8 +240,29 @@ public class DoctorSearchPanel extends JPanel{
 				doctor.getBirthday();
 				doctor.getTp();
 				doctor.getJobHistory();
-				((DoctorTableModel) searchTable.getModel()).setValueAtRow(doctor,updatedRow);
+				tbModel.setValueAtRow(doctor,updatedRow);
 			}
 		});	
 	}
+	
+	private void clearButtonAction(){
+		bClear.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clearTable();
+				
+			}
+			
+		});
+		
+	}
+	private void clearTable(){
+		int rowCount = tbModel.getRowCount();
+		for(int i = 0; i<rowCount; i++){
+			tbModel.removeRow(0);
+			
+		}
+	}
+	
 }

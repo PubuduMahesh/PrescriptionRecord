@@ -2,6 +2,7 @@ package cambio.precriptionrecord.view.prescription;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
@@ -9,10 +10,17 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusAdapter;
 import java.awt.event.FocusEvent;
+import java.io.FileOutputStream;
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -26,15 +34,26 @@ import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
+import javax.swing.text.Document;
 
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.model.drug.DrugTableModel;
+import cambio.precriptionrecord.model.patient.Patient;
+import cambio.precriptionrecord.model.prescription.Prescription;
 import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
+import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 import cambio.precriptionrecord.view.drug.DrugSearchPanel;
 import cambio.precriptionrecord.view.drug.EditDrug;
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JasperCompileManager;
+import net.sf.jasperreports.engine.JasperFillManager;
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.engine.JasperReport;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.swing.JRViewer;
 
 public class PrescriptionPanel extends JInternalFrame{
 	private GridBagLayout gridbag;
@@ -48,6 +67,7 @@ public class PrescriptionPanel extends JInternalFrame{
 	private JButton bPrint;
 	private JButton bSend;
 	private JButton bClear;
+	private PrescriptionTableModel tbModel;
 	private DrugController drugController = new DrugController();
 	private PrescriptionController prescriptionController;
 	public PrescriptionPanel(PrescriptionController prescriptionController){
@@ -144,9 +164,11 @@ public class PrescriptionPanel extends JInternalFrame{
 		gridbag.setConstraints(bClear, constraints);
 		add(bClear);
 		
-		/*button action */
+		/*action */
 		dateButtonAction();
 		mouseClickRow();
+		saveButtonAction();
+		printButtonAction();
 	}
 
 	private void addDrugSearchPanel(){
@@ -207,8 +229,8 @@ public class PrescriptionPanel extends JInternalFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				PrescriptionTableModel tableModel = (PrescriptionTableModel)prescriptionTable.getModel();
-				tableModel.updateTable(drug);
+				tbModel = (PrescriptionTableModel)prescriptionTable.getModel();
+				tbModel.updateTable(drug);
 			}
 		});
 	}
@@ -238,7 +260,129 @@ public class PrescriptionPanel extends JInternalFrame{
 	}
 	
 	private void createDialog(Drug drug){
-		new EditDosage(drug);
+		new EditDosage(drug,prescriptionController);
+		editDosageAddButtonAction();
+	}
+
+	private void editDosageAddButtonAction() {
+		prescriptionController.registerEditPrescriptionDosageListeners(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tbModel = (PrescriptionTableModel)prescriptionTable.getModel();
+				tbModel.updateTable((Drug)e.getSource());
+				
+			}
+		});
+		
+	}
+	
+	private void saveButtonAction(){
+		bSave.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				prescriptionController.fireSavePrescriptionPerformed(e);
+				prescriptionController.registerSavePrescriptionReverseListeners(new ActionListener() {
+					
+					@Override
+					public void actionPerformed(ActionEvent e) {
+						savePrescription(setPrescriptionObject((String)e.getSource()));
+					}
+				});
+				
+			}
+		});
+	}
+	
+	private Prescription setPrescriptionObject(String patientID){
+		Prescription prescription = new Prescription();
+		prescription.setDate(tDate.getText());
+		prescription.setDiagnosisDescription(tDiagnosis.getText());
+		prescription.setDoctorID("1");//need to change
+		prescription.setDrugList(createDrugList());
+		prescription.setPatientID(patientID);
+		
+		return prescription;
+		
+	}
+	
+	private String createDrugList(){
+		int rowCount = tbModel.getRowCount();
+		Drug drug = new Drug();
+		String drugList = null;
+		for(int rowIndex =0; rowIndex< rowCount; rowIndex++){
+			drug = tbModel.getValue(rowIndex);
+			drugList+= drug.getDrugId()+"-"+drug.getDrugName()
+			+"-"+drug.getDescription()
+			+"-"+drug.getType()
+			+"-"+drug.getDosage()+",\n"; 
+			
+		}
+		return drugList;
+		
+	}
+	
+	private void savePrescription(Prescription prescription){
+		DBConnection dbCon = new DBConnection();
+		Connection con = dbCon.getConnection();
+		Statement stmt = null;
+		String sql = null;
+		try {
+			stmt = con.createStatement();
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		try {
+			sql = "INSERT INTO `prescription` (`id`,"
+					+ " `patientID`,"
+					+ " `doctorID`,"
+					+ " `diagDescription`,"
+					+ " `drugList`,"
+					+ " `date`) VALUES (NULL,"
+					+ " '"+prescription.getPatientID()+"',"
+					+ " '"+prescription.getDoctorID()+"',"
+					+ " '"+prescription.getDiagnosisDescription()+"',"
+					+ " '"+prescription.getDrugList()+"',"
+					+ " '"+prescription.getDate()+"')";			
+			stmt.executeUpdate(sql);
+			con.close();
+			JOptionPane.showMessageDialog(null, "Prescription detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
+			
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(null, "Prescription detail saving failed", "Error", JOptionPane.ERROR_MESSAGE);
+			e.printStackTrace();
+		}
+	}
+	
+	private void printButtonAction(){
+		bPrint.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				printReport();
+				
+			}
+		});
+	}
+	
+	private void printReport(){
+		try{
+			List<Map<String,? >> dataSource = new ArrayList<Map<String, ?>>();
+			Map<String,Object> m = new HashMap<String,Object>();
+			m.put("name", "Sangakkara");
+			dataSource.add(m); 
+			JRDataSource jrdataSource = new JRBeanCollectionDataSource(dataSource);
+			String sourceName = "src/cambio/precriptionrecord/report/Blank_A4.jrxml";
+			JasperReport report = JasperCompileManager.compileReport(sourceName);
+			JasperPrint filledReport = JasperFillManager.fillReport(report, null,jrdataSource);
+			JDialog dialog = new JDialog();
+			dialog.setVisible(true);			
+			dialog.getContentPane().add(new JRViewer(filledReport));
+			dialog.pack();
+		}catch(Exception ex){
+			System.out.println(ex.getMessage() );
+		}
 	}
 
 }

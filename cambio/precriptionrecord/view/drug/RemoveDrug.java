@@ -30,18 +30,18 @@ import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.util.DBConnection;
 
 public class RemoveDrug extends JInternalFrame{
-	DrugController drugController = new DrugController();
-	GridBagLayout gridbag;
-	JTextField tName;
-	JTextArea tDescription;
-	JRadioButton rbTablet;
-	JRadioButton rbCapsules;
-	JRadioButton rbSyrups;
-	JTextField tDosage;
-	ButtonGroup bgType;
-	JButton bRemove;
-	JButton bClear;
-	JTextField tID;
+	private DrugController drugController = new DrugController();
+	private GridBagLayout gridbag;
+	private JTextField tName;
+	private JTextArea tDescription;
+	private JRadioButton rbTablet;
+	private JRadioButton rbCapsules;
+	private JRadioButton rbSyrups;
+	private JTextField tDosage;
+	private ButtonGroup bgType;
+	private JButton bRemove;
+	private JButton bClear;
+	private JTextField tID;
 	
     public RemoveDrug(DrugController drugController){
     	this.drugController = drugController;

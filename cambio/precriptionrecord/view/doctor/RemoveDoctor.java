@@ -53,7 +53,7 @@ public class RemoveDoctor extends JInternalFrame{
 	private ButtonGroup bgGender;
 	
 	private JButton bRemove;
-	private JButton bDiscard;
+	private JButton bClear;
 	private DoctorController doctorController;
 	public RemoveDoctor(DoctorController doctorController){
             this.doctorController = doctorController;
@@ -209,7 +209,7 @@ public class RemoveDoctor extends JInternalFrame{
 		bProfilePicDelete = new JButton("Delete");
 		
 		bRemove = new JButton("Remove");
-		bDiscard = new JButton("Discard");
+		bClear = new JButton("Clear");
 		
 		/*text field - name*/
 		constraintsField.gridx = 0;
@@ -294,8 +294,8 @@ public class RemoveDoctor extends JInternalFrame{
 		constraintsField.insets = new Insets(0, 420, 0, 0);
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 7;
-		gridbag.setConstraints(bDiscard, constraintsField);
-		add(bDiscard);		
+		gridbag.setConstraints(bClear, constraintsField);
+		add(bClear);		
 
 		/*button-profile picture add*/
 		constraintsField.insets = new Insets(150, 375, 0, 0);
@@ -375,7 +375,7 @@ public class RemoveDoctor extends JInternalFrame{
         }
         
         private void discardButtonAction(){
-            bDiscard.addActionListener(new ActionListener(){
+            bClear.addActionListener(new ActionListener(){
                 @Override 
                 public void actionPerformed(ActionEvent e){
                     setFieldClear();

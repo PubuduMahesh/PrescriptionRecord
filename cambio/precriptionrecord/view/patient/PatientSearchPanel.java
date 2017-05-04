@@ -37,18 +37,20 @@ public class PatientSearchPanel extends JPanel{
 	private JTextField tSearchName;
 	private JTextField tSearchID;
 	private JButton bSearchButton;
+	private JButton bClearButton;
 	private JTable searchTable;
-	
+	private PatientTableModel tbModel;	
 	private PatientController patientController;
+	
 	public PatientSearchPanel(PatientController patientController, int tbWidth, int tbHeight){
 		this.patientController = patientController;
-		
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setPreferredSize(new Dimension(tbWidth+30, tbHeight+70));
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		addSearchBar();
 		addTable(tbWidth,tbHeight);	
+		this.tbModel = (PatientTableModel)searchTable.getModel();
 	}
 	
 	private void addSearchBar(){
@@ -59,6 +61,7 @@ public class PatientSearchPanel extends JPanel{
 		tSearchName = new JTextField(20);
 		tSearchID = new JTextField(12);
 		bSearchButton = new JButton("Search");
+		bClearButton = new JButton("Clear");
 		
 		/*Temporary*/
 		tSearchID.setText("id");
@@ -88,8 +91,13 @@ public class PatientSearchPanel extends JPanel{
 		gridbag.setConstraints(bSearchButton, searchConstraints);
 		add(bSearchButton);
 		
+		searchConstraints.insets = new Insets(0, 580, 0, 0);
+		gridbag.setConstraints(bClearButton, searchConstraints);
+		add(bClearButton);
+		
 		/*button Actions*/
-		searchButtonAction();		
+		searchButtonAction();	
+		clearButtonAction();
 	}
 	
 	private void addTable(int tbWidth, int tbHeight){
@@ -105,13 +113,11 @@ public class PatientSearchPanel extends JPanel{
 		searchTable.setFillsViewportHeight(true);
 		scrollPane.setViewportView(searchTable);
 
-
 		tablConstraints.anchor = GridBagConstraints.NORTHWEST;//align content of main panel in to left top corner.
 		tablConstraints.gridx = 0;
 		tablConstraints.gridy = 1;
 		gridbag.setConstraints(scrollPane, tablConstraints);
-		add(scrollPane);
-		
+		add(scrollPane);		
 
 		/*Mouse Clicked Event*/
 		mouseClickAction();
@@ -127,6 +133,7 @@ public class PatientSearchPanel extends JPanel{
 		bSearchButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearTable();
 				DBConnection dbCon = new DBConnection();
 				Connection con = dbCon.getConnection();
 				Statement stmt = null;
@@ -150,6 +157,17 @@ public class PatientSearchPanel extends JPanel{
 			
 		});
 	}
+	private void clearButtonAction(){
+		bClearButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clearTable();
+				
+			}
+		});
+	}
+	
 	
 	private void setPatientObject(ResultSet rs){
 		try {
@@ -175,7 +193,6 @@ public class PatientSearchPanel extends JPanel{
 				healthHistory = rs.getObject("healthDescription").toString();
 				
 				Patient patient = new Patient(id,name,surname,address,gender,status,birthday,telephone,healthHistory);
-				PatientTableModel tbModel = (PatientTableModel)searchTable.getModel();
 				tbModel.updateTable(patient);
 			}
 		} catch (SQLException e) {
@@ -190,9 +207,12 @@ public class PatientSearchPanel extends JPanel{
 				if(e.getClickCount() == 1){
 					final JTable target = (JTable)e.getSource();
 					final int row = target.getSelectedRow();
-					Patient patient = ((PatientTableModel)target.getModel()).getValue(row);
-					ActionEvent eClick = new ActionEvent(patient, -1, "");
-					patientController.fireRowClickActionPerformed(eClick);
+					if(row != -1){
+						Patient patient = ((PatientTableModel)target.getModel()).getValue(row);
+						ActionEvent eClick = new ActionEvent(patient, -1, "");
+						patientController.fireRowClickActionPerformed(eClick);
+					}
+					
 				}
 			}
 		});
@@ -203,8 +223,7 @@ public class PatientSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = ((PatientTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(),searchTable);
-				System.out.println(rowIndex);
-				((PatientTableModel) searchTable.getModel()).removeRow(rowIndex);
+				tbModel.removeRow(rowIndex);
 			}
 		});	
 	}
@@ -227,8 +246,15 @@ public class PatientSearchPanel extends JPanel{
 						patient.getTp(),
 						patient.getMedicalHistory()
 				};
-				((PatientTableModel) searchTable.getModel()).setValueAtRow(patient,updatedRow);
+				tbModel.setValueAtRow(patient,updatedRow);
 			}
 		});	
+	}
+	private void clearTable(){
+		int rowCount = tbModel.getRowCount();
+		for(int i = 0; i<rowCount; i++){
+			tbModel.removeRow(0);
+			
+		}
 	}
 }

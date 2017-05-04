@@ -6,12 +6,13 @@ import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
 
 import cambio.precriptionrecord.model.drug.Drug;
+import cambio.precriptionrecord.model.prescription.Prescription;
 
 public class TreatmentTableModel extends AbstractTableModel{
 	private String [] columnNames;
-	private java.util.List<Drug> tableData = new ArrayList<Drug>();
+	private java.util.List<Prescription> tableData = new ArrayList<Prescription>();
 	
-	public TreatmentTableModel(ArrayList<Drug>data,String[] columnNames){
+	public TreatmentTableModel(ArrayList<Prescription>data,String[] columnNames){
 		this.columnNames = columnNames;
 		this.tableData = data;
 	}
@@ -33,44 +34,41 @@ public class TreatmentTableModel extends AbstractTableModel{
 
 	@Override
 	public Object getValueAt(int rowIndex, int columnIndex) {
-		Drug drug = tableData.get(rowIndex);
+		Prescription prescription = tableData.get(rowIndex);
 		switch (columnIndex) {
 		case 0:
-			return drug.getDrugId();
+			return prescription.getDate();
 		case 1:
-			return drug.getDrugName();
+			return prescription.getDiagnosisDescription();
 		case 2:
-			return drug.getDescription();
+			return prescription.getDrugList();
 		case 3:
-			return drug.getType();
-		case 4:
-			return drug.getDosage();
+			return prescription.getDoctorID();
 		default:
 			return null;
 		}
 			
 	}
 	
-	public Drug getValue(int rowIndex){
-		Drug drug = tableData.get(rowIndex);
-		return drug;
+	public Prescription getValue(int rowIndex){
+		Prescription prescription = tableData.get(rowIndex);
+		return prescription;
 		
 	}
 	
-	public void setValueAtRow(Drug drug, int rowIndex)
+	public void setValueAtRow(Prescription prescription, int rowIndex)
     {
-		Drug d = tableData.get(rowIndex);
-		d.setDrugName(drug.getDrugName());
-		d.setDrugId(drug.getDrugId());
-		d.setDescription(drug.getDescription());
-		d.setType(drug.getType());
-		d.setDosage(drug.getDosage());
+		Prescription d = tableData.get(rowIndex);
+		d.setDate(prescription.getDate());
+		d.setDiagnosisDescription(prescription.getDiagnosisDescription());
+		d.setDrugList(prescription.getDrugList());
+		d.setDoctorID(prescription.getDoctorID());
 		fireTableDataChanged();
         
 		
     }
-	public void updateTable(Drug drug){System.out.println("updated");
-		tableData.add(drug);
+	public void updateTable(Prescription prescription){
+		tableData.add(prescription);
 		int row = tableData.size()-1;// New data added to the first row each time. 
 		fireTableRowsInserted(row, row);//fire row inserted. 
 		

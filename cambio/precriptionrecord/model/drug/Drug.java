@@ -1,11 +1,11 @@
 package cambio.precriptionrecord.model.drug;
 
 public class Drug {
-	String drugId;
-	String drugName;
-	String description;
-	String type;
-	String dosage;
+	private String drugId;
+	private String drugName;
+	private String description;
+	private String type;
+	private String dosage;
 	
 	public String getDrugId() {
 		return drugId;

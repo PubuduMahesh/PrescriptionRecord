@@ -15,6 +15,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 import cambio.precriptionrecord.controller.PatientController;
+import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.util.AgeCalculator;
 import cambio.precriptionrecord.view.patient.PatientSearchPanel;
@@ -27,7 +28,9 @@ public class PatientPanel extends JPanel{
 	JTextField tID;
 	JTextField tAge;
 	JTextField tTelephone;
-	public PatientPanel() {
+	PrescriptionController prescriptionCotroler;
+	public PatientPanel(PrescriptionController prescriptionController) {
+		this.prescriptionCotroler = prescriptionController;
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"Patient"));
@@ -42,6 +45,7 @@ public class PatientPanel extends JPanel{
 		addField();
 		
 		mouseClickRow();
+		prescriptionSaveButtonActionFired();
 		
 	}
 	
@@ -151,5 +155,17 @@ public class PatientPanel extends JPanel{
 		tAge.setText(age.ageCalculator(patient.getBirthday()));
 		tTelephone.setText(patient.getTp());
 		
+	}
+	
+	private void prescriptionSaveButtonActionFired(){
+		prescriptionCotroler.registerSavePrescriptionListeners(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				ActionEvent e1 = new ActionEvent(tID.getText(), -1, "");
+				prescriptionCotroler.fireSavePrescriptionReversePerformed(e1);
+				
+			}
+		});
 	}
 }

@@ -81,7 +81,9 @@ public class DoctorTableModel extends AbstractTableModel {
 	public void updateTable(Doctor doctor){
 		tableData.add(doctor);
 		int row = tableData.size()-1;// New data added to the first row each time. 
-		fireTableRowsInserted(row, row);//fire row inserted. 
+		if(row >=0 ){
+			fireTableRowsInserted(row, row);//fire row inserted. 
+		}		
 		
 	}
 
@@ -100,7 +102,8 @@ public class DoctorTableModel extends AbstractTableModel {
 	}
 	
 	public void removeRow(int rowIndex){
-		tableData.remove(rowIndex);
-		fireTableDataChanged();
+			tableData.remove(rowIndex);
+			fireTableDataChanged();
+		
 	}
 }

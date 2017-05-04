@@ -1,15 +1,15 @@
 package cambio.precriptionrecord.model.doctor;
 
 public class Doctor {
-	String id;
-	String name;
-	String nic;
-	String regNumber;
-	String speiality;
-	String gender;
-	String birthday;
-	String tp;
-	String jobHistory;
+	private String id;
+	private String name;
+	private String nic;
+	private String regNumber;
+	private String speiality;
+	private String gender;
+	private String birthday;
+	private String tp;
+	private String jobHistory;
 	
 	public String getId(){
 		return id;

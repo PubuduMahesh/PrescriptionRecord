@@ -13,12 +13,14 @@ import java.sql.Statement;
 import java.util.ArrayList;
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
+import javax.swing.text.StyledEditorKit.FontSizeAction;
 
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.DrugController;
@@ -39,7 +41,9 @@ public class DrugSearchPanel extends JPanel{
 	private JTextField tSearchName;
 	private JTextField tSearchDrugId;
 	private JButton bSearchButton;
+	private JButton bClearButton;
 	private JTable searchTable;
+	DrugTableModel tbModel;
 	
 	private DrugController drugController;
 	public DrugSearchPanel(DrugController drugController,int tbWidth, int tbHeight){
@@ -49,23 +53,20 @@ public class DrugSearchPanel extends JPanel{
 		setPreferredSize(new Dimension(tbWidth+25, tbHeight+70));
 		addSearchBar();
 		setBorder(BorderFactory.createLineBorder(Color.black));
-		addTable(tbWidth,tbHeight);	
+		addTable(tbWidth,tbHeight);
+		tbModel = (DrugTableModel)searchTable.getModel();
 	}
 	
 	private void addSearchBar(){
-		GridBagConstraints searchConstraints = new GridBagConstraints();
+		GridBagConstraints searchConstraints = new GridBagConstraints();		
+		searchConstraints.anchor = GridBagConstraints.WEST;
 		
 		lSearchName = new JLabel("Name");
-		lSearchDrugId = new JLabel("Drug ID");
+		lSearchDrugId = new JLabel("ID");
 		tSearchName = new JTextField(10);
 		tSearchDrugId = new JTextField(6);
 		bSearchButton = new JButton("Search");
-		
-		/*Temporary*/
-		tSearchDrugId.setText("DrugID");
-		tSearchName.setText("name");
-		
-		searchConstraints.anchor = GridBagConstraints.WEST;
+		bClearButton = new JButton("Clear");		
 		
 		searchConstraints.gridx = 0;
 		searchConstraints.gridy = 0;
@@ -73,24 +74,29 @@ public class DrugSearchPanel extends JPanel{
 		gridbag.setConstraints(lSearchName, searchConstraints);
 		add(lSearchName);	
 		
-		searchConstraints.insets = new Insets(0, 50, 0, 0);
+		searchConstraints.insets = new Insets(0, 35, 0, 0);
 		gridbag.setConstraints(tSearchName, searchConstraints);
 		add(tSearchName);
 		
-		searchConstraints.insets = new Insets(0, 175, 10, 0);
+		searchConstraints.insets = new Insets(0, 160, 10, 0);
 		gridbag.setConstraints(lSearchDrugId, searchConstraints);
 		add(lSearchDrugId);
 		
-		searchConstraints.insets = new Insets(0, 225, 0, 0);
+		searchConstraints.insets = new Insets(0, 175, 0, 0);
 		gridbag.setConstraints(tSearchDrugId, searchConstraints);
 		add(tSearchDrugId);
 		
-		searchConstraints.insets = new Insets(0, 325, 0, 0);
+		searchConstraints.insets = new Insets(0, 250, 0, 0);
 		gridbag.setConstraints(bSearchButton, searchConstraints);
 		add(bSearchButton);
 		
+		searchConstraints.insets = new Insets(0, 330, 0, 0);
+		gridbag.setConstraints(bClearButton, searchConstraints);
+		add(bClearButton);
+		
 		/*button Actions*/
-		searchButtonAction();		
+		searchButtonAction();
+		clearButtonAction();
 	}
 	
 	private void addTable(int tbWidth, int tbHeight){
@@ -128,6 +134,7 @@ public class DrugSearchPanel extends JPanel{
 		bSearchButton.addActionListener(new ActionListener(){
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				clearTable();
 				DBConnection dbCon = new DBConnection();
 				Connection con = dbCon.getConnection();
 				Statement stmt = null;
@@ -151,6 +158,16 @@ public class DrugSearchPanel extends JPanel{
 			
 		});
 	}
+	private void clearButtonAction(){
+		bClearButton.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				clearTable();
+				
+			}
+		});
+	}
 	
 	private void setDrugObject(ResultSet rs){
 		try {
@@ -172,7 +189,6 @@ public class DrugSearchPanel extends JPanel{
 				drug.setDescription(description);
 				drug.setType(type);
 				drug.setDosage(dosage);
-				DrugTableModel tbModel = (DrugTableModel)searchTable.getModel();
 				tbModel.updateTable(drug);
 			}
 		} catch (SQLException e) {
@@ -187,9 +203,12 @@ public class DrugSearchPanel extends JPanel{
 				if(e.getClickCount() == 1){
 					final JTable target = (JTable)e.getSource();
 					final int row = target.getSelectedRow();
-					Drug drug = ((DrugTableModel)target.getModel()).getValue(row);
-					ActionEvent eClick = new ActionEvent(drug, -1, "");
-					drugController.fireRowClickActionPerformed(eClick);
+					if(row >= 0){
+						Drug drug = tbModel.getValue(row);
+						ActionEvent eClick = new ActionEvent(drug, -1, "");
+						drugController.fireRowClickActionPerformed(eClick);
+					}
+
 				}
 			}
 		});
@@ -200,8 +219,7 @@ public class DrugSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				int rowIndex = ((DrugTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(),searchTable);
-				System.out.println(rowIndex);
-				((DrugTableModel) searchTable.getModel()).removeRow(rowIndex);
+				tbModel.removeRow(rowIndex);
 			}
 		});	
 	}
@@ -212,8 +230,15 @@ public class DrugSearchPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {	
 				Drug drug = (Drug) e.getSource();
 				int updatedRow = ((DrugTableModel) searchTable.getModel()).getRowIndex(drug.getDrugId(),searchTable);				
-				((DrugTableModel) searchTable.getModel()).setValueAtRow(drug,updatedRow);
+				tbModel.setValueAtRow(drug,updatedRow);
 			}
 		});	
+	}
+	private void clearTable(){
+		int rowCount = tbModel.getRowCount();
+		for(int i = 0; i<rowCount; i++){
+			tbModel.removeRow(0);
+			
+		}
 	}
 }

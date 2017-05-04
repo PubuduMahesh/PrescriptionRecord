@@ -211,7 +211,7 @@ public class RemovePatient extends JInternalFrame{
 		bProfilePicDelete = new JButton("Delete");
 		
 		bRemove = new JButton("Remove");
-		bDiscard = new JButton("Discard");
+		bDiscard = new JButton("Clear");
 				
 		/*text field - id*/
 		tID.setEditable(false);

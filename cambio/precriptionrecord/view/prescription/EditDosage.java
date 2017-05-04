@@ -19,7 +19,7 @@ import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
 
 public class EditDosage extends JDialog{
-	GridBagLayout gridbag;
+	private GridBagLayout gridbag;
 	private JTextField tName;
 	private JTextArea tDescription;
 	private JRadioButton rbTablet;
@@ -30,14 +30,16 @@ public class EditDosage extends JDialog{
 	private JTextField tID;
 	private JButton bAdd;
 	private JButton bCancel;
-	Drug drug;
-	public EditDosage(Drug drug){
+	private Drug drug;
+	private PrescriptionController prescriptionController;
+	
+	public EditDosage(Drug drug,PrescriptionController prescriptionController){
 		this.drug = drug;
+		this.prescriptionController = prescriptionController;
 		gridbag = new GridBagLayout();
 		setVisible(true);
 		setModal(true);		
 		addComponent();
-		addBottomPanel();
 		setField();
 		setLayout(gridbag);
 		pack();
@@ -50,6 +52,10 @@ public class EditDosage extends JDialog{
 		constraints.gridy = 0;
 		addLabel();
 		addField();
+		setField();
+
+		/*add buton action*/
+		addButtonAction();
 	}
 	
 	private void addField() {
@@ -179,33 +185,48 @@ public class EditDosage extends JDialog{
 		gridbag.setConstraints(lDosageDescription, constraintsLabel);
 		add(lDosageDescription);
 		
-
-		setField();
-		/*add buton action*/
-		addButtonAction();
-	}
-
-	private void addBottomPanel(){
-		
 	}
 	
-	private void setField(){
-//		System.out.println(drug.getDescription());
-//		tName.setText(drug.getDrugName());
-//		tDescription.setText(drug.getDescription());
-//		if(drug.getType().equals("Tablet"))
-//			rbTablet.setSelected(true);
-//		else if(drug.getType().equals("Syrups"))
-//			rbSyrups.setSelected(true);
-//		else
-//			rbCapsules.setSelected(true);
-//		tDosage.setText(drug.getDosage());
+	private void setField(){	
+		try{
+			tID.setText(drug.getDrugId());
+			tName.setText(drug.getDrugName());
+			tDescription.setText(drug.getDescription());
+			if(drug.getType().equals("Tablet"))
+				rbTablet.setSelected(true);
+			else if(drug.getType().equals("Syrups"))
+				rbSyrups.setSelected(true);
+			else
+				rbCapsules.setSelected(true);
+			tDosage.setText(drug.getDosage());
+		}catch(Exception ex){
+			System.out.println(ex.getMessage());
+		}
 	}
 	
 	private void addButtonAction(){
-		
+		bAdd.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				Drug drug = new Drug();
+				drug.setDrugId(tID.getText());
+				drug.setDrugName(tName.getText());
+				drug.setDescription(tDescription.getText());
+				if(rbTablet.isSelected())
+					drug.setType("Tablet");
+				else if(rbCapsules.isSelected())
+					drug.setType("Capsules");
+				else
+					drug.setType("Syrups");
+				drug.setDosage(tDosage.getText());
+				ActionEvent e1 = new ActionEvent(drug, -1, "");
+				prescriptionController.fireEditPrescriptionDosagePerformed(e1);
+				dispose();
+				
+			}
+		});
 	}
-	
 	
 	
 }

@@ -29,17 +29,17 @@ import javax.swing.JButton;
 
 public class NewDrug extends JInternalFrame{
 
-	DrugController drugController = new DrugController();
-	GridBagLayout gridbag;
-	JTextField tName;
-	JTextArea tDescription;
-	JRadioButton rbTablet;
-	JRadioButton rbCapsules;
-	JRadioButton rbSyrups;
-	JTextField tDosage;
-	ButtonGroup bgType;
-	JButton bSave;
-	JButton bClear;
+	private DrugController drugController = new DrugController();
+	private GridBagLayout gridbag;
+	private JTextField tName;
+	private JTextArea tDescription;
+	private JRadioButton rbTablet;
+	private JRadioButton rbCapsules;
+	private JRadioButton rbSyrups;
+	private JTextField tDosage;
+	private ButtonGroup bgType;
+	private JButton bSave;
+	private JButton bClear;
 
 	public NewDrug(DrugController drugController){
 		this.drugController = drugController;

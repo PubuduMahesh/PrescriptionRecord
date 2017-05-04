@@ -37,7 +37,7 @@ public class NewPrescription extends JInternalFrame{
 	}
 	
 	private void addPatientPanel(){
-		PatientPanel patienPanel = new PatientPanel();
+		PatientPanel patienPanel = new PatientPanel(prescriptionController);
 		GridBagConstraints constraint = new GridBagConstraints();		
 		constraint.gridx = 0;
 		constraint.gridy = 0;

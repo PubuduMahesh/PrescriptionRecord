@@ -196,7 +196,7 @@ public class NewPatient extends JInternalFrame{
 		bProfilePicDelete = new JButton("Delete");
 		
 		bSave = new JButton("Save");
-		bDiscard = new JButton("Discard");
+		bDiscard = new JButton("Clear");
 		
 		/*text field - name*/
 		constraintsField.gridx = 1;

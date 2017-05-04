@@ -34,6 +34,7 @@ import javax.swing.event.DocumentListener;
 public class EditDoctor extends JInternalFrame{
 	private GridBagLayout gridbag;
 
+	private JTextField tID;
 	private JTextField tName;
 	private JTextField tNIC;
 	private JTextField tBirthday;
@@ -49,7 +50,7 @@ public class EditDoctor extends JInternalFrame{
 	private ButtonGroup bgGender;
 
 	private JButton bSave;
-	private JButton bDiscard;
+	private JButton bClear;
 	private DoctorController doctorController;
 
 	public EditDoctor(DoctorController doctorController){
@@ -81,10 +82,6 @@ public class EditDoctor extends JInternalFrame{
 	private void addSearchPanel(){
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
-		//		JLabel tempLable = new JLabel("Temp");
-		//		tempLable.setPreferredSize(new Dimension(650, 250));
-		//		tempLable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		//		add(tempLable);
 		DoctorSearchPanel searchPanel = new DoctorSearchPanel(doctorController);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
@@ -97,6 +94,7 @@ public class EditDoctor extends JInternalFrame{
 		GridBagConstraints constraintsLabel = new GridBagConstraints();
 		constraintsLabel.anchor = GridBagConstraints.NORTHWEST;
 
+		JLabel lID = new JLabel("ID");
 		JLabel lName = new JLabel("Name");
 		JLabel lNIC = new JLabel("NIC");
 		JLabel lRegNumber = new JLabel("Reg:Number");
@@ -106,7 +104,6 @@ public class EditDoctor extends JInternalFrame{
 		JLabel ltp = new JLabel("Telephone");
 		JLabel lJobHistory = new JLabel("Job History");
 		JLabel lProfilePicture = new JLabel();
-		JLabel lLeft = new JLabel();
 
 		lName.setText("<html>Name <font color='red'> *</font></html>");
 		lNIC.setText("<html>NIC <font color='red'> *</font></html>");
@@ -116,22 +113,29 @@ public class EditDoctor extends JInternalFrame{
 		lGender.setText("<html>Gender <font color='red'> *</font></html>");
 
 
-		/*Label-Name*/
+		/*Label-ID*/
 		constraintsLabel.insets = new Insets(0, 0, 0, 0);
+		constraintsLabel.gridx = 0;
+		constraintsLabel.gridy = 1;
+		gridbag.setConstraints(lID, constraintsLabel);
+		add(lID);
+		
+		/*Label-Name*/
+		constraintsLabel.insets = new Insets(35, 0, 0, 0);
 		constraintsLabel.gridx = 0;
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lName, constraintsLabel);
 		add(lName);
 
 		/*Label-NIC*/
-		constraintsLabel.insets = new Insets(35, 0, 10, 40);
+		constraintsLabel.insets = new Insets(70, 0, 10, 40);
 		constraintsLabel.gridx = 0;
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lNIC, constraintsLabel);
 		add(lNIC);
 
 		/*Label-RegNumbert*/
-		constraintsLabel.insets = new Insets(70, 0, 10, 40);
+		constraintsLabel.insets = new Insets(105, 0, 10, 40);
 		constraintsLabel.gridx = 0;
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lRegNumber, constraintsLabel);
@@ -139,7 +143,7 @@ public class EditDoctor extends JInternalFrame{
 
 
 		/*Label-Speciality*/
-		constraintsLabel.insets = new Insets(105, 0, 10, 40);
+		constraintsLabel.insets = new Insets(140, 0, 10, 40);
 		constraintsLabel.gridx = 0;
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lSpeciality, constraintsLabel);
@@ -179,19 +183,13 @@ public class EditDoctor extends JInternalFrame{
 		constraintsLabel.gridy = 1;
 		gridbag.setConstraints(lProfilePicture, constraintsLabel);
 		add(lProfilePicture);
-
-		/*Label-Left arrangement*/
-		/*lLeft.setPreferredSize(new Dimension(115,100));
-		constraintsLabel.gridx = 4;
-		constraintsLabel.gridy = 1;
-		gridbag.setConstraints(lLeft,constraintsLabel);
-		add(lLeft);	*/
 	}
 
 	private void addField(){
 		GridBagConstraints constraintsField = new GridBagConstraints();
 		constraintsField.anchor = GridBagConstraints.NORTHWEST;
-
+		
+		tID = new JTextField(5);
 		tName = new JTextField(20);
 		tNIC = new JTextField(20);
 		tRegNumber = new JTextField(20);
@@ -206,31 +204,39 @@ public class EditDoctor extends JInternalFrame{
 		bProfilePicDelete = new JButton("Delete");
 
 		bSave = new JButton("Save");
-		bDiscard = new JButton("Discard");
-
-		/*text field - name*/
+		bClear = new JButton("Clear");
+		
+		/*text field - id*/
+		tID.setEnabled(false);
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 1;
 		constraintsField.insets = new Insets(0, 100, 0, 0);
+		gridbag.setConstraints(tID, constraintsField);
+		add(tID);
+		
+		/*text field - name*/
+		constraintsField.gridx = 0;
+		constraintsField.gridy = 1;
+		constraintsField.insets = new Insets(35, 100, 0, 0);
 		gridbag.setConstraints(tName, constraintsField);
 		add(tName);
 
 		/*text field - nic*/
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 1;
-		constraintsField.insets = new Insets(35,100, 10, 40);
+		constraintsField.insets = new Insets(70,100, 10, 40);
 		gridbag.setConstraints(tNIC, constraintsField);
 		add(tNIC);
 
 		/*text field - regNumber*/
-		constraintsField.insets = new Insets(70, 100, 10, 40);
+		constraintsField.insets = new Insets(105, 100, 10, 40);
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 1;		
 		gridbag.setConstraints(tRegNumber, constraintsField);
 		add(tRegNumber);
 
 		/*text field - Speciality*/
-		constraintsField.insets = new Insets(105, 100, 10, 40);
+		constraintsField.insets = new Insets(140, 100, 10, 40);
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 1;		
 		gridbag.setConstraints(tSpeciality, constraintsField);
@@ -291,8 +297,8 @@ public class EditDoctor extends JInternalFrame{
 		constraintsField.insets = new Insets(0, 420, 0, 0);
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 7;
-		gridbag.setConstraints(bDiscard, constraintsField);
-		add(bDiscard);		
+		gridbag.setConstraints(bClear, constraintsField);
+		add(bClear);		
 
 		/*button-profile picture add*/
 		constraintsField.insets = new Insets(150, 375, 0, 0);
@@ -339,6 +345,7 @@ public class EditDoctor extends JInternalFrame{
 	}
 
 	private void setDoctorField(Doctor doctor){
+		tID.setText(doctor.getId());
 		tName.setText(doctor.getName());
 		tNIC.setText(doctor.getNic());
 		tRegNumber.setText(doctor.getRegNumber());
@@ -372,7 +379,7 @@ public class EditDoctor extends JInternalFrame{
 	}
 
 	private void discardButtonAction(){
-		bDiscard.addActionListener(new ActionListener(){
+		bClear.addActionListener(new ActionListener(){
 
 			@Override
 			public void actionPerformed(ActionEvent e){
@@ -382,6 +389,7 @@ public class EditDoctor extends JInternalFrame{
 	}
 
 	private void clearField(){
+		tID.setText("");
 		tName.setText("");
 		tNIC.setText("");
 		tRegNumber.setText("");
@@ -454,40 +462,31 @@ public class EditDoctor extends JInternalFrame{
 			public void actionPerformed(ActionEvent e) {
 				int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save Doctor?", "Warning",0);
 				if(dialogResult == JOptionPane.YES_OPTION){
-					String name = tName.getText();
-					String nic = tNIC.getText();
-					String regNumber = tRegNumber.getText();
-					String speciality = tSpeciality.getText();
-					String gender;
-
-					if(rbMale.isSelected())
-						gender = "Male";
-					else 
-						gender = "Female";
-
-					String birthday = tBirthday.getText();
-					String tp = tTp.getText();
-					String jobHistory = tJobHistory.getText();
-
 					Doctor doctor = new Doctor();
-					doctor.setName(name);
-					doctor.setNic(nic);
-					doctor.setRegNumber(regNumber);
-					doctor.setSpeiality(speciality);
-					doctor.setGender(gender);
-					doctor.setBirthday(birthday);
-					doctor.setTp(tp);
-					doctor.setJobHistory(jobHistory);
+					doctor.setId(tID.getText());
+					doctor.setName(tName.getText());
+					doctor.setNic(tNIC.getText());
+					doctor.setRegNumber(tRegNumber.getText());
+					doctor.setSpeiality(tSpeciality.getText());				
+					doctor.setBirthday(tBirthday.getText());
+					doctor.setTp(tTp.getText());
+					doctor.setJobHistory( tJobHistory.getText());
+					if(rbMale.isSelected())
+						doctor.setGender("Male");
+					else 
+						doctor.setGender("Female");	
 
-					saveDoctor(doctor);			
+					saveDoctor(doctor);	
+					
 				}
+				
 			}
 
 		});
+		
 	}
 
 	private void saveDoctor(Doctor doctor){
-		System.out.println("save doctordsdfs");
 		DBConnection dbCon = new DBConnection();
 		Connection connection = dbCon.getConnection();
 		Statement stmt = null;
@@ -510,7 +509,7 @@ public class EditDoctor extends JInternalFrame{
 					+ "`jobHistory` = '"+doctor.getJobHistory()+"',"
 					+ "`profilePicture` = NULL "
 					+ " WHERE "
-					+ "`doctor`.`regNumber` = '"+doctor.getRegNumber()+"'";
+					+ "`doctor`.`id` = '"+doctor.getId()+"'";
 			stmt.executeUpdate(sql);
 			connection.close();
 			clearField();
