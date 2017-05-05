@@ -14,6 +14,7 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.patient.Patient;
@@ -29,8 +30,10 @@ public class PatientPanel extends JPanel{
 	JTextField tAge;
 	JTextField tTelephone;
 	PrescriptionController prescriptionCotroler;
-	public PatientPanel(PrescriptionController prescriptionController) {
+	CommonController commonController;
+	public PatientPanel(PrescriptionController prescriptionController,CommonController commonController) {
 		this.prescriptionCotroler = prescriptionController;
+		this.commonController = commonController;
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"Patient"));
@@ -46,6 +49,7 @@ public class PatientPanel extends JPanel{
 		
 		mouseClickRow();
 		prescriptionSaveButtonActionFired();
+		commonControllerActionFired();
 		
 	}
 	
@@ -126,7 +130,7 @@ public class PatientPanel extends JPanel{
 		GridBagConstraints constraints = new GridBagConstraints();
 		int tbWidth = 690;
 		int tbHeight = 135;		
-		PatientSearchPanel patienSearchPanel = new PatientSearchPanel(patientController, tbWidth, tbHeight);
+		PatientSearchPanel patienSearchPanel = new PatientSearchPanel(patientController, tbWidth, tbHeight,commonController);
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -164,6 +168,19 @@ public class PatientPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {
 				ActionEvent e1 = new ActionEvent(tID.getText(), -1, "");
 				prescriptionCotroler.fireSavePrescriptionReversePerformed(e1);
+				
+			}
+		});
+	}
+	private void commonControllerActionFired(){
+		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tName.setText("");
+				tAge.setText("");
+				tID.setText("");
+				tTelephone.setText("");
 				
 			}
 		});

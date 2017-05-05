@@ -2,15 +2,14 @@ package cambio.precriptionrecord.view.prescription;
 
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Graphics2D;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.FocusAdapter;
-import java.awt.event.FocusEvent;
-import java.io.FileOutputStream;
+import java.io.File;
+import java.io.IOException;
+import java.io.StringWriter;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -23,37 +22,40 @@ import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
+import javax.swing.DefaultCellEditor;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.event.DocumentEvent;
+import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
-import javax.swing.text.Document;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.drug.Drug;
-import cambio.precriptionrecord.model.drug.DrugTableModel;
-import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.model.prescription.Prescription;
+import cambio.precriptionrecord.model.prescription.PrescriptionForm;
 import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
 import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 import cambio.precriptionrecord.view.drug.DrugSearchPanel;
-import cambio.precriptionrecord.view.drug.EditDrug;
-import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
 import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.swing.JRViewer;
+
+import org.jaxen.expr.DefaultAbsoluteLocationPath;
+import org.json.simple.JSONObject;
 
 public class PrescriptionPanel extends JInternalFrame{
 	private GridBagLayout gridbag;
@@ -68,10 +70,13 @@ public class PrescriptionPanel extends JInternalFrame{
 	private JButton bSend;
 	private JButton bClear;
 	private PrescriptionTableModel tbModel;
+	private DrugSearchPanel drugSearchPanel;
 	private DrugController drugController = new DrugController();
 	private PrescriptionController prescriptionController;
-	public PrescriptionPanel(PrescriptionController prescriptionController){
+	private CommonController commonController;
+	public PrescriptionPanel(PrescriptionController prescriptionController, CommonController commonController){
 		this.prescriptionController = prescriptionController;
+		this.commonController = commonController;
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setBorder(BorderFactory.createTitledBorder(BorderFactory.createLineBorder(Color.BLACK),"Prescription"));
@@ -87,12 +92,14 @@ public class PrescriptionPanel extends JInternalFrame{
 		addField();
 		addDrugSearchPanel();
 		addPrescriptionTable();
+		saveButtonDisabled();
 	}
 
 	private void addField(){
 		GridBagConstraints constraints = new GridBagConstraints();
 		JLabel lDate = new JLabel("Date");
 		JLabel lDiagnosis = new JLabel ("Diagnosis");
+		JLabel lPrescription = new JLabel("Prescription");
 		tDate = new JTextField(8);
 		bDate = new JButton(":)");
 		tDiagnosis = new JTextArea(15,18);
@@ -144,6 +151,11 @@ public class PrescriptionPanel extends JInternalFrame{
 		gridbag.setConstraints(bEdit, constraints);
 		add(bEdit);
 		
+		/*lable - prescription*/
+		constraints.insets = new Insets(135, 280, 0, 0);
+		gridbag.setConstraints(lPrescription, constraints);
+		add(lPrescription);
+		
 		/*button - save*/
 		constraints.insets = new Insets(285, 275, 0, 0);
 		gridbag.setConstraints(bSave, constraints);
@@ -164,18 +176,24 @@ public class PrescriptionPanel extends JInternalFrame{
 		gridbag.setConstraints(bClear, constraints);
 		add(bClear);
 		
+		lDate.setText("<html>Date <font color='red'> *</font></html>");
+		lDiagnosis.setText("<html>Diagnosis <font color='red'> *</font></html>");
+		lPrescription.setText("<html>Prescription <font color='red'>*</font></html>");
+		
 		/*action */
 		dateButtonAction();
 		mouseClickRow();
 		saveButtonAction();
 		printButtonAction();
+		sendButtonAction();
+		clearButtonAction();		
 	}
 
 	private void addDrugSearchPanel(){
 		GridBagConstraints constraints = new GridBagConstraints();
 		int tbWidth = 400;
 		int tbHeight = 50;
-		DrugSearchPanel drugSearchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight);
+		drugSearchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,commonController);
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
@@ -187,7 +205,7 @@ public class PrescriptionPanel extends JInternalFrame{
 	private void addPrescriptionTable(){
 		GridBagConstraints tablConstraints = new GridBagConstraints();
 
-		final String[] header = {"id","name","description","type","dosage"};
+		final String[] header = {"ID","Name","Description","Type","Dosage"};
 		ArrayList<Drug> data = new ArrayList<Drug>();
 		prescriptionTable = new JTable(new PrescriptionTableModel(data,header));
 
@@ -202,6 +220,8 @@ public class PrescriptionPanel extends JInternalFrame{
 		tablConstraints.insets = new Insets(160, 275, 0, 0);
 		gridbag.setConstraints(scrollPane, tablConstraints);
 		add(scrollPane);
+		
+		this.tbModel = (PrescriptionTableModel)prescriptionTable.getModel();
 	}
 	
 	private void dateButtonAction(){
@@ -268,8 +288,7 @@ public class PrescriptionPanel extends JInternalFrame{
 		prescriptionController.registerEditPrescriptionDosageListeners(new ActionListener() {
 			
 			@Override
-			public void actionPerformed(ActionEvent e) {
-				tbModel = (PrescriptionTableModel)prescriptionTable.getModel();
+			public void actionPerformed(ActionEvent e) {				
 				tbModel.updateTable((Drug)e.getSource());
 				
 			}
@@ -360,29 +379,148 @@ public class PrescriptionPanel extends JInternalFrame{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				printReport();
+				Prescription prescription = new Prescription();
+				prescription.setDate(tDate.getText());
+				prescription.setDiagnosisDescription(tDiagnosis.getText());				
+				printReport(prescription);
+				
+			}
+		});
+	}	
+	private void sendButtonAction(){
+		bSend.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				PrescriptionForm prescriptionForm = new PrescriptionForm();
+				prescriptionForm.setPatientName("Mahela");
+				prescriptionForm.setPatientAge("20");
+				prescriptionForm.setPatientTelePhone("0775252215");
+				prescriptionForm.setDate(tDate.getText());
+				prescriptionForm.setDoctorName("Sanath");
+				prescriptionForm.setDoctorTelephone("0775855623");
+				createJsonObject(prescriptionForm);
+				
+			}
+		});
+		
+	}
+	private void clearButtonAction(){
+		bClear.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Clear All Field?","Warning",0);
+				if(dialogResult == JOptionPane.YES_OPTION)
+					clearField();
 				
 			}
 		});
 	}
-	
-	private void printReport(){
+	private void printReport(Prescription prescription){
 		try{
-			List<Map<String,? >> dataSource = new ArrayList<Map<String, ?>>();
-			Map<String,Object> m = new HashMap<String,Object>();
-			m.put("name", "Sangakkara");
-			dataSource.add(m); 
-			JRDataSource jrdataSource = new JRBeanCollectionDataSource(dataSource);
-			String sourceName = "src/cambio/precriptionrecord/report/Blank_A4.jrxml";
+            Map<String, Object> parameters = new HashMap<String, Object>();
+            parameters.put("date",prescription.getDate() );
+            parameters.put("diagnosis",prescription.getDiagnosisDescription());
+            String sourceName = "src/cambio/report/temp.jrxml";
 			JasperReport report = JasperCompileManager.compileReport(sourceName);
-			JasperPrint filledReport = JasperFillManager.fillReport(report, null,jrdataSource);
+
+			JasperPrint jasperPrint = JasperFillManager.fillReport(report, parameters, new JREmptyDataSource());
+
 			JDialog dialog = new JDialog();
 			dialog.setVisible(true);			
-			dialog.getContentPane().add(new JRViewer(filledReport));
+			dialog.getContentPane().add(new JRViewer(jasperPrint));
 			dialog.pack();
 		}catch(Exception ex){
-			System.out.println(ex.getMessage() );
+			System.out.println(ex.getMessage() );			
+
 		}
+	}
+	private void createJsonObject(PrescriptionForm prescriptionForm){
+		JSONObject object = new JSONObject();
+		object.put("patientName", prescriptionForm.getPatientName());
+		object.put("patientAge",prescriptionForm.getPatientAge());
+		object.put("patientTelephone", prescriptionForm.getPatientTelePhone());
+		object.put("date",prescriptionForm.getDate());
+		object.put("doctorName", prescriptionForm.getDoctorName());
+		object.put("doctorTelephone",prescriptionForm.getDoctorTelephone());
+		
+		StringWriter out = new StringWriter();
+		try {
+			object.writeJSONString(out);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		
+	}
+	private void clearField(){
+		tDate.setText("");
+		tDiagnosis.setText("");
+		ActionEvent e = new ActionEvent(drugSearchPanel, -2, null);
+		commonController.fireClearPrescriptionReportALlElementActionPerformed(e);//clearing drug table
+		int rowCount = tbModel.getRowCount();//clearing prescriptionTable		
+		for(int i = 0; i<rowCount; i++){
+			tbModel.removeRow(0);
+			
+		}
+	}
+	private void saveButtonDisabled(){
+		bSave.setEnabled(false);
+		new SaveButtonTextFieldCondtion(tDate);
+		new SaveButtonTextFieldAreaCondtion(tDiagnosis);
+	}
+	
+	private class  SaveButtonTextFieldCondtion{
+		public SaveButtonTextFieldCondtion (JTextField textField) {
+			textField.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+
+
+			});
+		}
+	}
+	private class  SaveButtonTextFieldAreaCondtion{
+		public SaveButtonTextFieldAreaCondtion (JTextArea textArea) {
+			textArea.getDocument().addDocumentListener(new DocumentListener() {
+				@Override
+				public void changedUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+				
+				@Override
+				public void removeUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+				
+				@Override
+				public void insertUpdate(DocumentEvent e) {
+					enableSaveButton();
+				}
+				
+				
+			});
+		}
+	}
+	
+	private void enableSaveButton(){
+		if(!tDate.getText().equals("") && !tDiagnosis.getText().equals("")){
+			bSave.setEnabled(true);
+		}
+		else
+			bSave.setEnabled(false);
 	}
 
 }

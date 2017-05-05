@@ -14,7 +14,7 @@ public class PageTitle extends JPanel{
 		JLabel titleLabel = new JLabel("Prescription Record"+title);
 		titleLabel.setFont(new Font("seif",Font.BOLD,18));
 		add(titleLabel);
-		setPreferredSize(new Dimension(770,30));
+		setPreferredSize(new Dimension(660,30));
 //		this.setBorder(BorderFactory.createLineBorder(Color.black));
 	}
 }

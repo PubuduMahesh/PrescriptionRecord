@@ -90,7 +90,7 @@ public class RemovePatient extends JInternalFrame{
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		int tbWidth = 690;
 		int tbHieght = 130;
-		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController, tbWidth, tbHieght);		
+		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController, tbWidth, tbHieght,null);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);

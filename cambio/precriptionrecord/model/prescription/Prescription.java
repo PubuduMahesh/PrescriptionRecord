@@ -5,8 +5,15 @@ public class Prescription {
 	private String patientID;
 	private String doctorID;
 	private String diagnosisDescription;
-	private String DrugList;
-	private String Date;
+	private String drugList;
+	private String date;
+	private String patientName;
+	public String getPatientName() {
+		return patientName;
+	}
+	public void setPatientName(String patientName) {
+		this.patientName = patientName;
+	}
 	public String getId() {
 		return id;
 	}
@@ -32,16 +39,16 @@ public class Prescription {
 		this.diagnosisDescription = diagnosisDescription;
 	}
 	public String getDrugList() {
-		return DrugList;
+		return drugList;
 	}
 	public void setDrugList(String drugList) {
-		DrugList = drugList;
+		this.drugList = drugList;
 	}
 	public String getDate() {
-		return Date;
+		return date;
 	}
 	public void setDate(String date) {
-		Date = date;
+		this.date = date;
 	}
 	
 	

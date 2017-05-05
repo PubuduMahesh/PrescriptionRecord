@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JTextField;
 import javax.swing.text.StyledEditorKit.FontSizeAction;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.model.doctor.Doctor;
@@ -46,8 +47,11 @@ public class DrugSearchPanel extends JPanel{
 	DrugTableModel tbModel;
 	
 	private DrugController drugController;
-	public DrugSearchPanel(DrugController drugController,int tbWidth, int tbHeight){
-		this.drugController = drugController;		
+	private CommonController commonController;
+	public DrugSearchPanel(DrugController drugController,int tbWidth, int tbHeight,
+			CommonController commonController){
+		this.drugController = drugController;	
+		this.commonController = commonController;
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setPreferredSize(new Dimension(tbWidth+25, tbHeight+70));
@@ -97,6 +101,8 @@ public class DrugSearchPanel extends JPanel{
 		/*button Actions*/
 		searchButtonAction();
 		clearButtonAction();
+		
+		fireCommonControllerAction();
 	}
 	
 	private void addTable(int tbWidth, int tbHeight){
@@ -241,4 +247,19 @@ public class DrugSearchPanel extends JPanel{
 			
 		}
 	}
+	private void fireCommonControllerAction(){
+		/*this method is called when clear button of the prescription form.*/
+		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tSearchDrugId.setText("");
+				tSearchName.setText("");
+				clearTable();
+				
+			}
+		});
+	}
+	
+	
 }

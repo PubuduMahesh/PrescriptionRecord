@@ -18,6 +18,7 @@ import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
@@ -27,10 +28,13 @@ public class MenuBar extends JPanel{
 	private PatientController patientController;
 	private DoctorController doctorController;
 	private DrugController drugController;
-	private PrescriptionController prescriptionController;    
+	private PrescriptionController prescriptionController;   
 	private JMenuBar menuBar = new JMenuBar();
 
-	public MenuBar(PatientController patientcontroller, DoctorController doctorController, DrugController drugController, PrescriptionController prescriptionController) {
+	public MenuBar(PatientController patientcontroller, 
+			DoctorController doctorController, 
+			DrugController drugController, 
+			PrescriptionController prescriptionController) {
 		this.patientController = patientcontroller;
 		this.doctorController = doctorController;
 		this.prescriptionController = prescriptionController;

@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Created with Jaspersoft Studio version 6.3.1.final using JasperReports Library version 6.3.1  -->
+<!-- 2017-05-05T15:09:41 -->
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports http://jasperreports.sourceforge.net/xsd/jasperreport.xsd" name="temp" pageWidth="595" pageHeight="842" columnWidth="555" leftMargin="20" rightMargin="20" topMargin="20" bottomMargin="20" uuid="55b75302-91b5-4016-b7ab-a814cc8effa0">
+	<subDataset name="ItemDataSet" uuid="1678d52d-9fc0-4fe1-ae88-6fe31b3f8a5d">
+		<queryString>
+			<![CDATA[]]>
+		</queryString>
+		<field name="name" class="java.lang.String"/>
+	</subDataset>
+	<parameter name="date" class="java.lang.String"/>
+	<parameter name="diagnosis" class="java.lang.String"/>
+	<queryString>
+		<![CDATA[]]>
+	</queryString>
+	<background>
+		<band splitType="Stretch"/>
+	</background>
+	<detail>
+		<band height="790" splitType="Stretch">
+			<staticText>
+				<reportElement x="0" y="50" width="70" height="30" uuid="e123709a-bc5b-48b9-b2be-a4711b2d8abe"/>
+				<textElement textAlignment="Center">
+					<font fontName="DejaVu Sans" size="18"/>
+					<paragraph lineSpacing="Single"/>
+				</textElement>
+				<text><![CDATA[Date:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="80" y="50" width="120" height="30" uuid="125f8748-d77a-486e-ad94-9911350950d6"/>
+				<box topPadding="0" leftPadding="0" bottomPadding="0" rightPadding="0">
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{date}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="210" y="50" width="60" height="30" uuid="ca48707e-0461-4a96-9f7a-fbdfcc12b887"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Name: ]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="130" y="0" width="250" height="40" uuid="1dadae21-28df-4159-a94b-1150ec85f2c9"/>
+				<textElement textAlignment="Center">
+					<font size="26"/>
+				</textElement>
+				<text><![CDATA[Cloud Clinic]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="280" y="50" width="140" height="30" uuid="75088234-06e3-492f-baae-bc713933120f"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</textField>
+			<staticText>
+				<reportElement x="430" y="50" width="40" height="30" uuid="fcea53ba-4095-482c-b3d0-63d1639b3400"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Age:]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="481" y="49" width="69" height="30" uuid="6c935d4e-b9c0-4e65-a73d-1d0865259113"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+			</textField>
+			<textField>
+				<reportElement x="110" y="90" width="440" height="180" uuid="05b94f73-4bde-4c99-b8a9-28ed840253c5"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA[$P{diagnosis}]]></textFieldExpression>
+			</textField>
+			<staticText>
+				<reportElement x="9" y="169" width="91" height="30" uuid="0665dd0d-e2e4-418d-bdcc-41d43351501b"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Diagnosis:]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="0" y="360" width="121" height="40" uuid="63f71d45-5906-48d7-84d9-5b07d67cca58"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Prescription]]></text>
+			</staticText>
+			<staticText>
+				<reportElement x="10" y="620" width="70" height="30" uuid="2da2aadc-4f77-4266-b767-dbfbc8b41a9f"/>
+				<textElement>
+					<font size="18"/>
+				</textElement>
+				<text><![CDATA[Other: ]]></text>
+			</staticText>
+			<textField>
+				<reportElement x="90" y="620" width="470" height="170" uuid="b5a94e47-0c33-40a1-98cb-0d66ebc11425"/>
+				<box>
+					<topPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<leftPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<bottomPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+					<rightPen lineWidth="1.0" lineStyle="Solid" lineColor="#000000"/>
+				</box>
+				<textFieldExpression><![CDATA["Text Field"]]></textFieldExpression>
+			</textField>
+		</band>
+	</detail>
+</jasperReport>

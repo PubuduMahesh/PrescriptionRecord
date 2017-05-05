@@ -90,7 +90,7 @@ public class EditPatient extends JInternalFrame{
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		int tbWidth = 690;
 		int tbHeight = 130;
-		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController,tbWidth, tbHeight);		
+		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController,tbWidth, tbHeight,null);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);

@@ -73,7 +73,7 @@ public class EditDrug extends JInternalFrame{
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		int tbWidth = 400;
 		int tbHeight = 130;
-		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight);		
+		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,null);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);

@@ -11,6 +11,7 @@ import java.awt.event.ActionListener;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
@@ -25,6 +26,7 @@ public class Home extends JFrame{
 	public Home() {
 		initUI();
 		configureLayout();
+		setVisible(true);
 		
 	}
 	private void initUI() {	
@@ -37,7 +39,6 @@ public class Home extends JFrame{
 		setResizable(false);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);	
 		getContentPane().add(panelMain);
-		setVisible(true);
 	}
 	
 	private void configureLayout() {		

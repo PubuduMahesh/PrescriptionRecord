@@ -84,10 +84,6 @@ public class RemoveDoctor extends JInternalFrame{
 	private void addSearchPanel(){
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
-//		JLabel tempLable = new JLabel("Temp");
-//		tempLable.setPreferredSize(new Dimension(650, 250));
-//		tempLable.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-//		add(tempLable);
 		DoctorSearchPanel searchPanel = new DoctorSearchPanel(doctorController);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
@@ -454,8 +450,8 @@ public class RemoveDoctor extends JInternalFrame{
                 @Override
                 public void actionPerformed(ActionEvent e){
                     int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Remove Doctor?","Warning",0);
-				if(dialogResult == JOptionPane.YES_OPTION)
-					removePatient(tRegNumber.getText());
+					if(dialogResult == JOptionPane.YES_OPTION)
+						removePatient(tRegNumber.getText());
                 }
             });
         }

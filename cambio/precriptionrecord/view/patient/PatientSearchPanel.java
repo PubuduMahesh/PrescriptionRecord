@@ -22,6 +22,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.model.patient.PatientTableModel;
 import cambio.precriptionrecord.model.patient.Patient;
@@ -41,9 +42,14 @@ public class PatientSearchPanel extends JPanel{
 	private JTable searchTable;
 	private PatientTableModel tbModel;	
 	private PatientController patientController;
+	private CommonController commonController;
 	
-	public PatientSearchPanel(PatientController patientController, int tbWidth, int tbHeight){
+	public PatientSearchPanel(PatientController patientController, 
+			int tbWidth, 
+			int tbHeight,
+			CommonController commonController){
 		this.patientController = patientController;
+		this.commonController = commonController;
 		this.gridbag = new GridBagLayout();
 		setLayout(gridbag);
 		setPreferredSize(new Dimension(tbWidth+30, tbHeight+70));
@@ -127,6 +133,9 @@ public class PatientSearchPanel extends JPanel{
 		
 		/*Edit Button Clicked Action*/
 		updateRow();
+		
+		/*commonController Action Fired*/
+		commonControllerAction();
 	}
 	
 	private void searchButtonAction(){
@@ -249,6 +258,19 @@ public class PatientSearchPanel extends JPanel{
 				tbModel.setValueAtRow(patient,updatedRow);
 			}
 		});	
+	}
+	private void commonControllerAction(){
+		/*This action is fired when clear button of the prescription form is clicked*/
+		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				tSearchName.setText("");
+				tSearchID.setText("");
+				clearTable();
+				
+			}
+		});
 	}
 	private void clearTable(){
 		int rowCount = tbModel.getRowCount();

@@ -1,8 +1,10 @@
 package cambio.precriptionrecord.view.prescription;
 
+import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
+import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -10,6 +12,7 @@ import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JDialog;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JRadioButton;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -56,6 +59,7 @@ public class EditDosage extends JDialog{
 
 		/*add buton action*/
 		addButtonAction();
+		cancelButtonAction();
 	}
 	
 	private void addField() {
@@ -223,6 +227,18 @@ public class EditDosage extends JDialog{
 				ActionEvent e1 = new ActionEvent(drug, -1, "");
 				prescriptionController.fireEditPrescriptionDosagePerformed(e1);
 				dispose();
+				
+			}
+		});
+	}
+	private void cancelButtonAction(){
+		bCancel.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int dialogResult = JOptionPane.showConfirmDialog (((Component) e.getSource()).getParent(), "Do You Really Want to Close This Window?","Warning",0);
+				if(dialogResult == JOptionPane.YES_OPTION)
+					dispose();
 				
 			}
 		});

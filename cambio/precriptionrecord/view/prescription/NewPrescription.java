@@ -11,13 +11,18 @@ import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 
+import org.omg.CORBA.CODESET_INCOMPATIBLE;
+
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 
 public class NewPrescription extends JInternalFrame{
-	PrescriptionController prescriptionController;
-	GridBagLayout gridbag;
+	private PrescriptionController prescriptionController;
+	private CommonController commonController;
+	private GridBagLayout gridbag;
 	public NewPrescription(PrescriptionController prescriptionController){
 		this.prescriptionController = prescriptionController;
+		this.commonController = new CommonController();
 		setTitle("Add New Drug");
 		JDesktopPane desktopPane = new JDesktopPane();
 		setPreferredSize(new Dimension(740,665));
@@ -37,7 +42,7 @@ public class NewPrescription extends JInternalFrame{
 	}
 	
 	private void addPatientPanel(){
-		PatientPanel patienPanel = new PatientPanel(prescriptionController);
+		PatientPanel patienPanel = new PatientPanel(prescriptionController,commonController);
 		GridBagConstraints constraint = new GridBagConstraints();		
 		constraint.gridx = 0;
 		constraint.gridy = 0;
@@ -46,7 +51,7 @@ public class NewPrescription extends JInternalFrame{
 	}
 	
 	private void addPrescriptionPanel(){
-		PrescriptionPanel prescriptionPanel = new PrescriptionPanel(prescriptionController);
+		PrescriptionPanel prescriptionPanel = new PrescriptionPanel(prescriptionController,commonController);
 		GridBagConstraints constraint = new GridBagConstraints();	
 		constraint.gridx = 0;
 		constraint.gridy = 1;

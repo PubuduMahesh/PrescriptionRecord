@@ -71,7 +71,7 @@ public class TreatmentHistory extends JInternalFrame{
 	
 	private void addPatientSearchPanel(){
 		GridBagConstraints constraints = new GridBagConstraints();
-		PatientSearchPanel patientSearchPanel = new PatientSearchPanel(patientController, 700, 130);
+		PatientSearchPanel patientSearchPanel = new PatientSearchPanel(patientController, 700, 130,null);
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.gridx = 0;
 		constraints.gridy = 0;
