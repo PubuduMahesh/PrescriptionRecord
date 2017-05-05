@@ -34,7 +34,7 @@ import javax.swing.JButton;
 public class PatientSearchPanel extends JPanel{
 	private GridBagLayout gridbag;
 	private JLabel lSearchName;
-	private JLabel lSearchID;
+	private JLabel lSearchNIC;
 	private JTextField tSearchName;
 	private JTextField tSearchID;
 	private JButton bSearchButton;
@@ -65,16 +65,12 @@ public class PatientSearchPanel extends JPanel{
 		GridBagConstraints searchConstraints = new GridBagConstraints();
 		
 		lSearchName = new JLabel("Name");
-		lSearchID = new JLabel("ID");
+		lSearchNIC = new JLabel("NIC");
 		tSearchName = new JTextField(20);
 		tSearchID = new JTextField(12);
 		bSearchButton = new JButton("Search");
 		bClearButton = new JButton("Clear");
-		
-		/*Temporary*/
-		tSearchID.setText("id");
-		tSearchName.setText("name");
-		
+				
 		searchConstraints.anchor = GridBagConstraints.NORTHWEST;
 		
 		searchConstraints.gridx = 0;
@@ -88,8 +84,8 @@ public class PatientSearchPanel extends JPanel{
 		add(tSearchName);
 		
 		searchConstraints.insets = new Insets(0, 300, 10, 0);
-		gridbag.setConstraints(lSearchID, searchConstraints);
-		add(lSearchID);
+		gridbag.setConstraints(lSearchNIC, searchConstraints);
+		add(lSearchNIC);
 		
 		searchConstraints.insets = new Insets(0, 330, 0, 0);
 		gridbag.setConstraints(tSearchID, searchConstraints);
@@ -143,6 +139,8 @@ public class PatientSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clearTable();
+				String name = tSearchName.getText();
+				String nic = tSearchID.getText();
 				DBConnection dbCon = new DBConnection();
 				Connection con = dbCon.getConnection();
 				Statement stmt = null;
@@ -154,7 +152,15 @@ public class PatientSearchPanel extends JPanel{
 					e1.printStackTrace();
 				}
 				try {
-					sql = "select * from patient";			
+					if(!name.equals("") && !nic.equals(""))
+						sql = "SELECT * from `patient` WHERE `name` LIKE '%"+name+"%' AND `nic` = '"+nic+"' ";
+					else if(!name.equals("") && nic.equals(""))
+						sql = "SELECT * from `patient` WHERE `name` LIKE '%"+name+"%'";
+					else if(name.equals("") && !nic.equals(""))
+						sql = "SELECT * from `patient` WHERE `nic` = '"+nic+"' ";
+					else
+						sql = "SELECT * from `patient`";
+					
 					rs = stmt.executeQuery(sql);
 					setPatientObject(rs);
 					con.close();					
@@ -171,6 +177,8 @@ public class PatientSearchPanel extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+				tSearchID.setText("");
+				tSearchName.setText("");
 				clearTable();
 				
 			}
@@ -243,18 +251,6 @@ public class PatientSearchPanel extends JPanel{
 			public void actionPerformed(ActionEvent e) {		
 				Patient patient = (Patient) e.getSource();
 				int updatedRow = ((PatientTableModel) searchTable.getModel()).getRowIndex(patient.getID(),searchTable);
-				String[] patientValues;
-				patientValues = new String[]{
-						patient.getID(),
-						patient.getName(),
-						patient.getNIC(),
-						patient.getAddress(),
-						patient.getGender(),
-						patient.getStatus(),
-						patient.getBirthday(),
-						patient.getTp(),
-						patient.getMedicalHistory()
-				};
 				tbModel.setValueAtRow(patient,updatedRow);
 			}
 		});	
