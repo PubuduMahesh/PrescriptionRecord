@@ -57,6 +57,8 @@ public class PatientSearchPanel extends JPanel{
 		addSearchBar();
 		addTable(tbWidth,tbHeight);	
 		this.tbModel = (PatientTableModel)searchTable.getModel();
+		/*commonController Action Fired*/
+		commonControllerAction();
 	}
 	
 	private void addSearchBar(){
@@ -132,10 +134,8 @@ public class PatientSearchPanel extends JPanel{
 		removeRow();
 		
 		/*Edit Button Clicked Action*/
-		updateRow();
+		updateRow();		
 		
-		/*commonController Action Fired*/
-		commonControllerAction();
 	}
 	
 	private void searchButtonAction(){
@@ -261,8 +261,7 @@ public class PatientSearchPanel extends JPanel{
 	}
 	private void commonControllerAction(){
 		/*This action is fired when clear button of the prescription form is clicked*/
-		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {
-			
+		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {			
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tSearchName.setText("");

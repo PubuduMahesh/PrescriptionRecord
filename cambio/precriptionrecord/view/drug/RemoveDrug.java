@@ -25,12 +25,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.util.DBConnection;
 
 public class RemoveDrug extends JInternalFrame{
 	private DrugController drugController = new DrugController();
+	private CommonController commonController;
 	private GridBagLayout gridbag;
 	private JTextField tName;
 	private JTextArea tDescription;
@@ -45,6 +47,7 @@ public class RemoveDrug extends JInternalFrame{
 	
     public RemoveDrug(DrugController drugController){
     	this.drugController = drugController;
+    	this.commonController = new CommonController();
 		setTitle("Remove Drug");
 		JDesktopPane desktopPane = new JDesktopPane();
 		setPreferredSize(new Dimension(500,500));
@@ -73,7 +76,7 @@ public class RemoveDrug extends JInternalFrame{
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		int tbWidth = 400;
 		int tbHeight = 130;
-		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,null);		
+		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,commonController);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);

@@ -24,6 +24,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.model.patient.PatientTableModel;
@@ -33,7 +34,8 @@ import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 
 public class TreatmentHistory extends JInternalFrame{
-	private PatientController patientController;	
+	private PatientController patientController;
+	private CommonController commonController;
 	private GridBagLayout gridbag;
 	private JButton bTo;
 	private JButton bFrom;
@@ -46,6 +48,7 @@ public class TreatmentHistory extends JInternalFrame{
 	
 	public TreatmentHistory(PatientController patientController){
 		this.patientController = patientController;
+		this.commonController = new CommonController();
 		gridbag = new GridBagLayout();
 		JDesktopPane desktopPane = new JDesktopPane();
 		setTitle("Add New Patient");
@@ -71,7 +74,7 @@ public class TreatmentHistory extends JInternalFrame{
 	
 	private void addPatientSearchPanel(){
 		GridBagConstraints constraints = new GridBagConstraints();
-		PatientSearchPanel patientSearchPanel = new PatientSearchPanel(patientController, 700, 130,null);
+		PatientSearchPanel patientSearchPanel = new PatientSearchPanel(patientController, 700, 130,commonController);
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.gridx = 0;
 		constraints.gridy = 0;

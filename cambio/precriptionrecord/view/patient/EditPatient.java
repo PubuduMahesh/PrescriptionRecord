@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.util.DBConnection;
@@ -58,10 +59,10 @@ public class EditPatient extends JInternalFrame{
 	private JButton bDiscard;
 	
 	private PatientController patientController;
-	
+	private CommonController commonController;
 	public EditPatient(PatientController patientController){
 		this.patientController = patientController;
-		
+		this.commonController = new CommonController();
 		JDesktopPane desktopPane = new JDesktopPane();
 		setTitle("Edit Patient");
 		setPreferredSize(new Dimension(740,665));
@@ -90,7 +91,7 @@ public class EditPatient extends JInternalFrame{
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
 		int tbWidth = 690;
 		int tbHeight = 130;
-		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController,tbWidth, tbHeight,null);		
+		PatientSearchPanel searchPanel = new PatientSearchPanel(patientController,tbWidth, tbHeight,commonController);		
 		constraintsSearch.gridx = 0;
 		constraintsSearch.gridy = 0;
 		constraintsSearch.insets = new Insets(0, 0, 0, 0);
