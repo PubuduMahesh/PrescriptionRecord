@@ -69,6 +69,7 @@ public class PrescriptionPanel extends JInternalFrame{
 	private JButton bPrint;
 	private JButton bSend;
 	private JButton bClear;
+	private JButton bRemove;
 	private PrescriptionTableModel tbModel;
 	private DrugSearchPanel drugSearchPanel;
 	private DrugController drugController = new DrugController();
@@ -109,6 +110,7 @@ public class PrescriptionPanel extends JInternalFrame{
 		bPrint = new JButton("Print");
 		bSend = new JButton("Send");
 		bClear = new JButton("Clear");
+		bRemove = new JButton("Remove");
 
 		constraints.anchor = GridBagConstraints.NORTHWEST;
 		constraints.gridx = 0;
@@ -176,6 +178,11 @@ public class PrescriptionPanel extends JInternalFrame{
 		gridbag.setConstraints(bClear, constraints);
 		add(bClear);
 		
+		/*button - remove*/
+		constraints.insets = new Insets(285, 575, 0, 0);
+		gridbag.setConstraints(bRemove, constraints);
+		add(bRemove);
+		
 		lDate.setText("<html>Date <font color='red'> *</font></html>");
 		lDiagnosis.setText("<html>Diagnosis <font color='red'> *</font></html>");
 		lPrescription.setText("<html>Prescription <font color='red'>*</font></html>");
@@ -186,7 +193,8 @@ public class PrescriptionPanel extends JInternalFrame{
 		saveButtonAction();
 		printButtonAction();
 		sendButtonAction();
-		clearButtonAction();		
+		clearButtonAction();	
+		removeButtonAction();
 	}
 
 	private void addDrugSearchPanel(){
@@ -513,14 +521,25 @@ public class PrescriptionPanel extends JInternalFrame{
 				
 			});
 		}
-	}
-	
+	}	
 	private void enableSaveButton(){
 		if(!tDate.getText().equals("") && !tDiagnosis.getText().equals("")){
 			bSave.setEnabled(true);
 		}
 		else
 			bSave.setEnabled(false);
+	}
+	private void removeButtonAction(){
+		bRemove.addActionListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				int row = prescriptionTable.getSelectedRow();
+				if(row>=0)
+					tbModel.removeRow(row);
+				
+			}
+		});
 	}
 
 }
