@@ -13,6 +13,10 @@ public class PatientController {
 	private List<ActionListener> listenerRemoveRowPatientSearchTable = new ArrayList<>();
 	private List<ActionListener> listenerUpdateRowPatientSearchTable = new ArrayList<>();
 	private List<ActionListener> listenerTreatmentHistoryOpen = new ArrayList<>();
+	private List<ActionListener> listenerSaveNewPatient = new ArrayList<>();
+	private List<ActionListener> listenerSaveNewPatientReverse = new ArrayList<>();
+	private List<ActionListener> listenerClearPatientField = new ArrayList<>();
+	private List<ActionListener> listenerSaveEditPatient1 = new ArrayList<>();
 	
 	public void registerAddNewPatientListeners(ActionListener listener)
 	{
@@ -94,6 +98,74 @@ public class PatientController {
 	public void fireUpdateRowPatientSearchTablePerformed(ActionEvent e)
 	{
 		for (ActionListener actionListener : listenerUpdateRowPatientSearchTable) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerSaveNewPatientListeners(ActionListener listener)//profile picture- new patient
+	{
+		listenerSaveNewPatient.add(listener);
+	}
+	
+	public void fireSaveNewPatientPerformed(ActionEvent e)//new patient
+	{
+		for (ActionListener actionListener : listenerSaveNewPatient) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	public void registerSaveNewPatientReverseListeners(ActionListener listener)//new patient
+	{	
+		listenerSaveNewPatientReverse.add(listener);
+	}
+	
+	public void fireSaveNewPatientReversePerformed(ActionEvent e)//profile picture - new patient
+	{
+		for (ActionListener actionListener : listenerSaveNewPatientReverse) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	public void registerClearPatientFieldListeners(ActionListener listener)
+	{
+		listenerClearPatientField.add(listener);
+	}
+	
+	public void fireClearPatientFieldPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerClearPatientField) {
+			actionListener.actionPerformed(e);
+		}
+	}
+        
+	public void registerPatientEditListeners(ActionListener listener)//profile picture - edit patient
+	{
+		listenerSaveEditPatient1.add(listener);
+	}
+	
+	public void firePatientEditPerformed(ActionEvent e)//edit patient
+	{
+		for (ActionListener actionListener : listenerSaveEditPatient1) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	public void registerPatientEditReverseListeners(ActionListener listener)//edit patient
+	{
+		listenerSaveNewPatientReverse.add(listener);
+	}
+	
+	public void firePatientEditReversePerformed(ActionEvent e)//profile picture - edit patient
+	{
+		for (ActionListener actionListener : listenerSaveNewPatientReverse) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	public void registerClearEditPatientFieldListeners(ActionListener listener)
+	{
+		listenerClearPatientField.add(listener);
+	}
+	
+	public void fireClearEditPatientFieldPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerClearPatientField) {
 			actionListener.actionPerformed(e);
 		}
 	}

@@ -54,6 +54,7 @@ public class RemoveDrug extends JInternalFrame{
 		setClosable(true);
 		setVisible(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+                setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/drug.png"));
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);	
 
@@ -74,7 +75,7 @@ public class RemoveDrug extends JInternalFrame{
 	private void addSearchPanel(){
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
-		int tbWidth = 400;
+		int tbWidth = 410;
 		int tbHeight = 130;
 		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,commonController);		
 		constraintsSearch.gridx = 0;
@@ -129,7 +130,7 @@ public class RemoveDrug extends JInternalFrame{
 
 		/*Label- Dosage Description*/
 		constraintsLabel.gridx = 0;
-		constraintsLabel.insets = new Insets(180, 200, 0, 0);
+		constraintsLabel.insets = new Insets(180, 180, 0, 0);
 		gridbag.setConstraints(lDosageDescription, constraintsLabel);
 		add(lDosageDescription);
 	}
@@ -147,11 +148,6 @@ public class RemoveDrug extends JInternalFrame{
 		bRemove = new JButton("Rmove");
 		bClear = new JButton("Clear");
 		tID = new JTextField(8);
-
-		/*Temp*/
-		tName.setText("name");
-		tDescription.setText("description");
-		tDosage.setText("dosage");
 
 		/*Text Field - id*/
 		tID.setEnabled(false);
@@ -194,6 +190,7 @@ public class RemoveDrug extends JInternalFrame{
 		add(tDosage);
 
 		/*Button - Save*/
+                bRemove.setIcon(new javax.swing.ImageIcon("src/cambio/Image/remove.gif"));
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 2;
 		constraintsField.insets = new Insets(20, 200, 0, 0);
@@ -201,7 +198,9 @@ public class RemoveDrug extends JInternalFrame{
 		add(bRemove);
 
 		/*Button - clear*/
-		constraintsField.insets = new Insets(20, 270, 0, 0);
+                bClear.setIcon(new javax.swing.ImageIcon("src/cambio/Image/clearicon.png"));
+		constraintsField.insets = new Insets(20, 310, 0, 0);
+                bClear.setPreferredSize(new Dimension(100,35));
 		gridbag.setConstraints(bClear, constraintsField);
 		add(bClear);
 

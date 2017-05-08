@@ -10,6 +10,7 @@ public class Doctor {
 	private String birthday;
 	private String tp;
 	private String jobHistory;
+        private String profilePic;
 	
 	public String getId(){
 		return id;
@@ -82,4 +83,12 @@ public class Doctor {
 	public void setJobHistory(String jobHistory) {
 		this.jobHistory = jobHistory;
 	}
-}
+        
+        public void setProfilePic(String profilePic){
+            this.profilePic = profilePic;
+        }
+        
+        public String getProfilePic(){
+            return this.profilePic;
+        }
+}   

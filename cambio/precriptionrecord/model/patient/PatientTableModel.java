@@ -94,12 +94,11 @@ public class PatientTableModel extends AbstractTableModel {
 	
 	public int getRowIndex(String value,JTable table){
 		for(int rowCount = 0; rowCount < table.getRowCount(); rowCount++){
-			System.out.println(getValueAt(rowCount, 0));
 			if(getValueAt(rowCount, 0).equals(value)){
 				return rowCount;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	
 	public void removeRow(int rowIndex){

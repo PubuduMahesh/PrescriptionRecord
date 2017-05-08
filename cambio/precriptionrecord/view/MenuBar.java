@@ -1,6 +1,5 @@
 package cambio.precriptionrecord.view;
 
-import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
@@ -9,184 +8,148 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
-import javax.swing.JButton;
-import javax.swing.JDesktopPane;
-import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
+import javax.swing.Box;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
-import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.controller.DrugController;
 
-public class MenuBar extends JPanel{
-	private PatientController patientController;
-	private DoctorController doctorController;
-	private DrugController drugController;
-	private PrescriptionController prescriptionController;   
-	private JMenuBar menuBar = new JMenuBar();
+public class MenuBar extends JPanel {
 
-	public MenuBar(PatientController patientcontroller, 
-			DoctorController doctorController, 
-			DrugController drugController, 
-			PrescriptionController prescriptionController) {
-		this.patientController = patientcontroller;
-		this.doctorController = doctorController;
-		this.prescriptionController = prescriptionController;
-		this.drugController = drugController;
-		this.setLayout(new GridBagLayout());
-		setPreferredSize(new Dimension(770,35));
+    private final PatientController patientController;
+    private final DoctorController doctorController;
+    private final DrugController drugController;
+    private final PrescriptionController prescriptionController;
+    private final JMenuBar menuBar = new JMenuBar();
 
-		GridBagConstraints menuBarConstraints = new GridBagConstraints();
-		menuBarConstraints.anchor = GridBagConstraints.WEST;
-		menuBarConstraints.gridx = 0;
-		menuBarConstraints.gridy = 0;
+    public MenuBar(PatientController patientcontroller,
+            DoctorController doctorController,
+            DrugController drugController,
+            PrescriptionController prescriptionController) {
+        this.patientController = patientcontroller;
+        this.doctorController = doctorController;
+        this.prescriptionController = prescriptionController;
+        this.drugController = drugController;
+        this.setLayout(new GridBagLayout());
+        this.setPreferredSize(new Dimension(760, 35));
 
-		menuBar.setPreferredSize(new Dimension(650,30));
-		addMenuBarItem();
-		this.add(menuBar,menuBarConstraints);
+        GridBagConstraints menuBarConstraints = new GridBagConstraints();
+        menuBarConstraints.anchor = GridBagConstraints.WEST;
+        menuBarConstraints.gridx = 0;
+        menuBarConstraints.gridy = 0;
 
+        menuBar.setPreferredSize(new Dimension(670, 30));
+        addMenuBarItem();
+        this.add(menuBar, menuBarConstraints);
 
-	}	
+    }
 
-	private void addMenuBarItem(){
-		JMenu home = new JMenu("Home  ");
-		JMenu patientManagement = new JMenu("Patient Management  ");
-		JMenu doctorManagement = new JMenu("Doctor Management  ");
-		JMenu prescriptionManagement = new JMenu("Prescription Management  ");
-		JMenu drugManagement = new JMenu("Drug Management  ");
-		JMenu help = new JMenu("Help  ");			
-
-		menuBar.add(home);
-		menuBar.add(patientManagement);
-		menuBar.add(doctorManagement);
-		menuBar.add(prescriptionManagement);
-		menuBar.add(drugManagement);
-		menuBar.add(help);
-		//add sub menu item.
-		addPatientSubMenu(patientManagement);
-		addDoctorSubMenu(doctorManagement);
-		addPrescriptionSubMenu(prescriptionManagement);
-		addDrugSubMenu(drugManagement);
+    private void addMenuBarItem() {
+        JMenu home = new JMenu("Home  ");
+        JMenu patientManagement = new JMenu("Patient Management  ");
+        JMenu doctorManagement = new JMenu("Doctor Management  ");
+        JMenu prescriptionManagement = new JMenu("Prescription Management  ");
+        JMenu drugManagement = new JMenu("Drug Management  ");
+        JMenu help = new JMenu("Help  ");
 
 
-	}
+        menuBar.add(home);
+        menuBar.add(patientManagement);
+        menuBar.add(doctorManagement);
+        menuBar.add(prescriptionManagement);
+        menuBar.add(drugManagement);
+        menuBar.add(help);
+        //add sub menu item.
+        addPatientSubMenu(patientManagement);
+        addDoctorSubMenu(doctorManagement);
+        addPrescriptionSubMenu(prescriptionManagement);
+        addDrugSubMenu(drugManagement);
 
-	private void addPatientSubMenu(JMenu patientManage){
-		JMenuItem newPatient = new JMenuItem("New Patient");		
-		JMenuItem editPatient = new JMenuItem("Edit Patient");
-		JMenuItem removePatient = new JMenuItem("Remove Patient");
-		JMenuItem treatmentHistory = new JMenuItem("Treatment History");
-		patientManage.add(newPatient);
-		patientManage.add(editPatient);
-		patientManage.add(removePatient);
-		patientManage.add(treatmentHistory);
+    }
 
-		newPatient.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				patientController.fireAddNewPatientPerformed(e);
-			}
-		});
+    private void addPatientSubMenu(JMenu patientManage) {
+        JMenuItem editPatient = new JMenuItem("Edit Patient");
+        JMenuItem treatmentHistory = new JMenuItem("Treatment History");
+        patientManage.add(editPatient);
+        patientManage.add(treatmentHistory);
 
-		editPatient.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				patientController.fireEditPatientPerformed(e);
-			}
-		});
+        editPatient.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                patientController.fireEditPatientPerformed(e);
+            }
+        });
 
-		removePatient.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				patientController.fireRemovePatientPerformed(e);
-			}
-		});
-		
-		treatmentHistory.addActionListener(new ActionListener(){
-			
-			@Override
-			public void actionPerformed(ActionEvent e){
-				patientController.fireTreatmentHistoryPerformed(e);
-			}
-		});
-	}
+        treatmentHistory.addActionListener(new ActionListener() {
 
-	private void addDoctorSubMenu(JMenu doctorManage){
-		JMenuItem newDoctor = new JMenuItem("New Doctor");		
-		JMenuItem editDoctor= new JMenuItem("Edit Doctor");
-		JMenuItem removeDoctor = new JMenuItem("Remove Doctor");
-		doctorManage.add(newDoctor);
-		doctorManage.add(editDoctor);
-		doctorManage.add(removeDoctor);
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                patientController.fireTreatmentHistoryPerformed(e);
+            }
+        });
+    }
 
-		newDoctor.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				doctorController.fireAddNewDoctorPerformed(e);
-			}
-		});
+    private void addDoctorSubMenu(JMenu doctorManage) {
+        JMenuItem editDoctor = new JMenuItem("Edit Doctor");
+        doctorManage.add(editDoctor);
 
-		editDoctor.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				doctorController.fireEditDoctorPerformed(e);
-			}
-		});
+        editDoctor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+                doctorController.fireEditDoctorPerformed(e);
+            }
+        });
 
-		removeDoctor.addActionListener(new ActionListener(){
-			public void actionPerformed(ActionEvent e){
-				doctorController.fireRemoveDoctorActionPerformed(e);
-			}
-		});
+    }
 
-	}
+    private void addPrescriptionSubMenu(JMenu prescriptionManage) {
+        JMenuItem newPrescription = new JMenuItem("New Prescription");
+        prescriptionManage.add(newPrescription);
 
-	private void addPrescriptionSubMenu(JMenu prescriptionManage){
-		JMenuItem newPrescription = new JMenuItem("New Prescription");	
-		prescriptionManage.add(newPrescription);
+        newPrescription.addActionListener(new ActionListener() {
 
-		newPrescription.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                prescriptionController.fireAddNewPrescriptionPerformed(e);
+            }
+        });
 
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				prescriptionController.fireAddNewPrescriptionPerformed(e);				
-			}
-		});
+    }
 
-	}
+    private void addDrugSubMenu(JMenu drugManage) {
+        JMenuItem newDrug = new JMenuItem("New Drug");
+        JMenuItem editDrug = new JMenuItem("Edit Drugh");
+        JMenuItem removeDrug = new JMenuItem("Remove Drug");
+        drugManage.add(newDrug);
+        drugManage.add(editDrug);
+        drugManage.add(removeDrug);
 
-	private void addDrugSubMenu(JMenu drugManage){
-		JMenuItem newDrug = new JMenuItem("New Drug");		
-		JMenuItem editDrug = new JMenuItem("Edit Drugh");
-		JMenuItem removeDrug = new JMenuItem("Remove Drug");
-		drugManage.add(newDrug);
-		drugManage.add(editDrug);
-		drugManage.add(removeDrug);
+        newDrug.addActionListener(new ActionListener() {
 
-		newDrug.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drugController.fireAddNewDrugActionPerformed(e);
+            }
+        });
 
-			@Override
-			public void actionPerformed(ActionEvent e){
-				drugController.fireAddNewDrugActionPerformed(e);
-			}
-		});
+        editDrug.addActionListener(new ActionListener() {
 
-		editDrug.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drugController.fireEditDrugActionPerformed(e);
+            }
+        });
 
-			@Override 
-			public void actionPerformed(ActionEvent e){
-				drugController.fireEditDrugActionPerformed(e);
-			}
-		});
+        removeDrug.addActionListener(new ActionListener() {
 
-		removeDrug.addActionListener(new ActionListener(){
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drugController.fireRemoveDrugActionPerformed(e);
+            }
+        });
 
-			@Override 
-			public void actionPerformed(ActionEvent e){
-				drugController.fireRemoveDrugActionPerformed(e);
-			}
-		});
-
-	}	
+    }
 }

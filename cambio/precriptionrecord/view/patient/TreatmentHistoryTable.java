@@ -14,12 +14,9 @@ import javax.swing.JButton;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
-import javax.swing.border.Border;
 
-import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.model.patient.TreatmentTableModel;
 import cambio.precriptionrecord.model.prescription.Prescription;
-import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
 
 public class TreatmentHistoryTable extends JPanel{
 	private static JTable treatmentTable;
@@ -77,5 +74,6 @@ public class TreatmentHistoryTable extends JPanel{
 	public static JTable getTable(){
 		return treatmentTable;
 	}
+        
 	
 }

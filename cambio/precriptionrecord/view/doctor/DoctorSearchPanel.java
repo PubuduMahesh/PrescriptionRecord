@@ -26,6 +26,7 @@ import cambio.precriptionrecord.util.DBConnection;
 
 import javax.swing.JTable;
 import javax.swing.JButton;
+import javax.swing.JOptionPane;
 
 public class DoctorSearchPanel extends JPanel{
 	private GridBagLayout gridbag;
@@ -59,11 +60,7 @@ public class DoctorSearchPanel extends JPanel{
 		tSearchRegNumber = new JTextField(12);
 		bSearchButton = new JButton("Search");
 		bClear = new JButton("Clear");
-		
-		/*Temporary*/
-		tSearchRegNumber.setText("RegNumber");
-		tSearchName.setText("name");
-		
+				
 		searchConstraints.anchor = GridBagConstraints.NORTHWEST;
 		
 		searchConstraints.gridx = 0;
@@ -72,11 +69,11 @@ public class DoctorSearchPanel extends JPanel{
 		gridbag.setConstraints(lSearchName, searchConstraints);
 		add(lSearchName);	
 		
-		searchConstraints.insets = new Insets(0, 50, 0, 0);
+		searchConstraints.insets = new Insets(0, 45, 0, 0);
 		gridbag.setConstraints(tSearchName, searchConstraints);
 		add(tSearchName);
 		
-		searchConstraints.insets = new Insets(0, 300, 10, 0);
+		searchConstraints.insets = new Insets(0, 290, 10, 0);
 		gridbag.setConstraints(lSearchRegNumber, searchConstraints);
 		add(lSearchRegNumber);
 		
@@ -84,7 +81,7 @@ public class DoctorSearchPanel extends JPanel{
 		gridbag.setConstraints(tSearchRegNumber, searchConstraints);
 		add(tSearchRegNumber);
 		
-		searchConstraints.insets = new Insets(0, 550, 0, 0);
+		searchConstraints.insets = new Insets(0, 540, 0, 0);
 		gridbag.setConstraints(bSearchButton, searchConstraints);
 		add(bSearchButton);
 		
@@ -101,12 +98,12 @@ public class DoctorSearchPanel extends JPanel{
 
 		GridBagConstraints tablConstraints = new GridBagConstraints();
 		
-		final String[] header = {"Name","NIC","Reg:No","Speciality","Gender","Birthday","Telehphone","Job History"};
+		final String[] header = {"ID","Name","NIC","Reg:No","Speciality","Gender","Birthday","Telehphone","Job History"};
 		ArrayList<Doctor> data = new ArrayList<Doctor>();
 		searchTable = new JTable(new DoctorTableModel(data,header));
 		
 		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
-		searchTable.setPreferredScrollableViewportSize(new Dimension(690, 130));
+		searchTable.setPreferredScrollableViewportSize(new Dimension(700, 130));
 		searchTable.setFillsViewportHeight(true);
 		scrollPane.setViewportView(searchTable);
 
@@ -144,7 +141,14 @@ public class DoctorSearchPanel extends JPanel{
 					e1.printStackTrace();
 				}
 				try {
-					sql = "select * from doctor";			
+                                        if(!tSearchName.getText().equals("") && !tSearchRegNumber.getText().equals(""))
+                                            sql = "SELECT * FROM `doctor` WHERE `name` LIKE '%"+tSearchName.getText()+"%' && `regNumber` = '"+tSearchRegNumber.getText()+"'";			
+                                        else if(!tSearchName.getText().equals("") && tSearchRegNumber.getText().equals(""))
+                                                sql = "SELECT * FROM `doctor` WHERE `name` LIKE '%"+tSearchName.getText()+"%'";			
+                                        else if(tSearchName.getText().equals("") && !tSearchRegNumber.getText().equals(""))
+                                            sql = "SELECT * FROM `doctor` WHERE `regNumber` = '"+tSearchRegNumber.getText()+"'";	
+                                        else
+                                            sql = "SELECT * FROM `doctor`";
 					rs = stmt.executeQuery(sql);
 					setDoctorObject(rs);
 					con.close();					
@@ -168,8 +172,12 @@ public class DoctorSearchPanel extends JPanel{
 			String birthday;
 			String telephone;
 			String jobHistory;
-			
-			while(rs.next()){
+                        
+                        rs.last();
+                        int row = rs.getRow();
+                        rs.beforeFirst();
+                        if(row > 0){
+                            while(rs.next()){
 				id = rs.getObject("id").toString();
 				name = rs.getObject("name").toString();
 				nic = rs.getObject("nic").toString();
@@ -192,6 +200,12 @@ public class DoctorSearchPanel extends JPanel{
 				doctor.setJobHistory(jobHistory);				
 				tbModel.updateTable(doctor);
 			}
+                        }
+                        else{
+                            JOptionPane.showMessageDialog(null, "No data found from the source.", "Failed", JOptionPane.INFORMATION_MESSAGE);
+                        }
+			
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -205,7 +219,7 @@ public class DoctorSearchPanel extends JPanel{
 					final JTable target = (JTable)e.getSource();
 					final int row = target.getSelectedRow();
 					if(row >= 0){
-						Doctor doctor = ((DoctorTableModel)target.getModel()).getValue(row);
+						Doctor doctor = tbModel.getValue(row);
 						ActionEvent eClick = new ActionEvent(doctor, -1, "");
 						doctorController.fireRowClickActionPerformed(eClick);
 					}
@@ -230,17 +244,11 @@ public class DoctorSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				Doctor doctor = (Doctor) e.getSource();
-				int updatedRow = tbModel.getRowIndex(doctor.getId(),searchTable);
-				doctor.getId();
-				doctor.getName();
-				doctor.getNic();
-				doctor.getRegNumber();
-                doctor.getSpeiality();
-				doctor.getGender();
-				doctor.getBirthday();
-				doctor.getTp();
-				doctor.getJobHistory();
-				tbModel.setValueAtRow(doctor,updatedRow);
+				int updatedRow = tbModel.getRowIndex(doctor.getId(),searchTable);		
+				if(updatedRow >= 0)
+					tbModel.setValueAtRow(doctor,updatedRow);
+				else
+					tbModel.updateTable(doctor);
 			}
 		});	
 	}
@@ -250,6 +258,8 @@ public class DoctorSearchPanel extends JPanel{
 			
 			@Override
 			public void actionPerformed(ActionEvent e) {
+                                tSearchName.setText("");
+                                tSearchRegNumber.setText("");
 				clearTable();
 				
 			}

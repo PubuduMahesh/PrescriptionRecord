@@ -54,6 +54,7 @@ public class EditDrug extends JInternalFrame{
 		setClosable(true);
 		setVisible(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+                setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/drug.png"));
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);	
 
@@ -74,7 +75,7 @@ public class EditDrug extends JInternalFrame{
 	private void addSearchPanel(){
 		GridBagConstraints constraintsSearch = new GridBagConstraints();
 		constraintsSearch.anchor = GridBagConstraints.NORTHWEST;
-		int tbWidth = 400;
+		int tbWidth = 410;
 		int tbHeight = 130;
 		DrugSearchPanel searchPanel = new DrugSearchPanel(drugController, tbWidth, tbHeight,commonController);		
 		constraintsSearch.gridx = 0;
@@ -148,11 +149,6 @@ public class EditDrug extends JInternalFrame{
 		bClear = new JButton("Clear");
 		tID = new JTextField(8);
 
-		/*Temp*/
-		tName.setText("name");
-		tDescription.setText("description");
-		tDosage.setText("dosage");
-
 		/*Text Field - id*/
 		tID.setEnabled(false);
 		constraintsField.insets = new Insets(10, 100, 0, 0);
@@ -194,6 +190,7 @@ public class EditDrug extends JInternalFrame{
 		add(tDosage);
 
 		/*Button - Save*/
+                bSave.setIcon(new javax.swing.ImageIcon("src/cambio/Image/saveicon.png"));
 		constraintsField.gridx = 0;
 		constraintsField.gridy = 2;
 		constraintsField.insets = new Insets(20, 200, 0, 0);
@@ -201,7 +198,8 @@ public class EditDrug extends JInternalFrame{
 		add(bSave);
 
 		/*Button - clear*/
-		constraintsField.insets = new Insets(20, 270, 0, 0);
+                bClear.setIcon(new javax.swing.ImageIcon("src/cambio/Image/clearicon.png"));
+		constraintsField.insets = new Insets(20, 300, 0, 0);
 		gridbag.setConstraints(bClear, constraintsField);
 		add(bClear);
 

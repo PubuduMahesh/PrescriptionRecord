@@ -13,8 +13,9 @@ public class Patient {
 	private String birthday;
 	private String tp;
 	private String medicalHistory;
+        private String profilePic;
 	
-	public Patient(String id,String name,String nic,String address,String gender,String status,String birthday,String tp,String medicalHistory){
+	public Patient(String id,String name,String nic,String address,String gender,String status,String birthday,String tp,String medicalHistory,String profilePic){
 		this.id = id;
 		this.name = name;
 		this.nic = nic;
@@ -24,6 +25,7 @@ public class Patient {
 		this.birthday = birthday;
 		this.tp = tp;
 		this.medicalHistory = medicalHistory;
+                this.profilePic = profilePic;
 	}
 	
 	public Patient getPatient(){
@@ -65,6 +67,10 @@ public class Patient {
 	public String getMedicalHistory() {
 		return medicalHistory;
 	}
+        
+        public String getProfilePic(){
+            return profilePic;
+        }
 	
 	public void setID(String id){
 		this.id = id;
@@ -101,4 +107,8 @@ public class Patient {
 	public void setMedicalHistory(String medicalHistory){
 		this.medicalHistory = medicalHistory;
 	}
+        
+        public void setProfilePic(){
+            this.profilePic = profilePic;
+        }
 }

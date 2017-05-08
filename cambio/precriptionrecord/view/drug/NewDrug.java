@@ -45,10 +45,11 @@ public class NewDrug extends JInternalFrame{
 		this.drugController = drugController;
 		setTitle("Add New Drug");
 		JDesktopPane desktopPane = new JDesktopPane();
-		setPreferredSize(new Dimension(400,400));
+		setPreferredSize(new Dimension(360,250));
 		setClosable(true);
 		setVisible(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+                setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/drug.png"));
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);	
 
@@ -103,7 +104,7 @@ public class NewDrug extends JInternalFrame{
 
 		/*Label- Dosage Description*/
 		constraintsLabel.gridx = 1;
-		constraintsLabel.insets = new Insets(140, 100, 0, 0);
+		constraintsLabel.insets = new Insets(140, 60, 0, 0);
 		gridbag.setConstraints(lDosageDescription, constraintsLabel);
 		add(lDosageDescription);
 	}
@@ -120,11 +121,6 @@ public class NewDrug extends JInternalFrame{
 		rbSyrups = new JRadioButton("Syrups");  
 		bSave = new JButton("Save");
 		bClear = new JButton("Clear");
-
-		/*Temp*/
-		tName.setText("name");
-		tDescription.setText("description");
-		tDosage.setText("dosage");
 
 		/*Text Feild - name*/
 		constraintsField.gridx = 1;
@@ -158,14 +154,16 @@ public class NewDrug extends JInternalFrame{
 		add(tDosage);
 
 		/*Button - Save*/
+                bSave.setIcon(new javax.swing.ImageIcon("src/cambio/Image/saveicon.png"));
 		constraintsField.gridx = 1;
 		constraintsField.gridy = 1;
-		constraintsField.insets = new Insets(20, 100, 0, 0);
+		constraintsField.insets = new Insets(20, 60, 0, 0);
 		gridbag.setConstraints(bSave, constraintsField);
 		add(bSave);
 
 		/*Button - clear*/
-		constraintsField.insets = new Insets(20, 170, 0, 0);
+                bClear.setIcon(new javax.swing.ImageIcon("src/cambio/Image/clearicon.png"));
+		constraintsField.insets = new Insets(20, 160, 0, 0);
 		gridbag.setConstraints(bClear, constraintsField);
 		add(bClear);
 

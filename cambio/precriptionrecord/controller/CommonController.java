@@ -19,4 +19,15 @@ public class CommonController {
     		actionListener.actionPerformed(e);
     	}
     }
+    public void registerLoginCredentialsSuccessActionListeners(ActionListener listener)
+    {
+    	listenerPrescriptionReportClearAllFieldAction.add(listener);
+    }
+    
+    public void fireLoginCredentialSuccessActionPerformed(ActionEvent e)
+    {
+    	for (ActionListener actionListener : listenerPrescriptionReportClearAllFieldAction) {
+    		actionListener.actionPerformed(e);
+    	}
+    }
 }

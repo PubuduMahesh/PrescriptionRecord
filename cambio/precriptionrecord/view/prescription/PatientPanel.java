@@ -106,21 +106,25 @@ public class PatientPanel extends JPanel{
 		constraints.gridy = 1;
 		
 		/*text field - name*/
+                tName.setEditable(false);
 		constraints.insets = new Insets(0, 50, 0, 0);
 		gridbag.setConstraints(tName, constraints);
 		add(tName);
 		
 		/*text field - id*/
+                tID.setEditable(false);
 		constraints.insets = new Insets(0, 380, 0, 0);
 		gridbag.setConstraints(tID, constraints);
 		add(tID);
 		
 		/*text field - age*/
+                tAge.setEditable(false);
 		constraints.insets = new Insets(40, 50, 0, 0);
 		gridbag.setConstraints(tAge, constraints);
 		add(tAge);
 		
 		/*text field - telephone*/
+                tTelephone.setEditable(false);
 		constraints.insets = new Insets(40, 380, 0, 0);
 		gridbag.setConstraints(tTelephone, constraints);
 		add(tTelephone);

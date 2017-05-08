@@ -34,22 +34,23 @@ public class DoctorTableModel extends AbstractTableModel {
 	public Object getValueAt(int rowIndex, int columnIndex) {
 		Doctor doctor = tableData.get(rowIndex);
 		switch (columnIndex) {
-		
 		case 0:
-			return doctor.getName();
+			return doctor.getId();
 		case 1:
-			return doctor.getNic();
+			return doctor.getName();
 		case 2:
-			return doctor.getRegNumber();
+			return doctor.getNic();
 		case 3:
-			return doctor.getSpeiality();
+			return doctor.getRegNumber();
 		case 4:
-			return doctor.getGender();
+			return doctor.getSpeiality();
 		case 5:
-			return doctor.getBirthday();
+			return doctor.getGender();
 		case 6:
-			return doctor.getTp();
+			return doctor.getBirthday();
 		case 7:
+			return doctor.getTp();
+		case 8:
 			return doctor.getJobHistory();
 		default:
 			return null;
@@ -64,7 +65,7 @@ public class DoctorTableModel extends AbstractTableModel {
 	}
 	
 	public void setValueAtRow(Doctor doctor, int rowIndex)
-    {
+    {System.out.println("sdfjs");
 		Doctor d = tableData.get(rowIndex);
 		d.setName(doctor.getName());
 		d.setNic(doctor.getNic());
@@ -81,9 +82,8 @@ public class DoctorTableModel extends AbstractTableModel {
 	public void updateTable(Doctor doctor){
 		tableData.add(doctor);
 		int row = tableData.size()-1;// New data added to the first row each time. 
-		if(row >=0 ){
-			fireTableRowsInserted(row, row);//fire row inserted. 
-		}		
+		fireTableRowsInserted(row, row);//fire row inserted. 
+			
 		
 	}
 
@@ -98,7 +98,7 @@ public class DoctorTableModel extends AbstractTableModel {
 				return rowCount;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	
 	public void removeRow(int rowIndex){
