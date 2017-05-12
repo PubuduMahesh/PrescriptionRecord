@@ -47,13 +47,13 @@ public class EditDrug extends JInternalFrame {
     private JTextField tID;
     private JButton bDelete;
 
-    public EditDrug(DrugController drugController) {
-        this.drugController = drugController;
-        this.drugController = drugController;
+    public EditDrug() {
+        this.drugController = new DrugController();
         this.commonController = new CommonController();
-        setTitle("Edit Drug");
+        setTitle("Update Drug");
         JDesktopPane desktopPane = new JDesktopPane();
         setPreferredSize(new Dimension(510, 510));
+        setMinimumSize(new Dimension(510, 510));
         setClosable(true);
         setVisible(true);
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
@@ -274,7 +274,6 @@ public class EditDrug extends JInternalFrame {
                         + "`dosage` = '" + drug.getDosage() + "'"
                         + "WHERE"
                         + "`drug`.`drugID` = '" + drug.getDrugId() + "'";
-                drugController.fireEditRowDrugSearchTablePerformed(new ActionEvent(drug, -1, ""));
             }
             else{
                 sql = "INSERT INTO `drug` (`drugId`,"
@@ -286,14 +285,13 @@ public class EditDrug extends JInternalFrame {
 					+ "'"+drug.getDescription()+"',"
 					+ "'"+drug.getType()+"',"
 					+ "'"+drug.getDosage()+"')";
-            }
-
+            }            	
             stmt.executeUpdate(sql,stmt.RETURN_GENERATED_KEYS);
+            drugController.fireEditRowDrugSearchTablePerformed(new ActionEvent(drug, -1, ""));
             ResultSet rs =  stmt.getGeneratedKeys();
-			if (rs != null && rs.next()) {
-				System.out.println("The result is : " + rs.getString(1));
-
-			}
+			if (rs != null && rs.next()) 
+				drug.setDrugId(rs.getInt(1)+"");
+			
             connection.close();
             clearField();
             JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);

@@ -44,7 +44,7 @@ public class Login extends JPanel {
         this.commonController = commonController;
         gridbag = new GridBagLayout();
         JDesktopPane desktopPane = new JDesktopPane();
-        setPreferredSize(new Dimension(740, 665));
+        setPreferredSize(new Dimension(763, 750));
         gridbag = new GridBagLayout();
         setLayout(gridbag);
         createLayout();
@@ -101,7 +101,6 @@ public class Login extends JPanel {
         constraints.insets = new Insets(20, 0, 0, 0);
         gridbag.setConstraints(registerPanel, constraints);
         add(registerPanel);
-        
         /*Button action*/
         loginButtonAction();
         loginButtonDisabled();

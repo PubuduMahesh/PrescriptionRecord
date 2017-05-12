@@ -64,25 +64,20 @@ public class EditDoctor extends JInternalFrame {
     private final DoctorController doctorController;
 
     
-    public EditDoctor(DoctorController doctorController) {
-        this.doctorController = doctorController;
-
-        JDesktopPane desktopPane = new JDesktopPane();
-        setTitle("Edit Doctor");
+    public EditDoctor() {
+        this.doctorController = new DoctorController();
+        setTitle("Update Doctor");
         setPreferredSize(new Dimension(740, 665));
+        setMinimumSize(new Dimension(740, 665));
         setClosable(true);
         setVisible(true);
         setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
         setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/addNewPatient.jpg"));
         gridbag = new GridBagLayout();
         setLayout(gridbag);
-
         createLayout();
-
         /*table row click action performed*/
         mouseClickRow();
-
-        desktopPane.add(this);
     }
 
     private void createLayout() {
@@ -501,18 +496,6 @@ public class EditDoctor extends JInternalFrame {
                     } else {
                         doctor.setGender("Female");
                     }
-                    try {
-						doctor.setDoctorProfilePic(profilePicture.getProfilePicture());
-					} catch (SerialException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (IOException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					} catch (SQLException e1) {
-						// TODO Auto-generated catch block
-						e1.printStackTrace();
-					}
                     saveDoctor(doctor);
 
                 }
@@ -538,7 +521,7 @@ public class EditDoctor extends JInternalFrame {
                         + "`telephone` = ?,"
                         + "`jobHistory` = ?,"
                         + " `profilePicture` = ? "
-                        + "WHERE `doctor`.`id` = ?");
+                        + "WHERE `doctor`.`id` = ?",Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, doctor.getName());
                 statement.setString(2, doctor.getNic());
                 statement.setString(3, doctor.getRegNumber());
@@ -553,10 +536,9 @@ public class EditDoctor extends JInternalFrame {
                     statement.setBlob(9, inputStream);
                 }
                 else{
-                	statement.setNull(10, java.sql.Types.BLOB);
+                	statement.setNull(9, java.sql.Types.BLOB);
                 }
                 statement.setString(10, doctor.getId());
-                doctorController.fireUpdateRowDoctorSearchTablePerformed(new ActionEvent(doctor, -1, ""));
             }
             else{
             	statement = connection.prepareStatement("INSERT INTO `doctor` (`id`,"
@@ -568,7 +550,7 @@ public class EditDoctor extends JInternalFrame {
                         + " `birthday`, "
                         + " `telephone`,"
                         + " `jobHistory`,"
-                        + "`profilePicture`) VALUES (?,?,?,?,?,?,?,?,?,?)");
+                        + "`profilePicture`) VALUES (?,?,?,?,?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, null);
                 statement.setString(2, doctor.getName());
                 statement.setString(3, doctor.getNic());
@@ -586,10 +568,15 @@ public class EditDoctor extends JInternalFrame {
                 else{
                 	statement.setNull(10, java.sql.Types.BLOB);
                 }
-            }
+            }            
             
-            statement.executeUpdate();
+            if(statement.executeUpdate() > 0){
+            	ResultSet rs = statement.getGeneratedKeys();
+            	if(rs.next())
+            		doctor.setId(rs.getInt(1)+"");
+            }
             clearField();
+            doctorController.fireUpdateRowDoctorSearchTablePerformed(new ActionEvent(doctor, -1, ""));
             JOptionPane.showMessageDialog(null, "Doctor detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {

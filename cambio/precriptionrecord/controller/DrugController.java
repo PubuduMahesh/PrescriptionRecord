@@ -16,6 +16,7 @@ public class DrugController {
     private List<ActionListener> listenerSaveButtonBehaviorAltered = new ArrayList<>();
     private List<ActionListener> listenerEditSaveButtonAction = new ArrayList<>();
     private List<ActionListener> listenerEditSaveButtonActionReverse = new ArrayList<>();
+    private List<ActionListener> listenerDoubleClickRow = new ArrayList<>();
         
     public void registerAddNewDrugListeners(ActionListener listener)
 	{
@@ -133,6 +134,18 @@ public class DrugController {
     public void fireEditSaveButtonActionPerformedReverse(ActionEvent e)
     {
     	for (ActionListener actionListener : listenerEditSaveButtonActionReverse) {
+    		actionListener.actionPerformed(e);
+    	}
+    }
+    
+    public void registerRowDoubleClickActionListeners(ActionListener listener)
+    {
+    	listenerDoubleClickRow.add(listener);
+    }
+    
+    public void fireRowDoubleClickActionPerformed(ActionEvent e)
+    {
+    	for (ActionListener actionListener : listenerDoubleClickRow) {
     		actionListener.actionPerformed(e);
     	}
     }

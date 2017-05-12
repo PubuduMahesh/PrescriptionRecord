@@ -7,32 +7,33 @@ import java.awt.GridBagLayout;
 import java.awt.Point;
 import java.awt.Toolkit;
 
+import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
+import javax.swing.JLabel;
+import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
-import javax.swing.JPanel;
 
-import cambio.precriptionrecord.controller.DoctorController;
-import cambio.precriptionrecord.controller.PatientController;
-import cambio.precriptionrecord.controller.PrescriptionController;
-import cambio.precriptionrecord.controller.DrugController;
+import cambio.precriptionrecord.view.doctor.EditDoctor;
+import cambio.precriptionrecord.view.drug.EditDrug;
+import cambio.precriptionrecord.view.patient.EditPatient;
+import cambio.precriptionrecord.view.patient.TreatmentHistory;
+import cambio.precriptionrecord.view.prescription.NewPrescription;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.beans.PropertyVetoException;
 
 public class Home extends JFrame {
 
-    private JPanel panelMain = new JPanel(new GridBagLayout());
-    private PatientController patientController = new PatientController();
-    private DoctorController doctorController = new DoctorController();
-    private DrugController drugController = new DrugController();
-    private PrescriptionController prescriptionController = new PrescriptionController();
+    private JDesktopPane panelMain = new JDesktopPane();
     private CommonController commonController = new CommonController();
     public static String userNIC;
 
     public Home() {
         initUI();
-        configureLayout();
+        configureLayout();        
         setVisible(true);
 
     }
@@ -47,11 +48,13 @@ public class Home extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().add(panelMain);
+        panelMain.setLayout(new GridBagLayout());
+        panelMain.setVisible(true);
     }
 
     private void configureLayout() {
-        addTitle();
-        addLoginPanel();
+    	addMenuBar();
+//        addLoginPanel();
         
 
     }
@@ -67,13 +70,113 @@ public class Home extends JFrame {
     }
 
     private void addMenuBar() {
-        GridBagConstraints menuBarConstraints = new GridBagConstraints();
-        menuBarConstraints.weightx = 0.5;
-        menuBarConstraints.weighty = 0.5;
-        menuBarConstraints.gridx = 0;
-        menuBarConstraints.gridy = 1;
-        menuBarConstraints.anchor = GridBagConstraints.NORTHWEST;
-        panelMain.add(new MenuBar(patientController, doctorController, drugController, prescriptionController), menuBarConstraints);
+    	JMenuBar menuBar = new JMenuBar();
+        JMenu home = new JMenu("Home  ");
+        JMenu patientManagement = new JMenu("Patient Management  ");
+        JMenu doctorManagement = new JMenu("Doctor Management  ");
+        JMenu prescriptionManagement = new JMenu("Prescription Management  ");
+        JMenu drugManagement = new JMenu("Drug Management  ");
+        JMenu help = new JMenu("Help  ");
+        menuBar.add(home);
+        menuBar.add(patientManagement);
+        menuBar.add(doctorManagement);
+        menuBar.add(prescriptionManagement);
+        menuBar.add(drugManagement);
+        menuBar.add(help);
+        addPatientSubMenu(patientManagement);
+        addDoctorSubMenu(doctorManagement);
+        addPrescriptionSubMenu(prescriptionManagement);
+        addDrugSubMenu(drugManagement);
+    	setJMenuBar(menuBar);
+    }
+    private void addPatientSubMenu(JMenu patientManage) {
+        JMenuItem editPatient = new JMenuItem("Update Patient");
+        JMenuItem treatmentHistory = new JMenuItem("Treatment History");
+        patientManage.add(editPatient);
+        patientManage.add(treatmentHistory);
+
+        editPatient.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	EditPatient editPatient = new EditPatient();
+            	panelMain.add(editPatient); 
+            	try {
+            		editPatient.setSelected(true);
+                }catch (java.beans.PropertyVetoException e1) {}
+            }
+        });
+
+        treatmentHistory.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	TreatmentHistory treatmentHistory = new TreatmentHistory();
+            	panelMain.add(treatmentHistory);
+            	try{
+            		treatmentHistory.setSelected(true);
+            	}
+            	catch(Exception ex){
+            		System.out.println(ex.getMessage());
+            	}
+            }
+        });
+    }
+
+    private void addDoctorSubMenu(JMenu doctorManage) {
+        JMenuItem editDoctor = new JMenuItem("Update Doctor");
+        doctorManage.add(editDoctor);
+
+        editDoctor.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e) {
+            	EditDoctor doctor = new EditDoctor();
+            	panelMain.add(doctor);
+            	try{
+            		doctor.setSelected(true);
+            	}catch(Exception ex){
+            		
+            	}
+            }
+        });
+
+    }
+
+    private void addPrescriptionSubMenu(JMenu prescriptionManage) {
+        JMenuItem newPrescription = new JMenuItem("New Prescription");
+        prescriptionManage.add(newPrescription);
+
+        newPrescription.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+            	NewPrescription newPrescription = new NewPrescription();
+            	panelMain.add(newPrescription);
+            	try{
+            		newPrescription.setSelected(true);
+            	}catch(Exception ex){
+            		
+            	}
+            }
+        });
+
+    }
+
+    private void addDrugSubMenu(JMenu drugManage) {
+        JMenuItem editDrug = new JMenuItem("Update Drug");
+        drugManage.add(editDrug);
+        editDrug.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                EditDrug editDrug = new EditDrug();
+                panelMain.add(editDrug);
+                try{
+                	editDrug.setSelected(true);
+                }catch(Exception ex){
+                	
+                }
+                
+            }
+        });
+
     }
 
     private void addLoginPanel() {
@@ -89,18 +192,8 @@ public class Home extends JFrame {
             public void actionPerformed(ActionEvent e) {
                 userNIC = e.getSource().toString();
                 addMenuBar();
-                addEmptyPanel();
             }
         });
     }
-
-    private void addEmptyPanel() {
-        GridBagConstraints emptyPanelConstraints = new GridBagConstraints();
-        emptyPanelConstraints.weightx = 0.5;
-        emptyPanelConstraints.weighty = 0.5;
-        emptyPanelConstraints.gridx = 0;
-        emptyPanelConstraints.gridy = 2;
-        emptyPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
-        panelMain.add(new EmptyPanel(patientController, doctorController, drugController, prescriptionController), emptyPanelConstraints);
-    }
+   
 }

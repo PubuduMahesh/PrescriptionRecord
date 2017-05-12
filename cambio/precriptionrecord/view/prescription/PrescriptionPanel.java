@@ -73,6 +73,7 @@ public class PrescriptionPanel extends JInternalFrame {
     private final DrugController drugController = new DrugController();
     private final PrescriptionController prescriptionController;
     private final CommonController commonController;
+    private Drug drug = null;
 
     public PrescriptionPanel(PrescriptionController prescriptionController, CommonController commonController) {
         this.prescriptionController = prescriptionController;
@@ -93,6 +94,7 @@ public class PrescriptionPanel extends JInternalFrame {
         addDrugSearchPanel();
         addPrescriptionTable();
         saveButtonDisabled();
+        
     }
 
     private void addField() {
@@ -231,6 +233,10 @@ public class PrescriptionPanel extends JInternalFrame {
         add(scrollPane);
 
         this.tbModel = (PrescriptionTableModel) prescriptionTable.getModel();
+        
+
+    	addButtonAction();
+        editButtonAction();
     }
 
     private void dateButtonAction() {
@@ -253,13 +259,12 @@ public class PrescriptionPanel extends JInternalFrame {
         });
     }
 
-    private void addButtonAction(final Drug drug) {
+    private void addButtonAction() {
         bAdd.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                tbModel = (PrescriptionTableModel) prescriptionTable.getModel();
-                tbModel.updateTable(drug);
+                tbModel.updateTable(drug);System.out.println("lsdjflsjlfjsdlkfj");     
             }
         });
     }
@@ -270,25 +275,33 @@ public class PrescriptionPanel extends JInternalFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() instanceof Drug) {
-                    Drug drug = (Drug) e.getSource();
-                    addButtonAction(drug);
-                    editButtonAction(drug);
+                    drug = (Drug) e.getSource();                    
                 }
             }
         });
+        drugController.registerRowDoubleClickActionListeners(new ActionListener() {
+        	
+        	@Override
+        	public void actionPerformed(ActionEvent e) {
+        		if (e.getSource() instanceof Drug) {
+        			drug = (Drug) e.getSource();
+        			createDialog();
+        		}
+        	}
+        });
     }
 
-    private void editButtonAction(final Drug drug) {
+    private void editButtonAction() {
         bEdit.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                createDialog(drug);
+               createDialog();
             }
         });
     }
 
-    private void createDialog(Drug drug) {
+    private void createDialog() {
         new EditDosage(drug, prescriptionController);
         editDosageAddButtonAction();
     }
@@ -461,6 +474,7 @@ public class PrescriptionPanel extends JInternalFrame {
     private void clearField() {
         tDate.setText("");
         tAnalysis.setText("");
+        drug = null;
         ActionEvent e = new ActionEvent(drugSearchPanel, -2, null);
         commonController.fireClearPrescriptionReportALlElementActionPerformed(e);//clearing drug table
         int rowCount = tbModel.getRowCount();//clearing prescriptionTable		
@@ -542,6 +556,18 @@ public class PrescriptionPanel extends JInternalFrame {
 
             }
         });
+    }
+    private void addButtonDisable(){
+    	
+    	if(drug == null)
+    		bAdd.setEnabled(false);
+    	else
+    		bAdd.setEnabled(true);
+    	
+    }
+    private void editButtonDisable(){
+    	
+    	
     }
     
 

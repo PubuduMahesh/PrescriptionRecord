@@ -16,12 +16,13 @@ public class NewPrescription extends JInternalFrame{
 	private PrescriptionController prescriptionController;
 	private CommonController commonController;
 	private GridBagLayout gridbag;
-	public NewPrescription(PrescriptionController prescriptionController){
-		this.prescriptionController = prescriptionController;
+	public NewPrescription(){
+		this.prescriptionController = new PrescriptionController();
 		this.commonController = new CommonController();
 		setTitle("Add New Prescription");
 		JDesktopPane desktopPane = new JDesktopPane();
 		setPreferredSize(new Dimension(740,665));
+		setMinimumSize(new Dimension(740,665));
 		setClosable(true);
 		setVisible(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));

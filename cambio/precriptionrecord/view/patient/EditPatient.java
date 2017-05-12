@@ -53,6 +53,7 @@ import java.sql.Statement;
 
 public class EditPatient extends JInternalFrame {
 
+	private static int openFrameCount;
 	private final GridBagLayout gridbag;
 	private JTextField tName;
 	private JTextField tNIC;
@@ -76,16 +77,17 @@ public class EditPatient extends JInternalFrame {
 
 	private final PatientController patientController;
 	private final CommonController commonController;
-	
 
-	public EditPatient(PatientController patientController) {
-		this.patientController = patientController;
+
+	public EditPatient() {
+		this.patientController = new PatientController();
 		this.commonController = new CommonController();
-		JDesktopPane desktopPane = new JDesktopPane();
-		setTitle("Edit Patient");
+		setTitle("Update Patient");
 		setPreferredSize(new Dimension(740, 665));
+		setMinimumSize(new Dimension(740, 665));
 		setClosable(true);
 		setVisible(true);
+		setResizable(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 		setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/addNewPatient.jpg"));
 		gridbag = new GridBagLayout();
@@ -95,8 +97,6 @@ public class EditPatient extends JInternalFrame {
 
 		/*Mouse click action perform*/
 		mouseClickRow();
-
-		desktopPane.add(this);
 	}
 
 	private void createLayout() {
@@ -398,11 +398,11 @@ public class EditPatient extends JInternalFrame {
 
 		});
 	}
-
 	private void saveButtonDisabled() {
 		bUpdatge.setEnabled(false);
-		new SaveButtonTextFieldCondtion(tName);
-		new SaveButtonTextFieldCondtion(tBirthday);
+		bDelete.setEnabled(false);
+		new SaveDeleteButtonsTextFieldCondtion(tName);
+		new SaveDeleteButtonsTextFieldCondtion(tBirthday);
 		new SaveButtonRadioButtonCondtion(rbMale);
 		new SaveButtonRadioButtonCondtion(rbFemale);
 		new SaveButtonRadioButtonCondtion(rbSingle);
@@ -411,23 +411,26 @@ public class EditPatient extends JInternalFrame {
 
 	}
 
-	private class SaveButtonTextFieldCondtion {
+	private class SaveDeleteButtonsTextFieldCondtion {
 
-		public SaveButtonTextFieldCondtion(JTextField textField) {
+		public SaveDeleteButtonsTextFieldCondtion(JTextField textField) {
 			textField.getDocument().addDocumentListener(new DocumentListener() {
 				@Override
 				public void changedUpdate(DocumentEvent e) {
 					enableSaveButton();
+					enableRemoveButton();
 				}
 
 				@Override
 				public void removeUpdate(DocumentEvent e) {
 					enableSaveButton();
+					enableRemoveButton();
 				}
 
 				@Override
 				public void insertUpdate(DocumentEvent e) {
 					enableSaveButton();
+					enableRemoveButton();
 				}
 
 			});
@@ -454,6 +457,13 @@ public class EditPatient extends JInternalFrame {
 		} else {
 			bUpdatge.setEnabled(false);
 		}
+	}
+	private void enableRemoveButton(){
+		if(!tID.getText().equals(""))
+			bDelete.setEnabled(true);		
+		else
+			bDelete.setEnabled(false);
+
 	}
 
 	private void updateButtonAction() {
@@ -526,7 +536,7 @@ public class EditPatient extends JInternalFrame {
 						+ "`telephone` = ?,"
 						+ "`profilePicture` = ?,"
 						+ " `healthDescription` = ? "
-						+ "WHERE `patient`.`id` = ?");
+						+ "WHERE `patient`.`id` = ?",Statement.RETURN_GENERATED_KEYS);
 				statement.setString(1, patient.getName());
 				statement.setString(2, patient.getNIC());
 				statement.setString(3, patient.getAddress());
@@ -543,38 +553,43 @@ public class EditPatient extends JInternalFrame {
 					statement.setBlob(8, inputStream);
 				}
 				statement.setString(9, patient.getMedicalHistory());
-				statement.setString(10, patient.getID());
-				patientController.fireUpdateRowPatientSearchTablePerformed(new ActionEvent(patient, -1, null));
-			} else {System.out.println("sdksdsdjfklsflsflsjdlfkl");
-			statement = connection.prepareStatement("INSERT INTO `patient` (`id`,"
-					+ " `name`,"
-					+ " `nic`,"
-					+ " `address`,"
-					+ " `gender`, `status`,"
-					+ " `birthday`, `telephone`,`profilePicture`,"
-					+ " `healthDescription`) VALUES (?,?,?,?,?,?,?,?,?,?)");
-			statement.setString(1, null);
-			statement.setString(2, patient.getName());
-			statement.setString(3, patient.getNIC());
-			statement.setString(4, patient.getAddress());
-			statement.setString(5, patient.getGender());
-			statement.setString(6, patient.getStatus());
-			statement.setString(7, patient.getBirthday());
-			statement.setString(8, patient.getTp());
-			if(profilePicture.getProfilePicturePath().length()==0){
-				statement.setNull(9,java.sql.Types.BLOB);
-			}
-			else{ 
-				File image = new File(patient.getProfilePicPath());
-				inputStream = new FileInputStream(image);
-				statement.setBlob(9, inputStream);
-			}
-			statement.setString(10, patient.getMedicalHistory());
+				statement.setString(10, patient.getID());				
+			} 
+			else {
+				statement = connection.prepareStatement("INSERT INTO `patient` (`id`,"
+						+ " `name`,"
+						+ " `nic`,"
+						+ " `address`,"
+						+ " `gender`, `status`,"
+						+ " `birthday`, `telephone`,`profilePicture`,"
+						+ " `healthDescription`) VALUES (?,?,?,?,?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+				statement.setString(1, null);
+				statement.setString(2, patient.getName());
+				statement.setString(3, patient.getNIC());
+				statement.setString(4, patient.getAddress());
+				statement.setString(5, patient.getGender());
+				statement.setString(6, patient.getStatus());
+				statement.setString(7, patient.getBirthday());
+				statement.setString(8, patient.getTp());
+				if(profilePicture.getProfilePicturePath().length()==0){
+					statement.setNull(9,java.sql.Types.BLOB);
+				}
+				else{ 
+					File image = new File(patient.getProfilePicPath());
+					inputStream = new FileInputStream(image);
+					statement.setBlob(9, inputStream);
+				}
+				statement.setString(10, patient.getMedicalHistory());
 
 			}
-			statement.executeUpdate();            
+			if(statement.executeUpdate()>0){
+				ResultSet rs = statement.getGeneratedKeys();
+				if(rs.next())
+					patient.setID(rs.getInt(1)+"");
+			}
 			clearField();
-			JOptionPane.showMessageDialog(null, "Patient detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
+			patientController.fireUpdateRowPatientSearchTablePerformed(new ActionEvent(patient, -1, null));
+			JOptionPane.showMessageDialog(null, "Patient detail updating succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
 
 		} catch (Exception ex) {
 			System.out.println(ex.getMessage());

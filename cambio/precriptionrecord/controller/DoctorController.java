@@ -12,12 +12,8 @@ public class DoctorController {
 	private List<ActionListener> listenerRemoveDoctor = new ArrayList<>();
 	private List<ActionListener> listenerUpdateRow = new ArrayList<>();
 	private List<ActionListener> listenerRemoveRow = new ArrayList<>();
-	private List<ActionListener> listenerSaveNewDoctor = new ArrayList<>();
 	private List<ActionListener> listenerSaveNewDoctorReverse = new ArrayList<>();
-	private List<ActionListener> listenerClearDoctorField = new ArrayList<>();
-	private List<ActionListener> listenerEditDoctorField = new ArrayList<>();
 	private List<ActionListener> listenerEditDoctorFieldReverse = new ArrayList<>();
-	private List<ActionListener> listenerEditDoctorFieldClear = new ArrayList<>();
 	
 	public void registerAddNewDoctortListeners(ActionListener listener)
 	{

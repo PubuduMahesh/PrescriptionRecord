@@ -43,7 +43,7 @@ public class EmptyPanel extends JPanel {
         patientController.registerEditPatientListeners(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditPatient editPatient = new EditPatient(patientController);
+                EditPatient editPatient = new EditPatient();
                 add(editPatient);
             }
         });
@@ -54,7 +54,7 @@ public class EmptyPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditDoctor editDoctor = new EditDoctor(doctorController);
+                EditDoctor editDoctor = new EditDoctor();
                 add(editDoctor);
             }
         });
@@ -65,7 +65,7 @@ public class EmptyPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                EditDrug editDrug = new EditDrug(drugController);
+                EditDrug editDrug = new EditDrug();
                 add(editDrug);
             }
         });
@@ -76,7 +76,7 @@ public class EmptyPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                NewPrescription newPrescription = new NewPrescription(prescriptionController);
+                NewPrescription newPrescription = new NewPrescription();
                 add(newPrescription);
             }
         });
@@ -87,7 +87,7 @@ public class EmptyPanel extends JPanel {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                TreatmentHistory treatmentHistory = new TreatmentHistory(patientController);
+                TreatmentHistory treatmentHistory = new TreatmentHistory();
                 add(treatmentHistory);
 
             }

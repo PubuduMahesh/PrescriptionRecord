@@ -230,6 +230,15 @@ public class DrugSearchPanel extends JPanel {
                     }
 
                 }
+                else if(e.getClickCount() == 2){
+                	final JTable target = (JTable) e.getSource();
+                    final int row = target.getSelectedRow();
+                    if (row >= 0) {
+                        Drug drug = tbModel.getValue(row);
+                        ActionEvent eClick = new ActionEvent(drug, -1, "");
+                        drugController.fireRowDoubleClickActionPerformed(eClick);
+                    }
+                }
             }
         });
     }

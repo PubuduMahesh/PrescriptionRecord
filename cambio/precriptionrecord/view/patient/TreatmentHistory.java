@@ -45,21 +45,20 @@ public class TreatmentHistory extends JInternalFrame{
 	private JButton bSearch;
         private TreatmentTableModel tbModel;
 	
-	public TreatmentHistory(PatientController patientController){
-		this.patientController = patientController;
+	public TreatmentHistory(){
+		this.patientController = new PatientController();
 		this.commonController = new CommonController();
 		gridbag = new GridBagLayout();
-		JDesktopPane desktopPane = new JDesktopPane();
-		setTitle("Add New Patient");
+		setTitle("Treatment History");
 		setPreferredSize(new Dimension(740,665));
+		setMinimumSize(new Dimension(740,665));
 		setClosable(true);
-		setVisible(true);
+		setResizable(true);
 		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
 		gridbag = new GridBagLayout();
 		setLayout(gridbag);			
-		createLayout();			
-		desktopPane.add(this);
-		
+		createLayout();
+		setVisible(true);
 	}	
 	private void createLayout() {
 		addPatientSearchPanel();
