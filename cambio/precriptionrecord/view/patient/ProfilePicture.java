@@ -1,9 +1,6 @@
 
 package cambio.precriptionrecord.view.patient;
 
-import cambio.precriptionrecord.controller.PatientController;
-import java.awt.AWTEventMulticaster;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -13,6 +10,8 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
+import java.sql.Blob;
+
 import javax.swing.BorderFactory;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
@@ -23,15 +22,13 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ProfilePicture extends JPanel{
-    private PatientController patientController;
-    private GridBagLayout gridbag;
-    private JLabel lProfilePicture;
-    private JButton bProfilePicAdd;
-    private JButton bProfilePicDelete;
-    private String emptyProfilePicPath = "src/cambio/Image/emptyprofilepictureicon.png";
+    private final GridBagLayout gridbag;
+    private final JLabel lProfilePicture;
+    private final JButton bProfilePicAdd;
+    private final JButton bProfilePicDelete;
+    private String emptyProfilePicPath = "";
     
-    public ProfilePicture(PatientController patientController){
-        this.patientController = patientController;
+    public ProfilePicture(){
         gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         setLayout(gridbag);
@@ -71,10 +68,6 @@ public class ProfilePicture extends JPanel{
         /*Button Action*/
         profilePictureAddButtonAction();
         profilePictureDeleteButtonAction();
-        saveNewPatientActionFired();
-        clearProfilePicLabel();
-        editPatientActionFired();
-        editclearProfilePicLabel();
         
     }
     private void profilePictureAddButtonAction() {
@@ -115,38 +108,16 @@ public class ProfilePicture extends JPanel{
         return image;
         
     }
-    private void saveNewPatientActionFired(){
-        patientController.registerSaveNewPatientListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ActionEvent e1 = new ActionEvent(emptyProfilePicPath, -1, null);
-                patientController.fireSaveNewPatientReversePerformed(e1);
-            }
-        });
+    public String getProfilePicturePath(){
+    	return this.emptyProfilePicPath;
     }
-    private void clearProfilePicLabel(){
-        patientController.registerClearPatientFieldListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lProfilePicture.setIcon(null);
-            }
-        });
+    public void clearProfilePicture(){
+    	lProfilePicture.setIcon(null);
     }
-    private void editPatientActionFired(){
-        patientController.registerPatientEditListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ActionEvent e1 = new ActionEvent(emptyProfilePicPath, -1, null);
-                patientController.firePatientEditReversePerformed(e1);
-            }
-        });
+    public void setProfilePic(String path){
+    	lProfilePicture.setIcon(ResizeImage(path));
     }
-    private void editclearProfilePicLabel(){
-        patientController.registerClearEditPatientFieldListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lProfilePicture.setIcon(null);
-            }
-        });
+    public Blob getProfilePicBlob(){
+    	return (Blob) lProfilePicture.getIcon();
     }
 }

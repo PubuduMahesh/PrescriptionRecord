@@ -8,6 +8,7 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
+import javax.sql.rowset.serial.SerialException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
@@ -25,8 +26,12 @@ import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.ParseException;
@@ -38,7 +43,7 @@ import javax.swing.event.DocumentListener;
 
 public class EditDoctor extends JInternalFrame {
 
-    private GridBagLayout gridbag;
+    private final GridBagLayout gridbag;
 
     private JTextField tID;
     private JTextField tName;
@@ -51,13 +56,14 @@ public class EditDoctor extends JInternalFrame {
     private JRadioButton rbMale;
     private JRadioButton rbFemale;
     private JButton bBirthday;
-    private ButtonGroup bgGender;    
-
+    private ButtonGroup bgGender; 
     private JButton bUpdate;
     private JButton bClear;
     private JButton bDelete;
-    private DoctorController doctorController;
+    private ProfilePicture profilePicture;
+    private final DoctorController doctorController;
 
+    
     public EditDoctor(DoctorController doctorController) {
         this.doctorController = doctorController;
 
@@ -180,7 +186,7 @@ public class EditDoctor extends JInternalFrame {
         add(lJobHistory);
 
         /*profile picture*/
-        ProfilePicture profilePicture = new ProfilePicture(doctorController);
+        profilePicture = new ProfilePicture();
         constraintsLabel.insets = new Insets(0, 250, 10, 40);
         constraintsLabel.anchor = GridBagConstraints.NORTH;
         constraintsLabel.gridx = 0;
@@ -357,6 +363,21 @@ public class EditDoctor extends JInternalFrame {
         tBirthday.setText(doctor.getBirthday());
         tTp.setText(doctor.getTp());
         tJobHistory.setText(doctor.getJobHistory());
+        Blob profilePic = doctor.getDoctorProfilePic(); 
+        System.out.println("----");
+        System.out.println(profilePic);
+        if(profilePic != null){
+        	try{
+        		File tmpFile = new File("tmpImage");
+	        	FileOutputStream fos = new FileOutputStream(tmpFile);
+	        	fos.write( profilePic.getBytes(1L, (int)profilePic.length()) );
+	        	fos.close();
+	        	profilePicture.setProfilePic(tmpFile.getAbsolutePath());
+        	}catch(Exception ex){
+        		
+        	}
+        }
+        
     }
 
     private void birthdayButtonAction() {
@@ -389,8 +410,7 @@ public class EditDoctor extends JInternalFrame {
     }
 
     private void clearField() {
-        ActionEvent e = new ActionEvent("clear", -1, null);
-        doctorController.fireClearEditDoctorFieldPerformed(e);
+        profilePicture.clearProfilePicture();
         tID.setText("");
         tName.setText("");
         tNIC.setText("");
@@ -463,16 +483,11 @@ public class EditDoctor extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                doctorController.fireEditDoctorFieldPerformed(e);
-                doctorController.registerEditDoctorFieldReverseListeners(new ActionListener(){
-                    
-                    @Override
-                    public void actionPerformed(ActionEvent e){
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Edit Doctor?", "Warning", 0);
+            	int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Edit Doctor?", "Warning", 0);
                 if (dialogResult == JOptionPane.YES_OPTION) {
                     
                     Doctor doctor = new Doctor();
-                    doctor.setProfilePic(e.getSource().toString());
+                    doctor.setDoctorProfilePicPath(profilePicture.getProfilePicturePath());
                     doctor.setId(tID.getText());
                     doctor.setName(tName.getText());
                     doctor.setNic(tNIC.getText());
@@ -486,27 +501,32 @@ public class EditDoctor extends JInternalFrame {
                     } else {
                         doctor.setGender("Female");
                     }
-
+                    try {
+						doctor.setDoctorProfilePic(profilePicture.getProfilePicture());
+					} catch (SerialException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (IOException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					} catch (SQLException e1) {
+						// TODO Auto-generated catch block
+						e1.printStackTrace();
+					}
                     saveDoctor(doctor);
 
                 }
-                    }
-                });
-                
-
             }
 
         });
 
-    }    
+    }   
     private void saveDoctor(Doctor doctor) {
         DBConnection dbCon = new DBConnection();
         Connection connection = dbCon.getConnection();
         PreparedStatement statement = null;
         FileInputStream inputStream = null; 
-        try {
-            File image = new File(doctor.getProfilePic());
-            inputStream = new FileInputStream(image);
+        try {            
             if(!doctor.getId().equals("")){
             	statement = connection.prepareStatement("UPDATE `doctor` SET "
                         + " `name` = ?,"
@@ -527,8 +547,16 @@ public class EditDoctor extends JInternalFrame {
                 statement.setString(6, doctor.getBirthday());
                 statement.setString(7, doctor.getTp());
                 statement.setString(8, doctor.getJobHistory());
-                statement.setBlob(9, inputStream);
+                if(profilePicture.getProfilePicturePath().length()>0){
+                	File image = new File(doctor.getDoctorProfilePicPath());
+                	inputStream = new FileInputStream(image);
+                    statement.setBlob(9, inputStream);
+                }
+                else{
+                	statement.setNull(10, java.sql.Types.BLOB);
+                }
                 statement.setString(10, doctor.getId());
+                doctorController.fireUpdateRowDoctorSearchTablePerformed(new ActionEvent(doctor, -1, ""));
             }
             else{
             	statement = connection.prepareStatement("INSERT INTO `doctor` (`id`,"
@@ -550,13 +578,18 @@ public class EditDoctor extends JInternalFrame {
                 statement.setString(7, doctor.getBirthday());
                 statement.setString(8, doctor.getTp());
                 statement.setString(9, doctor.getJobHistory());
-                statement.setBlob(10, inputStream);
+                if(profilePicture.getProfilePicturePath().length()>0){
+                	File image = new File(doctor.getDoctorProfilePicPath());
+                	inputStream = new FileInputStream(image);
+                	statement.setBlob(10, inputStream);
+                }
+                else{
+                	statement.setNull(10, java.sql.Types.BLOB);
+                }
             }
             
             statement.executeUpdate();
             clearField();
-            ActionEvent e = new ActionEvent(doctor, -1, "");
-            doctorController.fireUpdateRowDoctorSearchTablePerformed(e);
             JOptionPane.showMessageDialog(null, "Doctor detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
 
         } catch (Exception ex) {

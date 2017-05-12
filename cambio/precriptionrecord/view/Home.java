@@ -8,6 +8,9 @@ import java.awt.Point;
 import java.awt.Toolkit;
 
 import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
 import javax.swing.JPanel;
 
 import cambio.precriptionrecord.controller.DoctorController;

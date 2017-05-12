@@ -11,28 +11,21 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
-import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.Font;
 import java.awt.GridBagConstraints;
 
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
-import javax.swing.text.StyledEditorKit.FontSizeAction;
 
 import cambio.precriptionrecord.controller.CommonController;
-import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.DrugController;
-import cambio.precriptionrecord.model.doctor.Doctor;
-import cambio.precriptionrecord.model.doctor.DoctorTableModel;
 import cambio.precriptionrecord.model.drug.Drug;
 import cambio.precriptionrecord.model.drug.DrugTableModel;
 import cambio.precriptionrecord.util.DBConnection;
 
 import javax.swing.JTable;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -257,7 +250,10 @@ public class DrugSearchPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 Drug drug = (Drug) e.getSource();
                 int updatedRow = ((DrugTableModel) searchTable.getModel()).getRowIndex(drug.getDrugId(), searchTable);
-                tbModel.setValueAtRow(drug, updatedRow);
+                if(updatedRow >= 0)
+                    tbModel.setValueAtRow(drug, updatedRow);
+                else
+                    tbModel.updateTable(drug);
             }
         });
     }

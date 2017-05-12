@@ -1,5 +1,7 @@
 package cambio.precriptionrecord.model.doctor;
 
+import java.sql.Blob;
+
 public class Doctor {
 	private String id;
 	private String name;
@@ -10,12 +12,13 @@ public class Doctor {
 	private String birthday;
 	private String tp;
 	private String jobHistory;
-        private String profilePic;
-	
+	private String profilePicPath;
+	private Blob profilePic;
+
 	public String getId(){
 		return id;
 	}
-	
+
 	public void setId(String id){
 		this.id = id;
 	}
@@ -83,12 +86,19 @@ public class Doctor {
 	public void setJobHistory(String jobHistory) {
 		this.jobHistory = jobHistory;
 	}
-        
-        public void setProfilePic(String profilePic){
-            this.profilePic = profilePic;
-        }
-        
-        public String getProfilePic(){
-            return this.profilePic;
-        }
+
+	public void setDoctorProfilePicPath(String profilePic){
+		this.profilePicPath = profilePic;
+	}
+
+	public String getDoctorProfilePicPath(){
+		return this.profilePicPath;
+	}
+	
+	public void setDoctorProfilePic(Blob profilePicture){
+		this.profilePic = profilePicture;
+	}
+	public Blob getDoctorProfilePic(){
+		return this.profilePic;
+	}
 }   

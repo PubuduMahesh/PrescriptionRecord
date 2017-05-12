@@ -1,14 +1,11 @@
 package cambio.precriptionrecord.view;
 
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.swing.BorderFactory;
-import javax.swing.Box;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -17,6 +14,7 @@ import javax.swing.JPanel;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
+import cambio.precriptionrecord.view.patient.EditPatient;
 import cambio.precriptionrecord.controller.DrugController;
 
 public class MenuBar extends JPanel {
@@ -80,7 +78,7 @@ public class MenuBar extends JPanel {
 
         editPatient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-                patientController.fireEditPatientPerformed(e);
+            	patientController.fireEditPatientPerformed(e);
             }
         });
 
@@ -120,34 +118,13 @@ public class MenuBar extends JPanel {
     }
 
     private void addDrugSubMenu(JMenu drugManage) {
-        JMenuItem newDrug = new JMenuItem("New Drug");
         JMenuItem editDrug = new JMenuItem("Edit Drugh");
-        JMenuItem removeDrug = new JMenuItem("Remove Drug");
-        drugManage.add(newDrug);
         drugManage.add(editDrug);
-        drugManage.add(removeDrug);
-
-        newDrug.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drugController.fireAddNewDrugActionPerformed(e);
-            }
-        });
-
         editDrug.addActionListener(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 drugController.fireEditDrugActionPerformed(e);
-            }
-        });
-
-        removeDrug.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                drugController.fireRemoveDrugActionPerformed(e);
             }
         });
 

@@ -91,18 +91,6 @@ public class DoctorController {
 		}
 	}
 	
-	public void registerSaveNewDoctorListeners(ActionListener listener)
-	{
-		listenerSaveNewDoctor.add(listener);
-	}
-	
-	public void fireSaveNewDoctorPerformed(ActionEvent e)
-	{
-		for (ActionListener actionListener : listenerSaveNewDoctor) {
-			actionListener.actionPerformed(e);
-		}
-	}
-	
 	public void registerSaveNewDoctorReverseListeners(ActionListener listener)
 	{
 		listenerSaveNewDoctorReverse.add(listener);
@@ -114,28 +102,6 @@ public class DoctorController {
 			actionListener.actionPerformed(e);
 		}
 	}
-	public void registerClearDoctorFieldListeners(ActionListener listener)
-	{
-		listenerClearDoctorField.add(listener);
-	}
-	
-	public void fireClearDoctorFieldPerformed(ActionEvent e)
-	{
-		for (ActionListener actionListener : listenerClearDoctorField) {
-			actionListener.actionPerformed(e);
-		}
-	}
-	public void registerEditDoctorFieldListeners(ActionListener listener)
-	{
-		listenerEditDoctorField.add(listener);
-	}
-	
-	public void fireEditDoctorFieldPerformed(ActionEvent e)
-	{
-		for (ActionListener actionListener : listenerEditDoctorField) {
-			actionListener.actionPerformed(e);
-		}
-	}
 	public void registerEditDoctorFieldReverseListeners(ActionListener listener)
 	{
 		listenerEditDoctorFieldReverse.add(listener);
@@ -144,17 +110,6 @@ public class DoctorController {
 	public void fireEditDoctorFieldReversePerformed(ActionEvent e)
 	{
 		for (ActionListener actionListener : listenerEditDoctorFieldReverse) {
-			actionListener.actionPerformed(e);
-		}
-	}
-	public void registerClearEditDoctorFieldListeners(ActionListener listener)
-	{
-		listenerEditDoctorFieldClear.add(listener);
-	}
-	
-	public void fireClearEditDoctorFieldPerformed(ActionEvent e)
-	{
-		for (ActionListener actionListener : listenerEditDoctorFieldClear) {
 			actionListener.actionPerformed(e);
 		}
 	}

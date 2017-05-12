@@ -1,5 +1,7 @@
 package cambio.precriptionrecord.model.patient;
 
+import java.io.InputStream;
+import java.sql.Blob;
 import java.util.Date;
 
 public class Patient {
@@ -13,19 +15,11 @@ public class Patient {
 	private String birthday;
 	private String tp;
 	private String medicalHistory;
-        private String profilePic;
+    private String profilePic;
+    private Blob pp;
 	
-	public Patient(String id,String name,String nic,String address,String gender,String status,String birthday,String tp,String medicalHistory,String profilePic){
-		this.id = id;
-		this.name = name;
-		this.nic = nic;
-		this.address = address;
-		this.gender = gender;
-		this.status = status;
-		this.birthday = birthday;
-		this.tp = tp;
-		this.medicalHistory = medicalHistory;
-                this.profilePic = profilePic;
+	public Patient(){
+
 	}
 	
 	public Patient getPatient(){
@@ -68,7 +62,7 @@ public class Patient {
 		return medicalHistory;
 	}
         
-        public String getProfilePic(){
+        public String getProfilePicPath(){
             return profilePic;
         }
 	
@@ -108,7 +102,14 @@ public class Patient {
 		this.medicalHistory = medicalHistory;
 	}
         
-        public void setProfilePic(){
-            this.profilePic = profilePic;
-        }
+    public void setProfilePicPath(String profilePic){
+        this.profilePic = profilePic;
+    }
+    
+    public void setProfilePicBLOB(Blob pp){
+    	this.pp = pp;
+    }
+    public Blob getProfilePicBLOB(){
+    	return this.pp;
+    }
 }

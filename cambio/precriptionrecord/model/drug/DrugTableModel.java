@@ -59,6 +59,7 @@ public class DrugTableModel extends AbstractTableModel {
 	public void setValueAtRow(Drug drug, int rowIndex)
     {
 		Drug d = tableData.get(rowIndex);
+		
 		d.setDrugName(drug.getDrugName());
 		d.setDrugId(drug.getDrugId());
 		d.setDescription(drug.getDescription());
@@ -86,7 +87,7 @@ public class DrugTableModel extends AbstractTableModel {
 				return rowCount;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	
 	public void removeRow(int rowIndex){

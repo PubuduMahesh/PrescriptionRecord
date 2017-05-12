@@ -8,10 +8,6 @@ import java.awt.GridBagLayout;
 import javax.swing.BorderFactory;
 import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-
-import org.omg.CORBA.CODESET_INCOMPATIBLE;
 
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PrescriptionController;

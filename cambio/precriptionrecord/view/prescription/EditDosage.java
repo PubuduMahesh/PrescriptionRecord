@@ -4,7 +4,6 @@ import java.awt.Component;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Insets;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
@@ -19,10 +18,9 @@ import javax.swing.JTextField;
 
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.drug.Drug;
-import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
 
 public class EditDosage extends JDialog{
-	private GridBagLayout gridbag;
+	private final GridBagLayout gridbag;
 	private JTextField tName;
 	private JTextArea tDescription;
 	private JRadioButton rbTablet;
@@ -33,8 +31,8 @@ public class EditDosage extends JDialog{
 	private JTextField tID;
 	private JButton bAdd;
 	private JButton bCancel;
-	private Drug drug;
-	private PrescriptionController prescriptionController;
+	private final Drug drug;
+	private final PrescriptionController prescriptionController;
 	
 	public EditDosage(Drug drug,PrescriptionController prescriptionController){
 		this.drug = drug;

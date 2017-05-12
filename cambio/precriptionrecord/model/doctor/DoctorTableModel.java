@@ -65,7 +65,7 @@ public class DoctorTableModel extends AbstractTableModel {
 	}
 	
 	public void setValueAtRow(Doctor doctor, int rowIndex)
-    {System.out.println("sdfjs");
+    {
 		Doctor d = tableData.get(rowIndex);
 		d.setName(doctor.getName());
 		d.setNic(doctor.getNic());
@@ -92,9 +92,9 @@ public class DoctorTableModel extends AbstractTableModel {
 		return false;
 	}
 	
-	public int getRowIndex(String value,JTable table){
-		for(int rowCount = 0; rowCount < table.getRowCount(); rowCount++){
-			if(getValueAt(rowCount, 0).equals(value)){
+	public int getRowIndex(String value,JTable table){System.out.println(value);
+		for(int rowCount = 0; rowCount < table.getRowCount(); rowCount++){System.out.println(rowCount);
+			if(getValueAt(rowCount, 3).equals(value)){
 				return rowCount;
 			}
 		}
@@ -102,8 +102,8 @@ public class DoctorTableModel extends AbstractTableModel {
 	}
 	
 	public void removeRow(int rowIndex){
-			tableData.remove(rowIndex);
-			fireTableDataChanged();
+            tableData.remove(rowIndex);
+            fireTableDataChanged();
 		
 	}
 }

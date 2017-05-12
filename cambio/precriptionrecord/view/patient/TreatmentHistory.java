@@ -21,7 +21,6 @@ import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import cambio.precriptionrecord.controller.CommonController;
@@ -33,8 +32,8 @@ import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 
 public class TreatmentHistory extends JInternalFrame{
-	private PatientController patientController;
-	private CommonController commonController;
+	private final PatientController patientController;
+	private final CommonController commonController;
 	private GridBagLayout gridbag;
 	private JButton bTo;
 	private JButton bFrom;

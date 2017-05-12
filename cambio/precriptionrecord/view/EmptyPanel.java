@@ -1,6 +1,5 @@
 package cambio.precriptionrecord.view;
 
-import cambio.precriptionrecord.controller.CommonController;
 import java.awt.Dimension;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
@@ -13,8 +12,6 @@ import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.view.doctor.EditDoctor;
 import cambio.precriptionrecord.view.drug.EditDrug;
-import cambio.precriptionrecord.view.drug.NewDrug;
-import cambio.precriptionrecord.view.drug.RemoveDrug;
 import cambio.precriptionrecord.view.patient.EditPatient;
 import cambio.precriptionrecord.view.patient.TreatmentHistory;
 import cambio.precriptionrecord.view.prescription.NewPrescription;
@@ -39,9 +36,7 @@ public class EmptyPanel extends JPanel {
 
         loadNewPrescriptionGUI();
 
-        loadNewDrugGUI();
         loadEditDrugGUI();
-        loadRemoveDrugGUI();
     }
 
     private void loadEditPatientGUI() {
@@ -65,17 +60,6 @@ public class EmptyPanel extends JPanel {
         });
     }
 
-    private void loadNewDrugGUI() {
-        drugController.registerAddNewDrugListeners(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                NewDrug newDrug = new NewDrug(drugController);
-                add(newDrug);
-            }
-        });
-    }
-
     private void loadEditDrugGUI() {
         drugController.registerEditDrugListeners(new ActionListener() {
 
@@ -83,17 +67,6 @@ public class EmptyPanel extends JPanel {
             public void actionPerformed(ActionEvent e) {
                 EditDrug editDrug = new EditDrug(drugController);
                 add(editDrug);
-            }
-        });
-    }
-
-    private void loadRemoveDrugGUI() {
-        drugController.registerRemoveDrugListeners(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                RemoveDrug removeDrug = new RemoveDrug(drugController);
-                add(removeDrug);
             }
         });
     }

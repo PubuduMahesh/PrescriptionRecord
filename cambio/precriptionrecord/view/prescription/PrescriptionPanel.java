@@ -50,7 +50,7 @@ import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
 //import net.sf.jasperreports.swing.JRViewer;
-import net.sf.jasperreports.swing.JRViewer;
+//import net.sf.jasperreports.swing.JRViewer;
 
 import org.json.simple.JSONObject;
 
@@ -195,6 +195,7 @@ public class PrescriptionPanel extends JInternalFrame {
         sendButtonAction();
         clearButtonAction();
         removeButtonAction();
+        setPrescriptionObject();
     }
 
     private void addDrugSearchPanel() {
@@ -310,27 +311,26 @@ public class PrescriptionPanel extends JInternalFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 prescriptionController.fireSavePrescriptionPerformed(e);
-                prescriptionController.registerSavePrescriptionReverseListeners(new ActionListener() {
-
-                    @Override
-                    public void actionPerformed(ActionEvent e) {
-                        savePrescription(setPrescriptionObject((String) e.getSource()));
-                    }
-                });
+                
 
             }
         });
     }
 
-    private Prescription setPrescriptionObject(String patientID) {
-        Prescription prescription = new Prescription();
-        prescription.setDate(tDate.getText());
-        prescription.setDiagnosisDescription(tAnalysis.getText());
-        prescription.setDoctorID(Home.userNIC);//need to change
-        prescription.setDrugList(createDrugList());
-        prescription.setPatientID(patientID);
+    private void setPrescriptionObject() {
+    	final Prescription prescription = new Prescription();
+    	prescriptionController.registerSavePrescriptionReverseListeners(new ActionListener() {
 
-        return prescription;
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                prescription.setDate(tDate.getText());
+                prescription.setDiagnosisDescription(tAnalysis.getText());
+                prescription.setDoctorID(Home.userNIC);//need to change
+                prescription.setDrugList(createDrugList());
+                prescription.setPatientID((String) e.getSource());
+                savePrescription(prescription);
+            }
+        });
 
     }
 
@@ -432,7 +432,7 @@ public class PrescriptionPanel extends JInternalFrame {
 
             JDialog dialog = new JDialog();
             dialog.setVisible(true);
-			dialog.getContentPane().add(new JRViewer(jasperPrint));
+//			dialog.getContentPane().add(new JRViewer(jasperPrint));
             dialog.pack();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());

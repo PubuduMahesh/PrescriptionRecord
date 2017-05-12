@@ -1,7 +1,6 @@
 
 package cambio.precriptionrecord.view.doctor;
 
-import cambio.precriptionrecord.controller.DoctorController;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -10,8 +9,17 @@ import java.awt.Image;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
+import java.io.IOException;
+import java.sql.Blob;
+import java.sql.SQLException;
+
+import javax.imageio.ImageIO;
+import javax.sql.rowset.serial.SerialException;
 import javax.swing.BorderFactory;
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
@@ -21,15 +29,13 @@ import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
 
 public class ProfilePicture extends JPanel{
-    private DoctorController doctorController;
     private GridBagLayout gridbag;
     private JLabel lProfilePicture;
     private JButton bProfilePicAdd;
     private JButton bProfilePicDelete;
-    private String emptyProfilePicPath = "src/cambio/Image/emptyprofilepictureicon.png";
+    private String selectedProfilePicPath = "";
     
-    public ProfilePicture(DoctorController doctorController){
-        this.doctorController = doctorController;
+    public ProfilePicture(){
         gridbag = new GridBagLayout();
         GridBagConstraints constraints = new GridBagConstraints();
         setLayout(gridbag);
@@ -69,17 +75,12 @@ public class ProfilePicture extends JPanel{
         /*Button Action*/
         profilePictureAddButtonAction();
         profilePictureDeleteButtonAction();
-        saveNewDoctorActionFired();
-        clearProfilePicLabel();
-        editPatientActionFired();
-        editclearProfilePicLabel();
 //        
     }
     private void profilePictureAddButtonAction() {
         bProfilePicAdd.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("pubud");
                 JFileChooser file = new JFileChooser();
                 file.setCurrentDirectory(new File(System.getProperty("user.home")));
                 FileNameExtensionFilter filter = new FileNameExtensionFilter("*.images", "jpg", "gif", "png");
@@ -87,8 +88,8 @@ public class ProfilePicture extends JPanel{
                 int result = file.showSaveDialog(null);
                 if (result == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = file.getSelectedFile();
-                    emptyProfilePicPath = selectedFile.getAbsolutePath();
-                    lProfilePicture.setIcon(ResizeImage(emptyProfilePicPath));
+                    selectedProfilePicPath = selectedFile.getAbsolutePath();
+                    lProfilePicture.setIcon(ResizeImage(selectedProfilePicPath));
                 }
 
             }
@@ -106,46 +107,30 @@ public class ProfilePicture extends JPanel{
         });
         
     }
-    private ImageIcon ResizeImage(String ImagePath) {
-        ImageIcon MyImage = new ImageIcon(ImagePath);
+    private ImageIcon ResizeImage(String imagePath) {
+        ImageIcon MyImage = new ImageIcon(imagePath);
         Image img = MyImage.getImage();
         Image newImg = img.getScaledInstance(lProfilePicture.getWidth(), lProfilePicture.getHeight(), Image.SCALE_SMOOTH);
         ImageIcon image = new ImageIcon(newImg);
         return image;
         
     }
-    private void saveNewDoctorActionFired(){
-        doctorController.registerSaveNewDoctorListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ActionEvent e1 = new ActionEvent(emptyProfilePicPath, -1, null);
-                doctorController.fireSaveNewDoctorReversePerformed(e1);
-            }
-        });
+    public String getProfilePicturePath(){
+    	return this.selectedProfilePicPath;
     }
-    private void clearProfilePicLabel(){
-        doctorController.registerClearDoctorFieldListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lProfilePicture.setIcon(null);
-            }
-        });
+    public void clearProfilePicture(){
+    	lProfilePicture.setIcon(null);
     }
-    private void editPatientActionFired(){
-        doctorController.registerEditDoctorFieldListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                ActionEvent e1 = new ActionEvent(emptyProfilePicPath, -1, null);
-                doctorController.fireEditDoctorFieldReversePerformed(e1);
-            }
-        });
+    public void setProfilePic(String imagePath){
+    	lProfilePicture.setIcon(ResizeImage(imagePath));
     }
-    private void editclearProfilePicLabel(){
-        doctorController.registerClearEditDoctorFieldListeners(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                lProfilePicture.setIcon(null);
-            }
-        });
+    public Blob getProfilePicture() throws IOException, SerialException, SQLException{    	
+    	Icon icon = lProfilePicture.getIcon();
+    	BufferedImage bImage = new BufferedImage(icon.getIconWidth(),icon.getIconHeight(),BufferedImage.TYPE_INT_RGB);
+    	ByteArrayOutputStream b =new ByteArrayOutputStream();
+    	ImageIO.write(bImage, "jpg", b );
+    	byte[] imageInByte = b.toByteArray();
+    	Blob blobProfilePicture = new javax.sql.rowset.serial.SerialBlob(imageInByte);
+    	return blobProfilePicture;
     }
 }

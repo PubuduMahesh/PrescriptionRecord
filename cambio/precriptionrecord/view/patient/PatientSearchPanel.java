@@ -6,6 +6,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.io.InputStream;
+import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -31,7 +33,7 @@ import javax.swing.JOptionPane;
 
 public class PatientSearchPanel extends JPanel {
 
-    private GridBagLayout gridbag;
+    private final GridBagLayout gridbag;
     private JLabel lSearchName;
     private JLabel lSearchNIC;
     private JTextField tSearchName;
@@ -194,26 +196,40 @@ public class PatientSearchPanel extends JPanel {
             if (row > 0) {
                 String id;
                 String name;
-                String surname;
+                String nic;
                 String address;
                 String gender;
                 String status;
                 String birthday;
                 String telephone;
                 String healthHistory;
+                Blob pp;
 
                 while (rs.next()) {
                     id = rs.getObject("id").toString();
                     name = rs.getObject("name").toString();
-                    surname = rs.getObject("nic").toString();
+                    nic = rs.getObject("nic").toString();
                     address = rs.getObject("address").toString();
                     gender = rs.getObject("gender").toString();
                     status = rs.getObject("status").toString();
                     birthday = rs.getObject("birthday").toString();
                     telephone = rs.getObject("telephone").toString();
                     healthHistory = rs.getObject("healthDescription").toString();
+                    pp = rs.getBlob("profilePicture");
 
-                    Patient patient = new Patient(id, name, surname, address, gender, status, birthday, telephone, healthHistory, null);
+                    
+//                    Patient patient = new Patient(id, name, surname, address, gender, status, birthday, telephone, healthHistory, null);
+                    Patient patient = new Patient();
+                    patient.setID(id);
+                    patient.setName(name);
+                    patient.setNIC(nic);
+                    patient.setAddress(address);
+                    patient.setGender(gender);
+                    patient.setStatus(status);
+                    patient.setBirthday(birthday);
+                    patient.setTp(telephone);
+                    patient.setMedicalHistory(healthHistory);
+                    patient.setProfilePicBLOB(pp);
                     tbModel.updateTable(patient);
                 }
             } else {
