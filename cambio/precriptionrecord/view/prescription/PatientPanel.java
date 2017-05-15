@@ -41,95 +41,87 @@ public class PatientPanel extends JPanel{
 		createLayout();
 		scrollPane.add(this);
 	}
-	
+
 	private void createLayout(){
 		addPatientSearchTable();
 		addLabel();	
 		addField();
-		
+
 		mouseClickRow();
-		prescriptionSaveButtonActionFired();
 		commonControllerActionFired();
-		
+
 	}
-	
+
 	private void addLabel(){
 		JLabel lPatientName = new JLabel("Name");
 		JLabel lPatientID = new JLabel("ID");
 		JLabel lPatientAge = new JLabel("Age");
 		JLabel lPatientTelephone = new JLabel("Telephone");
 		JLabel lPatientProfilePicture = new JLabel("Picture");
-		
+
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		
+
 		/*JLabel - name*/		
 		constraints.insets = new Insets(0, 0, 0, 0);
 		gridbag.setConstraints(lPatientName, constraints);
 		add(lPatientName);
-		
+
 		/*JLabel - id*/
 		constraints.insets = new Insets(0, 300, 0, 0);
 		gridbag.setConstraints(lPatientID, constraints);
 		add(lPatientID);
-		
+
 		/*JLabel - age*/
 		constraints.insets = new Insets(40, 0, 0, 0);
 		gridbag.setConstraints(lPatientAge, constraints);
 		add(lPatientAge);
-		
+
 		/*JLabel - telephone*/
 		constraints.insets = new Insets(40, 300, 0, 0);
 		gridbag.setConstraints(lPatientTelephone, constraints);
 		add(lPatientTelephone);
-		
-		/*JLabel - profile picture*/
-		lPatientProfilePicture.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-		lPatientProfilePicture.setPreferredSize(new Dimension(75,75));
-		constraints.insets = new Insets(40, 500, 0, 0);
-		gridbag.setConstraints(lPatientProfilePicture, constraints);
-//		add(lPatientProfilePicture);
 	}
-	
+
 	private void addField(){
 		GridBagConstraints constraints = new GridBagConstraints();
 		constraints.anchor = GridBagConstraints.WEST;
-		
+
 		tName = new JTextField(20);
 		tID = new JTextField(10);
 		tAge = new JTextField(5);
 		tTelephone = new JTextField(10);
-		
+
 		constraints.gridx = 0;
 		constraints.gridy = 1;
-		
+
 		/*text field - name*/
-                tName.setEditable(false);
+		tName.setEditable(false);
 		constraints.insets = new Insets(0, 50, 0, 0);
 		gridbag.setConstraints(tName, constraints);
 		add(tName);
-		
+
 		/*text field - id*/
-                tID.setEditable(false);
+		tID.setEditable(false);
 		constraints.insets = new Insets(0, 380, 0, 0);
 		gridbag.setConstraints(tID, constraints);
 		add(tID);
-		
+
 		/*text field - age*/
-                tAge.setEditable(false);
+		tAge.setEditable(false);
 		constraints.insets = new Insets(40, 50, 0, 0);
 		gridbag.setConstraints(tAge, constraints);
 		add(tAge);
-		
+
 		/*text field - telephone*/
-                tTelephone.setEditable(false);
+		tTelephone.setEditable(false);
 		constraints.insets = new Insets(40, 380, 0, 0);
 		gridbag.setConstraints(tTelephone, constraints);
 		add(tTelephone);
 	}
-	
+
 	private void addPatientSearchTable(){
 		GridBagConstraints constraints = new GridBagConstraints();
 		int tbWidth = 690;
@@ -142,50 +134,41 @@ public class PatientPanel extends JPanel{
 		gridbag.setConstraints(patienSearchPanel, constraints);		
 		add(patienSearchPanel);
 	}
-	
+
 	private void mouseClickRow(){
 		patientController.registerRowClickListeners(new ActionListener() {
 			@Override
-			public void actionPerformed(ActionEvent e) {System.out.println("pubudu");
+			public void actionPerformed(ActionEvent e) {
 				if (e.getSource() instanceof Patient) {
 					Patient patient = (Patient)e.getSource();
 					setPatientCustomField(patient);
+					prescriptionCotroler.firePatientDetailActionPerformed(e);
 				}
-				
+
 			}
 		});
 	}
-	
+
 	private void setPatientCustomField(Patient patient){
 		AgeCalculator age = new AgeCalculator();
 		tName.setText(patient.getName());
 		tID.setText(patient.getID());
 		tAge.setText(age.ageCalculator(patient.getBirthday()));
 		tTelephone.setText(patient.getTp());
-		
-	}
-	
-	private void prescriptionSaveButtonActionFired(){
-		prescriptionCotroler.registerSavePrescriptionListeners(new ActionListener() {
-			
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				ActionEvent e1 = new ActionEvent(tID.getText(), -1, "");
-				prescriptionCotroler.fireSavePrescriptionReversePerformed(e1);
-				
-			}
-		});
+		ActionEvent e = new ActionEvent(tID,-1,null);
+		prescriptionCotroler.firePatientDetailFieldActionPerformed(e);
+
 	}
 	private void commonControllerActionFired(){
 		commonController.registerClearPrescriptionReportAllElementActionListeners(new ActionListener() {
-			
+
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				tName.setText("");
 				tAge.setText("");
 				tID.setText("");
 				tTelephone.setText("");
-				
+
 			}
 		});
 	}

@@ -40,7 +40,6 @@ public class EditDrug extends JInternalFrame {
     private JRadioButton rbTablet;
     private JRadioButton rbCapsules;
     private JRadioButton rbSyrups;
-    private JTextField tDosage;
     private ButtonGroup bgType;
     private JButton bSave;
     private JButton bClear;
@@ -95,13 +94,10 @@ public class EditDrug extends JInternalFrame {
         JLabel lName = new JLabel();
         JLabel lDescription = new JLabel("Description");
         JLabel lForm = new JLabel();
-        JLabel lDosage = new JLabel();
-        JLabel lDosageDescription = new JLabel("Per Day.");
         JLabel lID = new JLabel("drugID");
 
         lName.setText("<html>Name <font color='red'> *</font></html>");
         lForm.setText("<html>Drug Form <font color='red'> *</font></html>");
-        lDosage.setText("<html>Dosage <font color='red'> *</font></html>");
 
         constraintsLabel.gridx = 0;
         constraintsLabel.gridy = 1;
@@ -125,17 +121,6 @@ public class EditDrug extends JInternalFrame {
         constraintsLabel.insets = new Insets(140, 0, 0, 0);
         gridbag.setConstraints(lForm, constraintsLabel);
         add(lForm);
-
-        /*Label - Dosage*/
-        constraintsLabel.insets = new Insets(180, 0, 0, 0);
-        gridbag.setConstraints(lDosage, constraintsLabel);
-        add(lDosage);
-
-        /*Label- Dosage Description*/
-        constraintsLabel.gridx = 0;
-        constraintsLabel.insets = new Insets(180, 200, 0, 0);
-        gridbag.setConstraints(lDosageDescription, constraintsLabel);
-        add(lDosageDescription);
     }
 
     private void addField() {
@@ -144,7 +129,6 @@ public class EditDrug extends JInternalFrame {
 
         tName = new JTextField(20);
         tDescription = new JTextArea(3, 20);
-        tDosage = new JTextField(5);
         rbTablet = new JRadioButton("Tablet");
         rbCapsules = new JRadioButton("Capsules");
         rbSyrups = new JRadioButton("Syrups");
@@ -187,11 +171,6 @@ public class EditDrug extends JInternalFrame {
         constraintsField.insets = new Insets(140, 290, 0, 0);
         gridbag.setConstraints(rbSyrups, constraintsField);
         add(rbSyrups);
-
-        /*Text Feild - dosage*/
-        constraintsField.insets = new Insets(180, 100, 0, 0);
-        gridbag.setConstraints(tDosage, constraintsField);
-        add(tDosage);
 
         /*Button - Save*/
         bSave.setIcon(new javax.swing.ImageIcon("src/cambio/Image/saveicon.png"));
@@ -239,22 +218,18 @@ public class EditDrug extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save Drug?", "Warning", 0);
-                if (dialogResult == JOptionPane.YES_OPTION) {
-                    Drug drug = new Drug();
-                    drug.setDrugId(tID.getText());
-                    drug.setDrugName(tName.getText());
-                    drug.setDescription(tDescription.getText());
-                    if (rbCapsules.isSelected()) {
-                        drug.setType("Capsules");
-                    } else if (rbTablet.isSelected()) {
-                        drug.setType("Tablet");
-                    } else {
-                        drug.setType("Syrups");
-                    }
-                    drug.setDosage(tDosage.getText());
-                    saveDrug(drug);
+                Drug drug = new Drug();
+                drug.setDrugId(tID.getText());
+                drug.setDrugName(tName.getText());
+                drug.setDescription(tDescription.getText());
+                if (rbCapsules.isSelected()) {
+                    drug.setType("Capsules");
+                } else if (rbTablet.isSelected()) {
+                    drug.setType("Tablet");
+                } else {
+                    drug.setType("Syrups");
                 }
+                saveDrug(drug);
             }
         });
     }
@@ -274,24 +249,24 @@ public class EditDrug extends JInternalFrame {
                         + "`dosage` = '" + drug.getDosage() + "'"
                         + "WHERE"
                         + "`drug`.`drugID` = '" + drug.getDrugId() + "'";
-            }
-            else{
+            } else {
                 sql = "INSERT INTO `drug` (`drugId`,"
-					+ "`drugName`,"
-					+ "`description`,"
-					+ "`type`,"
-					+ "`dosage`) VALUES (NULL,"
-					+ "'"+drug.getDrugName()+"',"
-					+ "'"+drug.getDescription()+"',"
-					+ "'"+drug.getType()+"',"
-					+ "'"+drug.getDosage()+"')";
-            }            	
-            stmt.executeUpdate(sql,stmt.RETURN_GENERATED_KEYS);
+                        + "`drugName`,"
+                        + "`description`,"
+                        + "`type`,"
+                        + "`dosage`) VALUES (NULL,"
+                        + "'" + drug.getDrugName() + "',"
+                        + "'" + drug.getDescription() + "',"
+                        + "'" + drug.getType() + "',"
+                        + "'" + drug.getDosage() + "')";
+            }
+            stmt.executeUpdate(sql, stmt.RETURN_GENERATED_KEYS);
             drugController.fireEditRowDrugSearchTablePerformed(new ActionEvent(drug, -1, ""));
-            ResultSet rs =  stmt.getGeneratedKeys();
-			if (rs != null && rs.next()) 
-				drug.setDrugId(rs.getInt(1)+"");
-			
+            ResultSet rs = stmt.getGeneratedKeys();
+            if (rs != null && rs.next()) {
+                drug.setDrugId(rs.getInt(1) + "");
+            }
+
             connection.close();
             clearField();
             JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -305,7 +280,6 @@ public class EditDrug extends JInternalFrame {
         tName.setText("");
         tDescription.setText("");
         bgType.clearSelection();
-        tDosage.setText("");
     }
 
     private void saveButtonDisabled() {
@@ -314,7 +288,6 @@ public class EditDrug extends JInternalFrame {
         new SaveButtonRadioButtonCondtion(rbTablet);
         new SaveButtonRadioButtonCondtion(rbCapsules);
         new SaveButtonRadioButtonCondtion(rbSyrups);
-        new SaveButtonTextFieldCondtion(tDosage);
     }
 
     private class SaveButtonTextFieldCondtion {
@@ -353,7 +326,6 @@ public class EditDrug extends JInternalFrame {
 
     private void enableSaveButton() {
         if (!tName.getText().equals("")
-                && !tDosage.getText().equals("")
                 && (rbTablet.isSelected()
                 || rbCapsules.isSelected()
                 || rbSyrups.isSelected())) {
@@ -387,40 +359,39 @@ public class EditDrug extends JInternalFrame {
         } else {
             rbSyrups.setSelected(true);
         }
-        tDosage.setText(drug.getDosage());
     }
-    
-    private void deleteButtonAction(){
-		bDelete.addActionListener(new ActionListener(){
 
-			@Override
-			public void actionPerformed(ActionEvent e){
-				int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save Drug?", "Warning",0);
-				if(dialogResult == JOptionPane.YES_OPTION){
-					Drug drug = new Drug();
-					drug.setDrugId(tID.getText());
-					removeDrug(drug);
-				}
-			}	
-		});
-	}
-	
-	private void removeDrug(Drug drug){
-		DBConnection dbConnection = new DBConnection();
-		Connection connection = dbConnection.getConnection();
-		Statement stmt = null;
-		String sql;
-		try {
-			stmt = connection.createStatement();
-			sql = "DELETE FROM `drug` WHERE `drug`.`drugId` = '"+drug.getDrugId()+"'";
-			stmt.executeUpdate(sql);
-			connection.close();
-			ActionEvent e1 = new ActionEvent(drug.getDrugId(),-1,"");
-			drugController.fireRemoveRowDrugSearchTablePerformed(e1);
-			clearField();
-			JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}
-	}
+    private void deleteButtonAction() {
+        bDelete.addActionListener(new ActionListener() {
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Remove Drug?", "Warning", 0);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    Drug drug = new Drug();
+                    drug.setDrugId(tID.getText());
+                    removeDrug(drug);
+                }
+            }
+        });
+    }
+
+    private void removeDrug(Drug drug) {
+        DBConnection dbConnection = new DBConnection();
+        Connection connection = dbConnection.getConnection();
+        Statement stmt = null;
+        String sql;
+        try {
+            stmt = connection.createStatement();
+            sql = "DELETE FROM `drug` WHERE `drug`.`drugId` = '" + drug.getDrugId() + "'";
+            stmt.executeUpdate(sql);
+            connection.close();
+            ActionEvent e1 = new ActionEvent(drug.getDrugId(), -1, "");
+            drugController.fireRemoveRowDrugSearchTablePerformed(e1);
+            clearField();
+            JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e1) {
+            e1.printStackTrace();
+        }
+    }
 }

@@ -59,12 +59,7 @@ public class PrescriptionTableModel extends AbstractTableModel{
 	
 	public void setValueAtRow(Drug drug, int rowIndex)
     {
-		Drug d = tableData.get(rowIndex);
-		d.setDrugName(drug.getDrugName());
-		d.setDrugId(drug.getDrugId());
-		d.setDescription(drug.getDescription());
-		d.setType(drug.getType());
-		d.setDosage(drug.getDosage());
+		tableData.set(rowIndex, drug);
 		fireTableDataChanged();
         
 		
@@ -87,11 +82,15 @@ public class PrescriptionTableModel extends AbstractTableModel{
 				return rowCount;
 			}
 		}
-		return 0;
+		return -1;
 	}
 	
 	public void removeRow(int rowIndex){
 		tableData.remove(rowIndex);
 		fireTableDataChanged();
+	}
+	
+	public java.util.List<Drug> getTableData(){
+		return tableData;
 	}
 }

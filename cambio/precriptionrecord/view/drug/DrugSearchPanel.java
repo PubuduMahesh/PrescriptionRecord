@@ -41,8 +41,8 @@ public class DrugSearchPanel extends JPanel {
     private JTable searchTable;
     DrugTableModel tbModel;
 
-    private DrugController drugController;
-    private CommonController commonController;
+    private final DrugController drugController;
+    private final CommonController commonController;
 
     public DrugSearchPanel(DrugController drugController, int tbWidth, int tbHeight,
             CommonController commonController) {
@@ -104,7 +104,7 @@ public class DrugSearchPanel extends JPanel {
 
         GridBagConstraints tablConstraints = new GridBagConstraints();
 
-        final String[] header = {"id", "name", "description", "type", "dosage"};
+        final String[] header = {"id", "name", "description", "type"};
         ArrayList<Drug> data = new ArrayList<Drug>();
         searchTable = new JTable(new DrugTableModel(data, header));
 
@@ -204,7 +204,6 @@ public class DrugSearchPanel extends JPanel {
                     drug.setDrugName(name);
                     drug.setDescription(description);
                     drug.setType(type);
-                    drug.setDosage(dosage);
                     tbModel.updateTable(drug);
                 }
             } else {
@@ -247,7 +246,7 @@ public class DrugSearchPanel extends JPanel {
         drugController.registerRemoveRowDrugSearchTableListeners(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int rowIndex = ((DrugTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(), searchTable);
+                int rowIndex = tbModel.getRowIndex(e.getSource().toString(), searchTable);
                 tbModel.removeRow(rowIndex);
             }
         });
@@ -258,7 +257,7 @@ public class DrugSearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Drug drug = (Drug) e.getSource();
-                int updatedRow = ((DrugTableModel) searchTable.getModel()).getRowIndex(drug.getDrugId(), searchTable);
+                int updatedRow = tbModel.getRowIndex(drug.getDrugId(), searchTable);
                 if(updatedRow >= 0)
                     tbModel.setValueAtRow(drug, updatedRow);
                 else

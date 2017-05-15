@@ -8,6 +8,7 @@ public class Prescription {
 	private String drugList;
 	private String date;
 	private String patientName;
+	private String doctorName;
 	public String getPatientName() {
 		return patientName;
 	}
@@ -49,6 +50,12 @@ public class Prescription {
 	}
 	public void setDate(String date) {
 		this.date = date;
+	}
+	public void setDoctorName(String doctorName){
+		this.doctorName = doctorName;
+	}
+	public String getDoctorName(){
+		return this.doctorName;
 	}
 	
 	

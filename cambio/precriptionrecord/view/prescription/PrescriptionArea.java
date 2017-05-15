@@ -17,6 +17,7 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import javax.swing.BorderFactory;
@@ -37,6 +38,7 @@ import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.controller.PrescriptionController;
 import cambio.precriptionrecord.model.drug.Drug;
+import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.model.prescription.Prescription;
 import cambio.precriptionrecord.model.prescription.PrescriptionForm;
 import cambio.precriptionrecord.model.prescription.PrescriptionTableModel;
@@ -49,14 +51,14 @@ import net.sf.jasperreports.engine.JasperCompileManager;
 import net.sf.jasperreports.engine.JasperFillManager;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.engine.JasperReport;
-//import net.sf.jasperreports.swing.JRViewer;
-//import net.sf.jasperreports.swing.JRViewer;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.swing.JRViewer;
 
 import org.json.simple.JSONObject;
 
-public class PrescriptionPanel extends JInternalFrame {
+public class PrescriptionArea extends JInternalFrame {
 
-    private GridBagLayout gridbag;
+    private final GridBagLayout gridbag;
     private JButton bDate;
     private JTextField tDate;
     private JTextArea tAnalysis;
@@ -74,8 +76,13 @@ public class PrescriptionPanel extends JInternalFrame {
     private final PrescriptionController prescriptionController;
     private final CommonController commonController;
     private Drug drug = null;
+    private JTextField tPatientID;
+    private JTextField tPatientName;
+    private String patientID;
+    private String patientName;
+    private String patientAge;
 
-    public PrescriptionPanel(PrescriptionController prescriptionController, CommonController commonController) {
+    public PrescriptionArea(PrescriptionController prescriptionController, CommonController commonController) {
         this.prescriptionController = prescriptionController;
         this.commonController = commonController;
         gridbag = new GridBagLayout();
@@ -93,8 +100,7 @@ public class PrescriptionPanel extends JInternalFrame {
         addField();
         addDrugSearchPanel();
         addPrescriptionTable();
-        saveButtonDisabled();
-        
+
     }
 
     private void addField() {
@@ -145,13 +151,8 @@ public class PrescriptionPanel extends JInternalFrame {
         gridbag.setConstraints(diagnosisScrollPane, constraints);
         add(diagnosisScrollPane);
 
-        /*button - add*/
-        constraints.insets = new Insets(110, 635, 0, 0);
-        gridbag.setConstraints(bAdd, constraints);
-        add(bAdd);
-
         /*button - edit*/
-        constraints.insets = new Insets(110, 565, 0, 0);
+        constraints.insets = new Insets(110, 635, 0, 0);
         gridbag.setConstraints(bEdit, constraints);
         add(bEdit);
 
@@ -197,7 +198,9 @@ public class PrescriptionPanel extends JInternalFrame {
         sendButtonAction();
         clearButtonAction();
         removeButtonAction();
-        setPrescriptionObject();
+        editDosageAddButtonAction();
+        getPatientDetail();
+        saveButtonDisabled();
     }
 
     private void addDrugSearchPanel() {
@@ -233,9 +236,7 @@ public class PrescriptionPanel extends JInternalFrame {
         add(scrollPane);
 
         this.tbModel = (PrescriptionTableModel) prescriptionTable.getModel();
-        
 
-    	addButtonAction();
         editButtonAction();
     }
 
@@ -245,7 +246,7 @@ public class PrescriptionPanel extends JInternalFrame {
             @Override
             public void actionPerformed(ActionEvent e) {
                 try {
-                    String selDate = new DatePicker((PrescriptionPanel) (bDate.getParent().getParent().getParent().getParent())).setPickedDate();
+                    String selDate = new DatePicker((PrescriptionArea) (bDate.getParent().getParent().getParent().getParent())).setPickedDate();
                     Date date = new SimpleDateFormat("yyyy/MM/dd").parse(selDate);//convert the selected Date in to the "Date" type
                     if (date.before(new Date())) {//check whether the selected date is grater than with respect to the current date. 
                         tDate.setText(selDate);//set the date to the birthday text field.
@@ -259,35 +260,35 @@ public class PrescriptionPanel extends JInternalFrame {
         });
     }
 
-    private void addButtonAction() {
-        bAdd.addActionListener(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                tbModel.updateTable(drug);System.out.println("lsdjflsjlfjsdlkfj");     
-            }
-        });
-    }
-
     private void mouseClickRow() {
         drugController.registerRowClickListeners(new ActionListener() {
 
             @Override
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() instanceof Drug) {
-                    drug = (Drug) e.getSource();                    
+                    drug = (Drug) e.getSource();
                 }
             }
         });
         drugController.registerRowDoubleClickActionListeners(new ActionListener() {
-        	
-        	@Override
-        	public void actionPerformed(ActionEvent e) {
-        		if (e.getSource() instanceof Drug) {
-        			drug = (Drug) e.getSource();
-        			createDialog();
-        		}
-        	}
+
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() instanceof Drug) {
+                    drug = (Drug) e.getSource();
+                    int rowIndex = tbModel.getRowIndex(drug.getDrugId(), prescriptionTable);
+                    if (rowIndex >= 0) {
+                        int dialogResult = JOptionPane.showConfirmDialog(null, "Already added. Do you want to edit existing prescription?", "Warning", 0);
+                        if (dialogResult == JOptionPane.YES_OPTION) {
+                            Drug existingDrug = tbModel.getValue(rowIndex);
+                            tbModel.removeRow(rowIndex);
+                            createDialog(existingDrug);
+                        }
+                    } else {
+                        createDialog(drug);
+                    }
+                }
+            }
         });
     }
 
@@ -296,14 +297,23 @@ public class PrescriptionPanel extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-               createDialog();
+                int rowIndex = tbModel.getRowIndex(drug.getDrugId(), prescriptionTable);
+                if (rowIndex >= 0) {
+                    int dialogResult = JOptionPane.showConfirmDialog(null, "Already added. Do you want to edit existing prescription?", "Warning", 0);
+                    if (dialogResult == JOptionPane.YES_OPTION) {
+                        Drug existingDrug = tbModel.getValue(rowIndex);
+                        tbModel.removeRow(rowIndex);
+                        createDialog(existingDrug);
+                    }
+                } else {
+                    createDialog(drug);
+                }
             }
         });
     }
 
-    private void createDialog() {
-        new EditDosage(drug, prescriptionController);
-        editDosageAddButtonAction();
+    private void createDialog(Drug drug) {
+        new EditDosage(drug, prescriptionController, this);
     }
 
     private void editDosageAddButtonAction() {
@@ -311,7 +321,12 @@ public class PrescriptionPanel extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                tbModel.updateTable((Drug) e.getSource());
+                //check wheter drug is already added to the list. 
+                if (e.getSource() instanceof Drug) {
+                    drug = (Drug) e.getSource();
+                    tbModel.updateTable(drug);
+
+                }
 
             }
         });
@@ -323,34 +338,27 @@ public class PrescriptionPanel extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                prescriptionController.fireSavePrescriptionPerformed(e);
-                
+                setPrescriptionObject();
 
             }
         });
     }
 
     private void setPrescriptionObject() {
-    	final Prescription prescription = new Prescription();
-    	prescriptionController.registerSavePrescriptionReverseListeners(new ActionListener() {
-
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                prescription.setDate(tDate.getText());
-                prescription.setDiagnosisDescription(tAnalysis.getText());
-                prescription.setDoctorID(Home.userNIC);//need to change
-                prescription.setDrugList(createDrugList());
-                prescription.setPatientID((String) e.getSource());
-                savePrescription(prescription);
-            }
-        });
+        final Prescription prescription = new Prescription();
+        prescription.setDate(tDate.getText());
+        prescription.setDiagnosisDescription(tAnalysis.getText());
+        prescription.setDoctorID(Home.userNIC);
+        prescription.setDrugList(createDrugList());
+        prescription.setPatientID(patientID);
+        savePrescription(prescription);
 
     }
 
     private String createDrugList() {
         int rowCount = tbModel.getRowCount();
         Drug drug = new Drug();
-        String drugList = null;
+        String drugList = "";
         for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             drug = tbModel.getValue(rowIndex);
             drugList += drug.getDrugId() + "-" + drug.getDrugName()
@@ -375,7 +383,7 @@ public class PrescriptionPanel extends JInternalFrame {
         }
         try {
             sql = "INSERT INTO `prescription` (`id`,`patientID`,`doctorID`,`diagDescription`,`drugList`,`date`) "
-                    + "VALUES(NULL,'"+prescription.getPatientID()+"',(SELECT `id` FROM  `doctor` WHERE `doctor`.`nic` = '"+prescription.getDoctorID()+"'),'"+prescription.getDiagnosisDescription()+"','"+prescription.getDrugList()+"','"+prescription.getDate()+"')";
+                    + "VALUES(NULL,'" + prescription.getPatientID() + "',(SELECT `id` FROM  `doctor` WHERE `doctor`.`nic` = '" + prescription.getDoctorID() + "'),'" + prescription.getDiagnosisDescription() + "','" + prescription.getDrugList() + "','" + prescription.getDate() + "')";
             stmt.executeUpdate(sql);
             con.close();
             JOptionPane.showMessageDialog(null, "Prescription detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
@@ -394,6 +402,7 @@ public class PrescriptionPanel extends JInternalFrame {
                 Prescription prescription = new Prescription();
                 prescription.setDate(tDate.getText());
                 prescription.setDiagnosisDescription(tAnalysis.getText());
+                prescription.setPatientName(patientName);
                 printReport(prescription);
 
             }
@@ -435,9 +444,19 @@ public class PrescriptionPanel extends JInternalFrame {
 
     private void printReport(Prescription prescription) {
         try {
+        	List<Drug> listItems = new ArrayList<Drug>();
+        	Drug drug1 = new Drug();
+        	drug1.setDrugName("Penadol");
+        	drug1.setDescription("Peracitamol");
+        	drug1.setDosage("3 days");
+        	listItems = tbModel.getTableData();
+        	JRBeanCollectionDataSource itmesJRBean = new JRBeanCollectionDataSource(listItems);
+        	
             Map<String, Object> parameters = new HashMap<String, Object>();
             parameters.put("date", prescription.getDate());
             parameters.put("diagnosis", prescription.getDiagnosisDescription());
+            parameters.put("patientName", prescription.getPatientName());
+            parameters.put("ItemDataSource", itmesJRBean);
             String sourceName = "src/cambio/report/temp.jrxml";
             JasperReport report = JasperCompileManager.compileReport(sourceName);
 
@@ -445,7 +464,7 @@ public class PrescriptionPanel extends JInternalFrame {
 
             JDialog dialog = new JDialog();
             dialog.setVisible(true);
-//			dialog.getContentPane().add(new JRViewer(jasperPrint));
+			dialog.getContentPane().add(new JRViewer(jasperPrint));
             dialog.pack();
         } catch (Exception ex) {
             System.out.println(ex.getMessage());
@@ -486,6 +505,16 @@ public class PrescriptionPanel extends JInternalFrame {
 
     private void saveButtonDisabled() {
         bSave.setEnabled(false);
+        prescriptionController.registerPatientDetailFieldListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource() instanceof JTextField) {
+                    tPatientID = (JTextField)e.getSource();
+                    new SaveButtonTextFieldCondtion(tPatientID);
+                }
+
+            }
+        });
         new SaveButtonTextFieldCondtion(tDate);
         new SaveButtonTextFieldAreaCondtion(tAnalysis);
     }
@@ -537,7 +566,7 @@ public class PrescriptionPanel extends JInternalFrame {
     }
 
     private void enableSaveButton() {
-        if (!tDate.getText().equals("") && !tAnalysis.getText().equals("")) {
+        if (tPatientID != null && !tDate.getText().equals("") && !tAnalysis.getText().equals("") && !tPatientID.getText().equals("")) {
             bSave.setEnabled(true);
         } else {
             bSave.setEnabled(false);
@@ -557,18 +586,20 @@ public class PrescriptionPanel extends JInternalFrame {
             }
         });
     }
-    private void addButtonDisable(){
-    	
-    	if(drug == null)
-    		bAdd.setEnabled(false);
-    	else
-    		bAdd.setEnabled(true);
-    	
+    private void getPatientDetail(){
+    	prescriptionController.registerPatientDetailListener(new ActionListener() {
+			
+			@Override
+			public void actionPerformed(ActionEvent e) {
+				if(e.getSource() instanceof Patient){
+					Patient patient = (Patient)e.getSource();
+					patientID = patient.getID();
+					patientName = patient.getName();
+					patientAge = patient.getBirthday();					
+				}
+				
+			}
+		});
     }
-    private void editButtonDisable(){
-    	
-    	
-    }
-    
 
 }

@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.Arrays;
 
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JComboBox;
 import javax.swing.JLabel;
@@ -25,7 +24,7 @@ import javax.swing.event.DocumentListener;
 
 public class RegisterPanel extends JPanel {
 
-    private GridBagLayout gridbag;
+    private final GridBagLayout gridbag;
     private JTextField tNIC;
     private JPasswordField tPassword;
     private JPasswordField tConfirmPassword;
@@ -155,12 +154,9 @@ public class RegisterPanel extends JPanel {
         bRegistr.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Save Drug?", "Warning", 0);
-                if (dialogResult == JOptionPane.YES_OPTION) {
-                    registerUser();
-                }
-
+                registerUser();
             }
+
         });
     }
 

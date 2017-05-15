@@ -8,11 +8,9 @@ import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 
-import javax.sql.rowset.serial.SerialException;
 import javax.swing.BorderFactory;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
-import javax.swing.JDesktopPane;
 import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JRadioButton;
@@ -27,7 +25,6 @@ import cambio.precriptionrecord.util.DatePicker;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.sql.Blob;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -56,29 +53,34 @@ public class EditDoctor extends JInternalFrame {
     private JRadioButton rbMale;
     private JRadioButton rbFemale;
     private JButton bBirthday;
-    private ButtonGroup bgGender; 
+    private ButtonGroup bgGender;
     private JButton bUpdate;
     private JButton bClear;
     private JButton bDelete;
     private ProfilePicture profilePicture;
     private final DoctorController doctorController;
 
-    
-    public EditDoctor() {
-        this.doctorController = new DoctorController();
-        setTitle("Update Doctor");
-        setPreferredSize(new Dimension(740, 665));
-        setMinimumSize(new Dimension(740, 665));
-        setClosable(true);
-        setVisible(true);
-        setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
-        setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/addNewPatient.jpg"));
-        gridbag = new GridBagLayout();
-        setLayout(gridbag);
-        createLayout();
-        /*table row click action performed*/
-        mouseClickRow();
-    }
+	public EditDoctor() {
+		super("DOc", true, true, true, true);
+		this.doctorController = new DoctorController();
+		// setTitle("Update Doctor");
+
+		 setPreferredSize(new Dimension(740, 665));
+		// setMinimumSize(new Dimension(740, 665));
+		// setClosable(true);
+//		 setVisible(true);
+		// setResizable(true);
+		// setMaximizable(true);
+		// setIconifiable(true);
+		setBorder(BorderFactory.createLineBorder(Color.BLACK, 1, true));
+		setFrameIcon(new javax.swing.ImageIcon("src/cambio/Image/addNewPatient.jpg"));
+		gridbag = new GridBagLayout();
+		setLayout(gridbag);
+		createLayout();
+		/* table row click action performed */
+		mouseClickRow();
+		show();
+	}
 
     private void createLayout() {
         addSearchPanel();
@@ -300,7 +302,7 @@ public class EditDoctor extends JInternalFrame {
         constraintsField.gridy = 7;
         gridbag.setConstraints(bUpdate, constraintsField);
         add(bUpdate);
-        
+
         /*button-delete*/
         bDelete.setIcon(new javax.swing.ImageIcon("src/cambio/Image/delete.png"));
         constraintsField.insets = new Insets(0, 440, 10, 0);
@@ -358,21 +360,21 @@ public class EditDoctor extends JInternalFrame {
         tBirthday.setText(doctor.getBirthday());
         tTp.setText(doctor.getTp());
         tJobHistory.setText(doctor.getJobHistory());
-        Blob profilePic = doctor.getDoctorProfilePic(); 
+        Blob profilePic = doctor.getDoctorProfilePic();
         System.out.println("----");
         System.out.println(profilePic);
-        if(profilePic != null){
-        	try{
-        		File tmpFile = new File("tmpImage");
-	        	FileOutputStream fos = new FileOutputStream(tmpFile);
-	        	fos.write( profilePic.getBytes(1L, (int)profilePic.length()) );
-	        	fos.close();
-	        	profilePicture.setProfilePic(tmpFile.getAbsolutePath());
-        	}catch(Exception ex){
-        		
-        	}
+        if (profilePic != null) {
+            try {
+                File tmpFile = new File("tmpImage");
+                FileOutputStream fos = new FileOutputStream(tmpFile);
+                fos.write(profilePic.getBytes(1L, (int) profilePic.length()));
+                fos.close();
+                profilePicture.setProfilePic(tmpFile.getAbsolutePath());
+            } catch (Exception ex) {
+
+            }
         }
-        
+
     }
 
     private void birthdayButtonAction() {
@@ -478,40 +480,37 @@ public class EditDoctor extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-            	int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Edit Doctor?", "Warning", 0);
-                if (dialogResult == JOptionPane.YES_OPTION) {
-                    
-                    Doctor doctor = new Doctor();
-                    doctor.setDoctorProfilePicPath(profilePicture.getProfilePicturePath());
-                    doctor.setId(tID.getText());
-                    doctor.setName(tName.getText());
-                    doctor.setNic(tNIC.getText());
-                    doctor.setRegNumber(tRegNumber.getText());
-                    doctor.setSpeiality(tSpeciality.getText());
-                    doctor.setBirthday(tBirthday.getText());
-                    doctor.setTp(tTp.getText());
-                    doctor.setJobHistory(tJobHistory.getText());
-                    if (rbMale.isSelected()) {
-                        doctor.setGender("Male");
-                    } else {
-                        doctor.setGender("Female");
-                    }
-                    saveDoctor(doctor);
-
+                Doctor doctor = new Doctor();
+                doctor.setDoctorProfilePicPath(profilePicture.getProfilePicturePath());
+                doctor.setId(tID.getText());
+                doctor.setName(tName.getText());
+                doctor.setNic(tNIC.getText());
+                doctor.setRegNumber(tRegNumber.getText());
+                doctor.setSpeiality(tSpeciality.getText());
+                doctor.setBirthday(tBirthday.getText());
+                doctor.setTp(tTp.getText());
+                doctor.setJobHistory(tJobHistory.getText());
+                if (rbMale.isSelected()) {
+                    doctor.setGender("Male");
+                } else {
+                    doctor.setGender("Female");
                 }
+                saveDoctor(doctor);
+
             }
 
         });
 
-    }   
+    }
+
     private void saveDoctor(Doctor doctor) {
         DBConnection dbCon = new DBConnection();
         Connection connection = dbCon.getConnection();
         PreparedStatement statement = null;
-        FileInputStream inputStream = null; 
-        try {            
-            if(!doctor.getId().equals("")){
-            	statement = connection.prepareStatement("UPDATE `doctor` SET "
+        FileInputStream inputStream = null;
+        try {
+            if (!doctor.getId().equals("")) {
+                statement = connection.prepareStatement("UPDATE `doctor` SET "
                         + " `name` = ?,"
                         + " `nic` = ?,"
                         + " `regNumber` = ?,"
@@ -521,7 +520,7 @@ public class EditDoctor extends JInternalFrame {
                         + "`telephone` = ?,"
                         + "`jobHistory` = ?,"
                         + " `profilePicture` = ? "
-                        + "WHERE `doctor`.`id` = ?",Statement.RETURN_GENERATED_KEYS);
+                        + "WHERE `doctor`.`id` = ?", Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, doctor.getName());
                 statement.setString(2, doctor.getNic());
                 statement.setString(3, doctor.getRegNumber());
@@ -530,18 +529,16 @@ public class EditDoctor extends JInternalFrame {
                 statement.setString(6, doctor.getBirthday());
                 statement.setString(7, doctor.getTp());
                 statement.setString(8, doctor.getJobHistory());
-                if(profilePicture.getProfilePicturePath().length()>0){
-                	File image = new File(doctor.getDoctorProfilePicPath());
-                	inputStream = new FileInputStream(image);
+                if (profilePicture.getProfilePicturePath().length() > 0) {
+                    File image = new File(doctor.getDoctorProfilePicPath());
+                    inputStream = new FileInputStream(image);
                     statement.setBlob(9, inputStream);
-                }
-                else{
-                	statement.setNull(9, java.sql.Types.BLOB);
+                } else {
+                    statement.setNull(9, java.sql.Types.BLOB);
                 }
                 statement.setString(10, doctor.getId());
-            }
-            else{
-            	statement = connection.prepareStatement("INSERT INTO `doctor` (`id`,"
+            } else {
+                statement = connection.prepareStatement("INSERT INTO `doctor` (`id`,"
                         + " `name`,"
                         + " `nic`,"
                         + " `regNumber`,"
@@ -550,7 +547,7 @@ public class EditDoctor extends JInternalFrame {
                         + " `birthday`, "
                         + " `telephone`,"
                         + " `jobHistory`,"
-                        + "`profilePicture`) VALUES (?,?,?,?,?,?,?,?,?,?)",Statement.RETURN_GENERATED_KEYS);
+                        + "`profilePicture`) VALUES (?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
                 statement.setString(1, null);
                 statement.setString(2, doctor.getName());
                 statement.setString(3, doctor.getNic());
@@ -560,20 +557,20 @@ public class EditDoctor extends JInternalFrame {
                 statement.setString(7, doctor.getBirthday());
                 statement.setString(8, doctor.getTp());
                 statement.setString(9, doctor.getJobHistory());
-                if(profilePicture.getProfilePicturePath().length()>0){
-                	File image = new File(doctor.getDoctorProfilePicPath());
-                	inputStream = new FileInputStream(image);
-                	statement.setBlob(10, inputStream);
+                if (profilePicture.getProfilePicturePath().length() > 0) {
+                    File image = new File(doctor.getDoctorProfilePicPath());
+                    inputStream = new FileInputStream(image);
+                    statement.setBlob(10, inputStream);
+                } else {
+                    statement.setNull(10, java.sql.Types.BLOB);
                 }
-                else{
-                	statement.setNull(10, java.sql.Types.BLOB);
+            }
+
+            if (statement.executeUpdate() > 0) {
+                ResultSet rs = statement.getGeneratedKeys();
+                if (rs.next()) {
+                    doctor.setId(rs.getInt(1) + "");
                 }
-            }            
-            
-            if(statement.executeUpdate() > 0){
-            	ResultSet rs = statement.getGeneratedKeys();
-            	if(rs.next())
-            		doctor.setId(rs.getInt(1)+"");
             }
             clearField();
             doctorController.fireUpdateRowDoctorSearchTablePerformed(new ActionEvent(doctor, -1, ""));
@@ -583,38 +580,41 @@ public class EditDoctor extends JInternalFrame {
             System.out.println(ex.getMessage());
         }
     }
-    private void deleteButtonAction(){
-    	bDelete.addActionListener(new ActionListener(){
-            
+
+    private void deleteButtonAction() {
+        bDelete.addActionListener(new ActionListener() {
+
             @Override
-            public void actionPerformed(ActionEvent e){
-                int dialogResult = JOptionPane.showConfirmDialog (null, "Would You Like to Remove Doctor?","Warning",0);
-				if(dialogResult == JOptionPane.YES_OPTION)
-					removePatient(tRegNumber.getText());
+            public void actionPerformed(ActionEvent e) {
+                int dialogResult = JOptionPane.showConfirmDialog(null, "Would You Like to Remove Doctor?", "Warning", 0);
+                if (dialogResult == JOptionPane.YES_OPTION) {
+                    removePatient(tRegNumber.getText());
+                }
             }
         });
     }
-    private void removePatient(String regNumber){
-    	DBConnection dbConnection = new DBConnection();
+
+    private void removePatient(String regNumber) {
+        DBConnection dbConnection = new DBConnection();
         Connection connection = dbConnection.getConnection();
         Statement stmt = null;
         String sql = null;
-        
+
         try {
-		stmt = connection.createStatement();
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
-	try {
-		sql = "DELETE FROM `doctor` WHERE `doctor`.`regNumber` = '"+regNumber+"'";
-		stmt.executeUpdate(sql);
-		connection.close();
-		clearField();
-		ActionEvent e1 = new ActionEvent(regNumber,-1,"");
-		doctorController.fireRemoveRowDoctorSearchTablePerformed(e1);
-		JOptionPane.showMessageDialog(null, "Doctor detail removing succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-	} catch (SQLException e) {
-		e.printStackTrace();
-	}
+            stmt = connection.createStatement();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        try {
+            sql = "DELETE FROM `doctor` WHERE `doctor`.`regNumber` = '" + regNumber + "'";
+            stmt.executeUpdate(sql);
+            connection.close();
+            clearField();
+            ActionEvent e1 = new ActionEvent(regNumber, -1, "");
+            doctorController.fireRemoveRowDoctorSearchTablePerformed(e1);
+            JOptionPane.showMessageDialog(null, "Doctor detail removing succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 }

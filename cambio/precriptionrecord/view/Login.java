@@ -2,7 +2,6 @@ package cambio.precriptionrecord.view;
 
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.util.DBConnection;
-import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridBagConstraints;
@@ -16,21 +15,16 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JDesktopPane;
-import javax.swing.JInternalFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
-import javax.swing.border.Border;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
-import javax.swing.plaf.basic.BasicInternalFrameUI;
 
-import org.omg.CORBA.TCKind;
 
 public class Login extends JPanel {
 
@@ -211,7 +205,6 @@ public class Login extends JPanel {
     
     private void jTextField1KeyPressed(java.awt.event.KeyEvent evt) {
     	  if(evt.getKeyCode() == KeyEvent.VK_ENTER) {
-    	      System.out.println("sanath");
     	   }
     	} 
 

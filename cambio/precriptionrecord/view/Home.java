@@ -1,7 +1,12 @@
 package cambio.precriptionrecord.view;
 
 import cambio.precriptionrecord.controller.CommonController;
+
+import java.awt.BorderLayout;
+import java.awt.CardLayout;
+import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
 import java.awt.Point;
@@ -9,9 +14,6 @@ import java.awt.Toolkit;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
-import javax.swing.JInternalFrame;
-import javax.swing.JLabel;
-import javax.swing.JLayeredPane;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -23,7 +25,6 @@ import cambio.precriptionrecord.view.patient.TreatmentHistory;
 import cambio.precriptionrecord.view.prescription.NewPrescription;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.beans.PropertyVetoException;
 
 public class Home extends JFrame {
 
@@ -48,7 +49,7 @@ public class Home extends JFrame {
         setResizable(false);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         getContentPane().add(panelMain);
-        panelMain.setLayout(new GridBagLayout());
+        panelMain.setLayout(new BorderLayout());
         panelMain.setVisible(true);
     }
 
@@ -101,6 +102,7 @@ public class Home extends JFrame {
             	panelMain.add(editPatient); 
             	try {
             		editPatient.setSelected(true);
+            		editPatient.toFront();
                 }catch (java.beans.PropertyVetoException e1) {}
             }
         });
@@ -131,6 +133,7 @@ public class Home extends JFrame {
             	panelMain.add(doctor);
             	try{
             		doctor.setSelected(true);
+            		doctor.toFront();
             	}catch(Exception ex){
             		
             	}
@@ -186,7 +189,7 @@ public class Home extends JFrame {
         loginPanelConstraints.gridx = 0;
         loginPanelConstraints.gridy = 2;
         loginPanelConstraints.anchor = GridBagConstraints.NORTHWEST;
-        panelMain.add(new Login(commonController), loginPanelConstraints);
+        panelMain.add(new Login(commonController)/*, loginPanelConstraints*/);
         commonController.registerLoginCredentialsSuccessActionListeners(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {

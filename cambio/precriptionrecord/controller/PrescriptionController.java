@@ -6,10 +6,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PrescriptionController {
-	private List<ActionListener> listenerNewPrescriptionOpen = new ArrayList<>();
-	private List<ActionListener> listenerEditPrescriptionDosage = new ArrayList<>();
-	private List<ActionListener> listenerSavePrescription = new ArrayList<>();
-	private List<ActionListener> listenerSavePrescriptionReverse = new ArrayList<>();
+	private final List<ActionListener> listenerNewPrescriptionOpen = new ArrayList<>();
+	private final List<ActionListener> listenerEditPrescriptionDosage = new ArrayList<>();
+	private final List<ActionListener> listenerSavePrescription = new ArrayList<>();
+	private final List<ActionListener> listenerSavePrescriptionReverse = new ArrayList<>();
+	private final List<ActionListener> listenerPatientDetailField = new ArrayList<>();
+	private final List<ActionListener> listenerPatientDetail = new ArrayList<>();
 	
 	public void registerAddNewPrescriptionListeners(ActionListener listener)
 	{
@@ -35,18 +37,6 @@ public class PrescriptionController {
 		}
 	}
 	
-	public void registerSavePrescriptionListeners(ActionListener listener)
-	{
-		listenerSavePrescription.add(listener);
-	}
-	
-	public void fireSavePrescriptionPerformed(ActionEvent e)
-	{
-		for (ActionListener actionListener : listenerSavePrescription) {
-			actionListener.actionPerformed(e);
-		}
-	}
-	
 	public void registerSavePrescriptionReverseListeners(ActionListener listener)
 	{
 		listenerSavePrescriptionReverse.add(listener);
@@ -55,6 +45,30 @@ public class PrescriptionController {
 	public void fireSavePrescriptionReversePerformed(ActionEvent e)
 	{
 		for (ActionListener actionListener : listenerSavePrescriptionReverse) {
+			actionListener.actionPerformed(e);
+		}
+	}
+        
+	public void registerPatientDetailFieldListener(ActionListener listener)
+	{
+		listenerPatientDetailField.add(listener);
+	}
+	
+	public void firePatientDetailFieldActionPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerPatientDetailField) {
+			actionListener.actionPerformed(e);
+		}
+	}
+	
+	public void registerPatientDetailListener(ActionListener listener)
+	{
+		listenerPatientDetail.add(listener);
+	}
+	
+	public void firePatientDetailActionPerformed(ActionEvent e)
+	{
+		for (ActionListener actionListener : listenerPatientDetail) {
 			actionListener.actionPerformed(e);
 		}
 	}

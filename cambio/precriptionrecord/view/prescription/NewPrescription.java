@@ -49,7 +49,7 @@ public class NewPrescription extends JInternalFrame{
 	}
 	
 	private void addPrescriptionPanel(){
-		PrescriptionPanel prescriptionPanel = new PrescriptionPanel(prescriptionController,commonController);
+		PrescriptionArea prescriptionPanel = new PrescriptionArea(prescriptionController,commonController);
 		GridBagConstraints constraint = new GridBagConstraints();	
 		constraint.gridx = 0;
 		constraint.gridy = 1;

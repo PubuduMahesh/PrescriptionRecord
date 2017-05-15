@@ -66,15 +66,7 @@ public class DoctorTableModel extends AbstractTableModel {
 	
 	public void setValueAtRow(Doctor doctor, int rowIndex)
     {
-		Doctor d = tableData.get(rowIndex);
-		d.setName(doctor.getName());
-		d.setNic(doctor.getNic());
-		d.setRegNumber(doctor.getRegNumber());
-		d.setSpeiality(doctor.getSpeiality());
-		d.setGender(doctor.getGender());
-		d.setBirthday(doctor.getBirthday());
-		d.setTp(doctor.getTp());
-		d.setJobHistory(doctor.getJobHistory());	
+		tableData.set(rowIndex, doctor);
 		fireTableDataChanged();
         
 		

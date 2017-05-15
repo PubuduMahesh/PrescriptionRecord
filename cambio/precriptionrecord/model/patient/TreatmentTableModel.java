@@ -43,7 +43,7 @@ public class TreatmentTableModel extends AbstractTableModel{
 		case 2:
 			return prescription.getDrugList();
 		case 3:
-			return prescription.getDoctorID();
+			return prescription.getDoctorName();
 		default:
 			return null;
 		}
@@ -58,11 +58,7 @@ public class TreatmentTableModel extends AbstractTableModel{
 	
 	public void setValueAtRow(Prescription prescription, int rowIndex)
     {
-		Prescription d = tableData.get(rowIndex);
-		d.setDate(prescription.getDate());
-		d.setDiagnosisDescription(prescription.getDiagnosisDescription());
-		d.setDrugList(prescription.getDrugList());
-		d.setDoctorID(prescription.getDoctorID());
+		tableData.set(rowIndex, prescription);
 		fireTableDataChanged();
         
 		
@@ -91,5 +87,9 @@ public class TreatmentTableModel extends AbstractTableModel{
 	public void removeRow(int rowIndex){
 		tableData.remove(rowIndex);
 		fireTableDataChanged();
+	}
+	
+	public java.util.List<Prescription> getTableData(){
+		return tableData;
 	}
 }
