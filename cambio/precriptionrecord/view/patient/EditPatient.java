@@ -26,12 +26,14 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import cambio.precriptionrecord.SQLToolKit.PatientSQLToolkit;
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.model.patient.Patient;
 import cambio.precriptionrecord.util.DBConnection;
 import cambio.precriptionrecord.util.DatePicker;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -71,7 +73,6 @@ public class EditPatient extends JInternalFrame {
         this.commonController = new CommonController();
         setTitle("Update Patient");
         setPreferredSize(new Dimension(740, 665));
-//        setMinimumSize(new Dimension(740, 665));
         setClosable(true);
         setVisible(true);
         setResizable(true);
@@ -389,72 +390,56 @@ public class EditPatient extends JInternalFrame {
     private void saveButtonDisabled() {
         bUpdatge.setEnabled(false);
         bDelete.setEnabled(false);
-        new UpdateDeleteButtonsTextFieldCondtion(tName);
-        new UpdateDeleteButtonsTextFieldCondtion(tBirthday);
-        new RadioButtonRadioButtonCondtion(rbMale);
-        new RadioButtonRadioButtonCondtion(rbFemale);
-        new RadioButtonRadioButtonCondtion(rbSingle);
-        new RadioButtonRadioButtonCondtion(rbMarried);
-        new RadioButtonRadioButtonCondtion(rbDivorced);
+        tName.getDocument().addDocumentListener(new UpdateDeleteButtonsTextFieldCondtion());
+        tBirthday.getDocument().addDocumentListener(new UpdateDeleteButtonsTextFieldCondtion());
+        rbMale.addActionListener(new RadioButtonRadioButtonCondtion());
+        rbFemale.addActionListener(new RadioButtonRadioButtonCondtion());
+        rbSingle.addActionListener(new RadioButtonRadioButtonCondtion());
+        rbMarried.addActionListener(new RadioButtonRadioButtonCondtion());
+        rbDivorced.addActionListener(new RadioButtonRadioButtonCondtion());
 
     }
 
-    private class UpdateDeleteButtonsTextFieldCondtion {
+    private class UpdateDeleteButtonsTextFieldCondtion implements DocumentListener{
 
-        public UpdateDeleteButtonsTextFieldCondtion(JTextField textField) {
-            textField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                    enableRemoveButton();
-                }
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                    enableRemoveButton();
-                }
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                    enableRemoveButton();
-                }
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			 enableSaveButton();
+			
+		}
+    	
 
-            });
-        }
-    }
+	}
 
-    private class RadioButtonRadioButtonCondtion {
-
-        public RadioButtonRadioButtonCondtion(JRadioButton radioButton) {
-            radioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    enableSaveButton();
-                }
-            });
-        }
+    private class RadioButtonRadioButtonCondtion implements ActionListener{
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			enableSaveButton();
+			
+		}
     }
 
     private void enableSaveButton() {
-        if (!tName.getText().equals("") && 
-            !tBirthday.getText().equals("") && 
+        if (tName.getText().length()>0 && 
+            tBirthday.getText().length()>0 && 
             (rbMale.isSelected() || rbFemale.isSelected()) && 
             (rbSingle.isSelected()|| rbMarried.isSelected() || rbDivorced.isSelected())) {
             bUpdatge.setEnabled(true);
         } else {
             bUpdatge.setEnabled(false);
         }
-    }
-
-    private void enableRemoveButton() {
-        if (!tID.getText().equals("")) {
-            bDelete.setEnabled(true);
-        } else {
-            bDelete.setEnabled(false);
-        }
-
     }
 
     private void updateButtonAction() {
@@ -491,80 +476,13 @@ public class EditPatient extends JInternalFrame {
     }
 
     private void savePatient(Patient patient) {
-        DBConnection dbCon = new DBConnection();
-        Connection connection = dbCon.getConnection();
-        PreparedStatement statement = null;
-        FileInputStream inputStream = null;
-
-        try {
-            if (!patient.getID().equals("")) {
-                statement = connection.prepareStatement("UPDATE `patient` SET "
-                        + " `name` = ?,"
-                        + " `nic` = ?,"
-                        + " `address` = ?,"
-                        + " `gender` = ?,"
-                        + " `status` = ?,"
-                        + " `birthday` = ?, "
-                        + "`telephone` = ?,"
-                        + "`profilePicture` = ?,"
-                        + " `healthDescription` = ? "
-                        + "WHERE `patient`.`id` = ?", Statement.RETURN_GENERATED_KEYS);
-                statement.setString(1, patient.getName());
-                statement.setString(2, patient.getNIC());
-                statement.setString(3, patient.getAddress());
-                statement.setString(4, patient.getGender());
-                statement.setString(5, patient.getStatus());
-                statement.setString(6, patient.getBirthday());
-                statement.setString(7, patient.getTp());
-                if (profilePicture.getProfilePicturePath().length() == 0) {
-                    statement.setNull(8, java.sql.Types.BLOB);
-                } else {
-                    File image = new File(patient.getProfilePicPath());
-                    inputStream = new FileInputStream(image);
-                    statement.setBlob(8, inputStream);
-                }
-                statement.setString(9, patient.getMedicalHistory());
-                statement.setString(10, patient.getID());
-            } else {
-                statement = connection.prepareStatement("INSERT INTO `patient` (`id`,"
-                        + " `name`,"
-                        + " `nic`,"
-                        + " `address`,"
-                        + " `gender`, `status`,"
-                        + " `birthday`, `telephone`,`profilePicture`,"
-                        + " `healthDescription`) VALUES (?,?,?,?,?,?,?,?,?,?)", Statement.RETURN_GENERATED_KEYS);
-                statement.setString(1, null);
-                statement.setString(2, patient.getName());
-                statement.setString(3, patient.getNIC());
-                statement.setString(4, patient.getAddress());
-                statement.setString(5, patient.getGender());
-                statement.setString(6, patient.getStatus());
-                statement.setString(7, patient.getBirthday());
-                statement.setString(8, patient.getTp());
-                if (profilePicture.getProfilePicturePath().length() == 0) {
-                    statement.setNull(9, java.sql.Types.BLOB);
-                } else {
-                    File image = new File(patient.getProfilePicPath());
-                    inputStream = new FileInputStream(image);
-                    statement.setBlob(9, inputStream);
-                }
-                statement.setString(10, patient.getMedicalHistory());
-
-            }
-            if (statement.executeUpdate() > 0) {
-                ResultSet rs = statement.getGeneratedKeys();
-                if (rs.next()) {
-                    patient.setID(rs.getInt(1) + "");
-                }
-            }
-            clearField();
-            patientController.fireUpdateRowPatientSearchTablePerformed(new ActionEvent(patient, -1, null));
-            JOptionPane.showMessageDialog(null, "Patient detail updating succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (Exception ex) {
-            System.out.println(ex.getMessage());
-        }
-
+    	PatientSQLToolkit patientSqlToolkit = new PatientSQLToolkit();
+    	String patientID = patientSqlToolkit.updatePatient(patient, profilePicture);
+    	if(patientID!=null)
+    		patient.setID(patientID);    	
+    	clearField();
+        patientController.fireUpdateRowPatientSearchTablePerformed(new ActionEvent(patient, -1, null));
+        JOptionPane.showMessageDialog(null, "Patient detail updating succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 
     private void mouseClickRow() {
@@ -646,26 +564,9 @@ public class EditPatient extends JInternalFrame {
     }
 
     private void deltePatient(String id) {
-        DBConnection dbCon = new DBConnection();
-        Connection con = dbCon.getConnection();
-        Statement stmt = null;
-        String sql = null;
-        try {
-            stmt = con.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            sql = "DELETE FROM `patient` WHERE `id` = " + id + "";
-            stmt.executeUpdate(sql);
-            con.close();
-            clearField();
-            ActionEvent e1 = new ActionEvent(id, -1, "");
-            patientController.fireRemoveRowPatientSearchTablePerformed(e1);
-            JOptionPane.showMessageDialog(null, "Patient detail removing succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-
+        PatientSQLToolkit patientSQLToolkit = new PatientSQLToolkit();
+        patientSQLToolkit.deletePatient(id);
+        patientController.fireRemoveRowPatientSearchTablePerformed(new ActionEvent(id, -1, ""));
+        JOptionPane.showMessageDialog(null, "Patient detail removing succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 }

@@ -180,7 +180,7 @@ public class Login extends JPanel {
         }
     }
     private void enableLoginButton(){
-    	if(tPassword.getPassword().length > 0 && !tNIC.getText().equals(""))
+    	if(tPassword.getPassword().length > 0 && tNIC.getText().length()>0)
     		bLogin.setEnabled(true);
     	else
     		bLogin.setEnabled(false);

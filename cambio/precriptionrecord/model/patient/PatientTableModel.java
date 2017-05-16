@@ -1,6 +1,7 @@
 package cambio.precriptionrecord.model.patient;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -8,9 +9,9 @@ import javax.swing.table.AbstractTableModel;
 public class PatientTableModel extends AbstractTableModel {
 
 	private String [] columnNames;
-	private java.util.List<Patient> tableData = new ArrayList<Patient>();
+	private List<Patient> tableData = new ArrayList<Patient>();
 	
-	public PatientTableModel(ArrayList<Patient>data,String[] columnNames){
+	public PatientTableModel(List<Patient>data,String[] columnNames){
 		this.columnNames = columnNames;
 		this.tableData = data;
 	}
@@ -81,10 +82,9 @@ public class PatientTableModel extends AbstractTableModel {
 		
     }
 	public void updateTable(Patient patient){
-		tableData.add(patient);
-		int row = tableData.size()-1;// New data added to the first row each time. 
-		fireTableRowsInserted(row, row);//fire row inserted. 
-		
+			tableData.add(patient);
+			int row = tableData.size()-1;// New data added to the first row each time. 
+			fireTableRowsInserted(row, row);//fire row inserted.		
 	}
 
 	@Override
@@ -92,8 +92,8 @@ public class PatientTableModel extends AbstractTableModel {
 		return false;
 	}
 	
-	public int getRowIndex(String value,JTable table){
-		for(int rowCount = 0; rowCount < table.getRowCount(); rowCount++){
+	public int getRowIndex(String value){
+		for(int rowCount = 0; rowCount <getRowCount(); rowCount++){
 			if(getValueAt(rowCount, 0).equals(value)){
 				return rowCount;
 			}

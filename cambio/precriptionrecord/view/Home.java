@@ -14,6 +14,7 @@ import java.awt.Toolkit;
 
 import javax.swing.JDesktopPane;
 import javax.swing.JFrame;
+import javax.swing.JInternalFrame;
 import javax.swing.JMenu;
 import javax.swing.JMenuBar;
 import javax.swing.JMenuItem;
@@ -54,8 +55,8 @@ public class Home extends JFrame {
     }
 
     private void configureLayout() {
-    	addMenuBar();
-//        addLoginPanel();
+//    	addMenuBar();
+        addLoginPanel();
         
 
     }
@@ -90,6 +91,11 @@ public class Home extends JFrame {
         addDrugSubMenu(drugManagement);
     	setJMenuBar(menuBar);
     }
+    private void addToPanel(JInternalFrame frame) {
+		panelMain.add(frame);
+		frame.toFront();
+	}
+    
     private void addPatientSubMenu(JMenu patientManage) {
         JMenuItem editPatient = new JMenuItem("Update Patient");
         JMenuItem treatmentHistory = new JMenuItem("Treatment History");
@@ -98,15 +104,12 @@ public class Home extends JFrame {
 
         editPatient.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e) {
-            	EditPatient editPatient = new EditPatient();
-            	panelMain.add(editPatient); 
-            	try {
-            		editPatient.setSelected(true);
-            		editPatient.toFront();
-                }catch (java.beans.PropertyVetoException e1) {}
+				addToPanel(new EditPatient());
             }
         });
 
+    	
+    	
         treatmentHistory.addActionListener(new ActionListener() {
 
             @Override

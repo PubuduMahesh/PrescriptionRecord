@@ -34,6 +34,7 @@ import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 import javax.swing.plaf.basic.BasicInternalFrameUI;
 
+import cambio.precriptionrecord.SQLToolKit.PrescriptionSQLToolkit;
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.controller.PrescriptionController;
@@ -220,7 +221,7 @@ public class PrescriptionArea extends JInternalFrame {
         GridBagConstraints tablConstraints = new GridBagConstraints();
 
         final String[] header = {"ID", "Name", "Description", "Type", "Dosage"};
-        ArrayList<Drug> data = new ArrayList<Drug>();
+        List<Drug> data = new ArrayList<Drug>();
         prescriptionTable = new JTable(new PrescriptionTableModel(data, header));
 
         JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -276,7 +277,7 @@ public class PrescriptionArea extends JInternalFrame {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() instanceof Drug) {
                     drug = (Drug) e.getSource();
-                    int rowIndex = tbModel.getRowIndex(drug.getDrugId(), prescriptionTable);
+                    int rowIndex = tbModel.getRowIndex(drug.getDrugId());
                     if (rowIndex >= 0) {
                         int dialogResult = JOptionPane.showConfirmDialog(null, "Already added. Do you want to edit existing prescription?", "Warning", 0);
                         if (dialogResult == JOptionPane.YES_OPTION) {
@@ -297,7 +298,7 @@ public class PrescriptionArea extends JInternalFrame {
 
             @Override
             public void actionPerformed(ActionEvent e) {
-                int rowIndex = tbModel.getRowIndex(drug.getDrugId(), prescriptionTable);
+                int rowIndex = tbModel.getRowIndex(drug.getDrugId());
                 if (rowIndex >= 0) {
                     int dialogResult = JOptionPane.showConfirmDialog(null, "Already added. Do you want to edit existing prescription?", "Warning", 0);
                     if (dialogResult == JOptionPane.YES_OPTION) {
@@ -372,26 +373,9 @@ public class PrescriptionArea extends JInternalFrame {
     }
 
     private void savePrescription(Prescription prescription) {
-        DBConnection dbCon = new DBConnection();
-        Connection con = dbCon.getConnection();
-        Statement stmt = null;
-        String sql = null;
-        try {
-            stmt = con.createStatement();
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-        try {
-            sql = "INSERT INTO `prescription` (`id`,`patientID`,`doctorID`,`diagDescription`,`drugList`,`date`) "
-                    + "VALUES(NULL,'" + prescription.getPatientID() + "',(SELECT `id` FROM  `doctor` WHERE `doctor`.`nic` = '" + prescription.getDoctorID() + "'),'" + prescription.getDiagnosisDescription() + "','" + prescription.getDrugList() + "','" + prescription.getDate() + "')";
-            stmt.executeUpdate(sql);
-            con.close();
-            JOptionPane.showMessageDialog(null, "Prescription detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-
-        } catch (SQLException e) {
-            JOptionPane.showMessageDialog(null, "Prescription detail saving failed", "Error", JOptionPane.ERROR_MESSAGE);
-            e.printStackTrace();
-        }
+        PrescriptionSQLToolkit prescriptionToolkit = new PrescriptionSQLToolkit();
+        prescriptionToolkit.updatePrescription(prescription);
+        
     }
 
     private void printButtonAction() {
@@ -510,63 +494,64 @@ public class PrescriptionArea extends JInternalFrame {
             public void actionPerformed(ActionEvent e) {
                 if (e.getSource() instanceof JTextField) {
                     tPatientID = (JTextField)e.getSource();
-                    new SaveButtonTextFieldCondtion(tPatientID);
+                    tPatientID.getDocument().addDocumentListener(new SaveButtonTextFieldCondtion());
                 }
 
             }
         });
-        new SaveButtonTextFieldCondtion(tDate);
-        new SaveButtonTextFieldAreaCondtion(tAnalysis);
+        tDate.getDocument().addDocumentListener(new SaveButtonTextFieldCondtion());
+        tAnalysis.getDocument().addDocumentListener(new SaveButtonTextFieldAreaCondtion());
     }
 
-    private class SaveButtonTextFieldCondtion {
+    private class SaveButtonTextFieldCondtion implements DocumentListener{
 
-        public SaveButtonTextFieldCondtion(JTextField textField) {
-            textField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-            });
-        }
+
+        
     }
 
-    private class SaveButtonTextFieldAreaCondtion {
+    private class SaveButtonTextFieldAreaCondtion implements DocumentListener {
 
-        public SaveButtonTextFieldAreaCondtion(JTextArea textArea) {
-            textArea.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-            });
-        }
+        
     }
 
     private void enableSaveButton() {
-        if (tPatientID != null && !tDate.getText().equals("") && !tAnalysis.getText().equals("") && !tPatientID.getText().equals("")) {
+        if (tPatientID != null && tDate.getText().length()>0 && tAnalysis.getText().length()>0 && tPatientID.getText().length()>0) {
             bSave.setEnabled(true);
         } else {
             bSave.setEnabled(false);

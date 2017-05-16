@@ -24,6 +24,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.SQLToolKit.PatientSQLToolkit;
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.PatientController;
 import cambio.precriptionrecord.model.patient.Patient;
@@ -214,74 +215,23 @@ public class TreatmentHistory extends JInternalFrame{
 
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				DBConnection dbCon = new DBConnection();
-				Connection con = dbCon.getConnection();
-				Statement stmt = null;
-				String sql = null;
-				ResultSet rs= null;
-				try {
-					stmt = con.createStatement();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				List<Prescription> prescriptionList;
+				PatientSQLToolkit patientSqlToolkit = new PatientSQLToolkit();
+				prescriptionList = patientSqlToolkit.searchPrescription(tFrom.getText(),tTo.getText(), tID.getText());
+				if(prescriptionList.size()>0){
+					ActionEvent e1 = new ActionEvent(prescriptionList,-1,null);
+					commonController.fireTreatmentHistoryActionPrformed(e1);
 				}
-				try {
-					if(!tFrom.getText().equals("") && !tTo.getText().equals(""))
-						sql = "SELECT `prescription`.`date`,`prescription`.`diagDescription`,`prescription`.`drugList`,`doctor`.`name` from `prescription` INNER JOIN `doctor` ON `prescription`.`doctorID` = `doctor`.`id`" 
-								+ "WHERE "
-								+ "`prescription`.`date`< '"+tTo.getText()+"' "
-								+ "&& "
-								+ "`prescription`.`date` > '"+tFrom.getText()+"'"
-								+ " && `prescription`.`patientID` = '"+tID.getText()+"'";
-					else if(!tFrom.getText().equals("") && tTo.getText().equals(""))
-						sql = "SELECT `prescription`.`date`,`prescription`.`diagDescription`,`prescription`.`drugList`,`doctor`.`name` FROM  `prescription` INNER JOIN `doctor` ON `prescription`.`doctorID` = `doctor`.`id` WHERE `prescription`.`date` > '"+tFrom.getText()+"' && `patientID` = '"+tID.getText()+"'";
-					else if(tFrom.getText().equals("") && !tTo.getText().equals(""))
-						sql = "SELECT  `prescription`.`date`,`prescription`.`diagDescription`,`prescription`.`drugList`,`doctor`.`name` FROM prescription INNER JOIN `doctor` ON `prescription`.`doctorID` = `doctor`.`id` WHERE `prescription`.`date`< '"+tTo.getText()+"' && `prescription`.`patientID` = '"+tID.getText()+"'";
-					else 
-						sql = "SELECT `prescription`.`date`,`prescription`.`diagDescription`,`prescription`.`drugList`,`doctor`.`name` FROM  prescription INNER JOIN `doctor` ON `prescription`.`doctorID`=`doctor`.`id` WHERE `prescription`.`patientID` = '"+tID.getText()+"'";	
-					rs = stmt.executeQuery(sql);
-					setTreatmentHistoryObject(rs);
-					con.close();
-					TreatementSearchedPatient searchedPatient = new TreatementSearchedPatient();
-					searchedPatient.setPatientName(tName.getText());
-					searchedPatient.setFromDate(tFrom.getText());
-					searchedPatient.setToDate(tTo.getText());
-					ActionEvent e1 = new ActionEvent(searchedPatient,-1,null);
-					commonController.fireTreatmentHistoryPatientDetailActionPrformed(e1);
-					
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				
+				TreatementSearchedPatient searchedPatient = new TreatementSearchedPatient();
+				searchedPatient.setPatientName(tName.getText());
+				searchedPatient.setFromDate(tFrom.getText());
+				searchedPatient.setToDate(tTo.getText());
+				ActionEvent e1 = new ActionEvent(searchedPatient,-1,null);
+				commonController.fireTreatmentHistoryPatientDetailActionPrformed(e1);
 
 			}
 		});
-
-	}
-
-	private void setTreatmentHistoryObject(ResultSet rs){
-		try {   
-			rs.last();
-			int row = rs.getRow();
-			rs.beforeFirst();
-			if(row>0){
-				List<Prescription> prescriptionList = new ArrayList<Prescription>();
-				while(rs.next()){
-					Prescription prescription = new Prescription();
-					prescription.setDate(rs.getObject("date").toString());
-					prescription.setDiagnosisDescription(rs.getObject("diagDescription").toString());
-					prescription.setDrugList(rs.getObject("drugList").toString());
-					prescription.setDoctorName(rs.getObject("name").toString());
-					prescriptionList.add(prescription);
-				}
-				ActionEvent e1 = new ActionEvent(prescriptionList,-1,null);
-				commonController.fireTreatmentHistoryActionPrformed(e1);
-			}
-			else{
-				JOptionPane.showMessageDialog(null, "No data found from the source.", "Success", JOptionPane.INFORMATION_MESSAGE);
-			}
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
 
 	}
 

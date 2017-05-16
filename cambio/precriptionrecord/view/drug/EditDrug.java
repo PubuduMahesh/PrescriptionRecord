@@ -25,6 +25,7 @@ import javax.swing.JTextField;
 import javax.swing.event.DocumentEvent;
 import javax.swing.event.DocumentListener;
 
+import cambio.precriptionrecord.SQLToolKit.DrugSQLToolkit;
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.model.drug.Drug;
@@ -234,45 +235,20 @@ public class EditDrug extends JInternalFrame {
         });
     }
 
-    private void saveDrug(Drug drug) {
-        DBConnection dbConnection = new DBConnection();
-        Connection connection = dbConnection.getConnection();
-        Statement stmt = null;
-        String sql;
-        try {
-            stmt = connection.createStatement();
-            if (!drug.getDrugId().equals("")) {
-                sql = "UPDATE `drug` SET"
-                        + "`drugName` = '" + drug.getDrugName() + "',"
-                        + "`description` = '" + drug.getDescription() + "',"
-                        + "`type` = '" + drug.getType() + "',"
-                        + "`dosage` = '" + drug.getDosage() + "'"
-                        + "WHERE"
-                        + "`drug`.`drugID` = '" + drug.getDrugId() + "'";
-            } else {
-                sql = "INSERT INTO `drug` (`drugId`,"
-                        + "`drugName`,"
-                        + "`description`,"
-                        + "`type`,"
-                        + "`dosage`) VALUES (NULL,"
-                        + "'" + drug.getDrugName() + "',"
-                        + "'" + drug.getDescription() + "',"
-                        + "'" + drug.getType() + "',"
-                        + "'" + drug.getDosage() + "')";
-            }
-            stmt.executeUpdate(sql, stmt.RETURN_GENERATED_KEYS);
-            drugController.fireEditRowDrugSearchTablePerformed(new ActionEvent(drug, -1, ""));
-            ResultSet rs = stmt.getGeneratedKeys();
-            if (rs != null && rs.next()) {
-                drug.setDrugId(rs.getInt(1) + "");
-            }
-
-            connection.close();
-            clearField();
-            JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-        }
+    private void saveDrug(Drug drug) {        
+    	DrugSQLToolkit drugSQlToolkit = new DrugSQLToolkit();
+    	ResultSet rs = drugSQlToolkit.updateDrug(drug);
+    	try {
+			if (rs != null && rs.next()) {
+			    drug.setDrugId(rs.getInt(1) + "");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    	drugController.fireEditRowDrugSearchTablePerformed(new ActionEvent(drug, -1, ""));
+    	JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
+    	clearField();
     }
 
     private void clearField() {
@@ -284,48 +260,44 @@ public class EditDrug extends JInternalFrame {
 
     private void saveButtonDisabled() {
         bSave.setEnabled(false);
-        new SaveButtonTextFieldCondtion(tName);
-        new SaveButtonRadioButtonCondtion(rbTablet);
-        new SaveButtonRadioButtonCondtion(rbCapsules);
-        new SaveButtonRadioButtonCondtion(rbSyrups);
+        tName.getDocument().addDocumentListener(new SaveButtonTextFieldCondtion() );
+        rbTablet.addActionListener(new SaveButtonRadioButtonCondtion() );
+        rbCapsules.addActionListener(new SaveButtonRadioButtonCondtion() );
+        rbSyrups.addActionListener(new SaveButtonRadioButtonCondtion() );
     }
 
-    private class SaveButtonTextFieldCondtion {
+    private class SaveButtonTextFieldCondtion implements DocumentListener{
 
-        public SaveButtonTextFieldCondtion(JTextField textField) {
-            textField.getDocument().addDocumentListener(new DocumentListener() {
-                @Override
-                public void changedUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void insertUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void removeUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
+		@Override
+		public void removeUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
 
-                @Override
-                public void insertUpdate(DocumentEvent e) {
-                    enableSaveButton();
-                }
-            });
-        }
+		@Override
+		public void changedUpdate(DocumentEvent e) {
+			enableSaveButton();
+			
+		}
     }
 
-    private class SaveButtonRadioButtonCondtion {
+    private class SaveButtonRadioButtonCondtion implements ActionListener{
 
-        public SaveButtonRadioButtonCondtion(JRadioButton radioButton) {
-            radioButton.addActionListener(new ActionListener() {
-                @Override
-                public void actionPerformed(ActionEvent e) {
-                    enableSaveButton();
-                }
-            });
-        }
+		@Override
+		public void actionPerformed(ActionEvent e) {
+			enableSaveButton();
+			
+		}
     }
 
     private void enableSaveButton() {
-        if (!tName.getText().equals("")
+        if (tName.getText().length()>0
                 && (rbTablet.isSelected()
                 || rbCapsules.isSelected()
                 || rbSyrups.isSelected())) {
@@ -376,22 +348,11 @@ public class EditDrug extends JInternalFrame {
         });
     }
 
-    private void removeDrug(Drug drug) {
-        DBConnection dbConnection = new DBConnection();
-        Connection connection = dbConnection.getConnection();
-        Statement stmt = null;
-        String sql;
-        try {
-            stmt = connection.createStatement();
-            sql = "DELETE FROM `drug` WHERE `drug`.`drugId` = '" + drug.getDrugId() + "'";
-            stmt.executeUpdate(sql);
-            connection.close();
-            ActionEvent e1 = new ActionEvent(drug.getDrugId(), -1, "");
-            drugController.fireRemoveRowDrugSearchTablePerformed(e1);
-            clearField();
-            JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
-        } catch (SQLException e1) {
-            e1.printStackTrace();
-        }
+    private void removeDrug(Drug drug) {        
+    	DrugSQLToolkit drugSqlToolKit = new DrugSQLToolkit();
+    	drugSqlToolKit.DeleteDrug(drug);
+    	drugController.fireRemoveRowDrugSearchTablePerformed(new ActionEvent(drug.getDrugId(), -1, ""));
+    	clearField();
+    	JOptionPane.showMessageDialog(null, "Drug detail saving succeeded.", "Success", JOptionPane.INFORMATION_MESSAGE);
     }
 }

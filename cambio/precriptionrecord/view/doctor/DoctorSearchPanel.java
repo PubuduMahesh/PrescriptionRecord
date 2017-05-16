@@ -12,6 +12,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
@@ -20,12 +21,14 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.SQLToolKit.DoctorSQLTollkit;
 import cambio.precriptionrecord.controller.DoctorController;
 import cambio.precriptionrecord.model.doctor.Doctor;
 import cambio.precriptionrecord.model.doctor.DoctorTableModel;
 import cambio.precriptionrecord.util.DBConnection;
 
 import javax.swing.JTable;
+import javax.print.Doc;
 import javax.swing.JButton;
 import javax.swing.JOptionPane;
 
@@ -100,7 +103,7 @@ public class DoctorSearchPanel extends JPanel{
 		GridBagConstraints tablConstraints = new GridBagConstraints();
 
 		final String[] header = {"ID","Name","NIC","Reg:No","Speciality","Gender","Birthday","Telehphone","Job History"};
-		ArrayList<Doctor> data = new ArrayList<Doctor>();
+		List<Doctor> data = new ArrayList<Doctor>();
 		searchTable = new JTable(new DoctorTableModel(data,header));
 
 		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -131,89 +134,19 @@ public class DoctorSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				clearTable();
-				DBConnection dbCon = new DBConnection();
-				Connection con = dbCon.getConnection();
-				Statement stmt = null;
-				String sql = null;
-				ResultSet rs= null;
-				try {
-					stmt = con.createStatement();
-				} catch (SQLException e1) {
-					e1.printStackTrace();
+				DoctorSQLTollkit doctorSqlToolkit = new DoctorSQLTollkit();
+				List<Doctor> doctorList = doctorSqlToolkit.searchDoctor(tSearchName.getText(), tSearchRegNumber.getText());
+				if(doctorList.size()>0){
+					for(Doctor doctor:doctorList)
+						tbModel.updateTable(doctor);
 				}
-				try {
-					if(!tSearchName.getText().equals("") && !tSearchRegNumber.getText().equals(""))
-						sql = "SELECT * FROM `doctor` WHERE `name` LIKE '%"+tSearchName.getText()+"%' && `regNumber` = '"+tSearchRegNumber.getText()+"'";			
-					else if(!tSearchName.getText().equals("") && tSearchRegNumber.getText().equals(""))
-						sql = "SELECT * FROM `doctor` WHERE `name` LIKE '%"+tSearchName.getText()+"%'";			
-					else if(tSearchName.getText().equals("") && !tSearchRegNumber.getText().equals(""))
-						sql = "SELECT * FROM `doctor` WHERE `regNumber` = '"+tSearchRegNumber.getText()+"'";	
-					else
-						sql = "SELECT * FROM `doctor`";
-					rs = stmt.executeQuery(sql);
-					setDoctorObject(rs);
-					con.close();					
-
-				} catch (SQLException e1) {
-					e1.printStackTrace();
-				}
+				
 			}
 
 		});
 	}
 
-	private void setDoctorObject(ResultSet rs){
-		try {
-			String id;
-			String name;
-			String nic;
-			String regNumber;
-			String speciality;
-			String gender;
-			String birthday;
-			String telephone;
-			String jobHistory;
-			Blob pp;
-
-			rs.last();
-			int row = rs.getRow();
-			rs.beforeFirst();
-			if(row > 0){
-				while(rs.next()){
-					id = rs.getObject("id").toString();
-					name = rs.getObject("name").toString();
-					nic = rs.getObject("nic").toString();
-					regNumber = rs.getObject("regNumber").toString();
-					speciality = rs.getObject("speciality").toString();
-					gender = rs.getObject("gender").toString();
-					birthday = rs.getObject("birthday").toString();
-					telephone = rs.getObject("telephone").toString();
-					jobHistory = rs.getObject("jobHistory").toString();
-					pp = rs.getBlob("profilePicture");
-
-					Doctor doctor = new Doctor();
-					doctor.setId(id);
-					doctor.setName(name);
-					doctor.setNic(nic);
-					doctor.setRegNumber(regNumber);
-					doctor.setSpeiality(speciality);
-					doctor.setGender(gender);
-					doctor.setBirthday(birthday);
-					doctor.setTp(telephone);
-					doctor.setJobHistory(jobHistory);
-					doctor.setDoctorProfilePic(pp);
-					tbModel.updateTable(doctor);
-				}
-			}
-			else{
-				JOptionPane.showMessageDialog(null, "No data found from the source.", "Failed", JOptionPane.INFORMATION_MESSAGE);
-			}
-
-
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+	
 
 	private void mouseClickAction(){
 		searchTable.addMouseListener(new MouseAdapter() {
@@ -237,7 +170,7 @@ public class DoctorSearchPanel extends JPanel{
 		doctorController.registerRemoveRowDoctorSearchTableListeners(new ActionListener() {
 			@Override
 			public void actionPerformed(ActionEvent e) {
-				int rowIndex = ((DoctorTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString(),searchTable);
+				int rowIndex = ((DoctorTableModel) searchTable.getModel()).getRowIndex(e.getSource().toString());
 				if(rowIndex>=0)
 					tbModel.removeRow(rowIndex);
 			}
@@ -249,7 +182,7 @@ public class DoctorSearchPanel extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {	
 				Doctor doctor = (Doctor) e.getSource();
-				int updatedRow = tbModel.getRowIndex(doctor.getRegNumber(),searchTable);		
+				int updatedRow = tbModel.getRowIndex(doctor.getRegNumber());		
 				if(updatedRow >= 0)
 					tbModel.setValueAtRow(doctor,updatedRow);
 				else

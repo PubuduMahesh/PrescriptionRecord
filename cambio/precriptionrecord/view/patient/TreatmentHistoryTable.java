@@ -39,6 +39,11 @@ public class TreatmentHistoryTable extends JPanel{
 	private JButton bPrint;
 	private TreatmentTableModel tbModel;
 	private CommonController commonController;
+	private String patientName;
+	private String toDate;
+	private String fromDate;
+	private TreatementSearchedPatient tempPatient;
+	
 	public TreatmentHistoryTable(CommonController commonController){	
 		this.commonController = commonController;
 		gridbag = new GridBagLayout();
@@ -46,7 +51,7 @@ public class TreatmentHistoryTable extends JPanel{
 		setBorder(BorderFactory.createLineBorder(Color.BLACK));
 		setPreferredSize(new Dimension(720, 300));
 		final String[] header = {"Date","DiagnosisDescription","DrugList","Doctor"};
-		ArrayList<Prescription> data = new ArrayList<Prescription>();
+		List<Prescription> data = new ArrayList<Prescription>();
 		treatmentTable = new JTable(new TreatmentTableModel(data,header));
 		tbModel = (TreatmentTableModel)treatmentTable.getModel();
 		JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED,JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -78,6 +83,7 @@ public class TreatmentHistoryTable extends JPanel{
 		setTableData();
 		clearButtonAction();
 		printButtonAction(); 
+		setSearchedPatientObject();
 	}
 	private void clearButtonAction(){
 		bClear.addActionListener(new ActionListener() {
@@ -115,10 +121,10 @@ public class TreatmentHistoryTable extends JPanel{
         	JRBeanCollectionDataSource itmesJRBean = new JRBeanCollectionDataSource(listItems);
         	
             Map<String, Object> parameters = new HashMap<String, Object>();
-            parameters.put("ItemDataSource", itmesJRBean);
-            parameters.put("patientName", "Patient Name");
-            parameters.put("fromDate", "2");
-            parameters.put("toDate", "3");
+            parameters.put("ItemDataSource", itmesJRBean);          
+            parameters.put("patientName",patientName);
+            parameters.put("fromDate", fromDate);
+            parameters.put("toDate", toDate);
             String sourceName = "src/cambio/report/temp1.jrxml";
             JasperReport report = JasperCompileManager.compileReport(sourceName);
 
@@ -153,12 +159,13 @@ public class TreatmentHistoryTable extends JPanel{
 			@Override
 			public void actionPerformed(ActionEvent e) {
 				if(e.getSource() instanceof TreatementSearchedPatient){
-					TreatementSearchedPatient tempPatient = (TreatementSearchedPatient)e.getSource();
-//					searchedPatientName = 
+					tempPatient = (TreatementSearchedPatient)e.getSource();
+					patientName = tempPatient.getPatientName();
+					toDate = tempPatient.getToDate();
+					fromDate = tempPatient.getFromDate();
 				}
 				
 			}
 		});
 	}
-	
 }

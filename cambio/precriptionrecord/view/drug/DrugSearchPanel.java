@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.List;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 
@@ -19,6 +20,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JLabel;
 import javax.swing.JTextField;
 
+import cambio.precriptionrecord.SQLToolKit.DrugSQLToolkit;
 import cambio.precriptionrecord.controller.CommonController;
 import cambio.precriptionrecord.controller.DrugController;
 import cambio.precriptionrecord.model.drug.Drug;
@@ -105,7 +107,7 @@ public class DrugSearchPanel extends JPanel {
         GridBagConstraints tablConstraints = new GridBagConstraints();
 
         final String[] header = {"id", "name", "description", "type"};
-        ArrayList<Drug> data = new ArrayList<Drug>();
+        List<Drug> data = new ArrayList<Drug>();
         searchTable = new JTable(new DrugTableModel(data, header));
 
         JScrollPane scrollPane = new JScrollPane(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED, JScrollPane.HORIZONTAL_SCROLLBAR_AS_NEEDED);
@@ -135,37 +137,13 @@ public class DrugSearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 clearTable();
-                DBConnection dbCon = new DBConnection();
-                Connection con = dbCon.getConnection();
-                Statement stmt = null;
-                String sql = null;
-                ResultSet rs = null;
-                try {
-                    stmt = con.createStatement();
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
+                DrugSQLToolkit drugToolkit = new DrugSQLToolkit();
+                List<Drug> drugList = drugToolkit.searchDrug(tSearchName.getText(), tSearchDrugId.getText());
+                if(drugList.size()>0){
+                	for(Drug drug:drugList)
+                		tbModel.updateTable(drug);
                 }
-                try {
-                    if(!tSearchDrugId.getText().equals("") && !tSearchName.getText().equals("")){
-                        sql = "SELECT * FROM `drug` WHERE `drugID` = '"+tSearchDrugId.getText()+"' && `drugName` LIKE '%"+tSearchName.getText()+"%'";
-                    }
-                    else if(!tSearchDrugId.getText().equals("") && tSearchName.getText().equals("")){
-                        sql = "SELECT * FROM `drug` WHERE `drugID` = '"+tSearchDrugId.getText()+"'";
-                    }
-                    else if(tSearchDrugId.getText().equals("") && !tSearchName.getText().equals("")){
-                        sql = "SELECT * FROM `drug` WHERE `drugName` LIKE '%"+tSearchName.getText()+"%'";
-                    }
-                    else{
-                        sql = "SELECT * FROM `drug`";
-                    }
-                    
-                    rs = stmt.executeQuery(sql);
-                    setDrugObject(rs);
-                    con.close();
-
-                } catch (SQLException e1) {
-                    e1.printStackTrace();
-                }
+                
             }
 
         });
@@ -182,38 +160,7 @@ public class DrugSearchPanel extends JPanel {
         });
     }
 
-    private void setDrugObject(ResultSet rs) {
-        try {
-            rs.last();
-            if (rs.getRow() > 0) {
-                rs.beforeFirst();
-                String id;
-                String name;
-                String description;
-                String type;
-                String dosage;
-
-                while (rs.next()) {
-                    id = rs.getObject("drugID").toString();
-                    name = rs.getObject("drugName").toString();
-                    description = rs.getObject("description").toString();
-                    type = rs.getObject("type").toString();
-                    dosage = rs.getObject("dosage").toString();
-                    Drug drug = new Drug();
-                    drug.setDrugId(id);
-                    drug.setDrugName(name);
-                    drug.setDescription(description);
-                    drug.setType(type);
-                    tbModel.updateTable(drug);
-                }
-            } else {
-                JOptionPane.showMessageDialog(null, "No data found from the source", "Failed", JOptionPane.INFORMATION_MESSAGE);
-            }
-
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
+    
 
     private void mouseClickAction() {
         searchTable.addMouseListener(new MouseAdapter() {
@@ -246,7 +193,7 @@ public class DrugSearchPanel extends JPanel {
         drugController.registerRemoveRowDrugSearchTableListeners(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                int rowIndex = tbModel.getRowIndex(e.getSource().toString(), searchTable);
+                int rowIndex = tbModel.getRowIndex(e.getSource().toString());
                 tbModel.removeRow(rowIndex);
             }
         });
@@ -257,7 +204,7 @@ public class DrugSearchPanel extends JPanel {
             @Override
             public void actionPerformed(ActionEvent e) {
                 Drug drug = (Drug) e.getSource();
-                int updatedRow = tbModel.getRowIndex(drug.getDrugId(), searchTable);
+                int updatedRow = tbModel.getRowIndex(drug.getDrugId());
                 if(updatedRow >= 0)
                     tbModel.setValueAtRow(drug, updatedRow);
                 else

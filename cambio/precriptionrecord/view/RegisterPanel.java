@@ -214,7 +214,7 @@ public class RegisterPanel extends JPanel {
         }
     }
     private void enableRegisterButton(){
-    	if(!tNIC.getText().equals("") && tPassword.getPassword().length > 0 && tConfirmPassword.getPassword().length > 0 && passwordMatched){
+    	if(tNIC.getText().length()>0 && tPassword.getPassword().length > 0 && tConfirmPassword.getPassword().length > 0 && passwordMatched){
     		bRegistr.setEnabled(true);
     		
     	}

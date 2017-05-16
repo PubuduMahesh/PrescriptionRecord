@@ -1,6 +1,7 @@
 package cambio.precriptionrecord.model.drug;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import javax.swing.JTable;
 import javax.swing.table.AbstractTableModel;
@@ -8,9 +9,9 @@ import javax.swing.table.AbstractTableModel;
 public class DrugTableModel extends AbstractTableModel {
 
     private String[] columnNames;
-    private java.util.List<Drug> tableData = new ArrayList<Drug>();
+    private List<Drug> tableData = new ArrayList<Drug>();
 
-    public DrugTableModel(ArrayList<Drug> data, String[] columnNames) {
+    public DrugTableModel(List<Drug> data, String[] columnNames) {
         this.columnNames = columnNames;
         this.tableData = data;
     }
@@ -72,8 +73,8 @@ public class DrugTableModel extends AbstractTableModel {
         return false;
     }
 
-    public int getRowIndex(String value, JTable table) {
-        for (int rowCount = 0; rowCount < table.getRowCount(); rowCount++) {
+    public int getRowIndex(String value) {
+        for (int rowCount = 0; rowCount < getRowCount(); rowCount++) {
             if (getValueAt(rowCount, 0).equals(value)) {
                 return rowCount;
             }
